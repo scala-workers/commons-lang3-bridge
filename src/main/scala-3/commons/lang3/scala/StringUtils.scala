@@ -1,4 +1,4 @@
-package commons.scala.bridge.lang3
+package commons.lang3.scala
 
 import java.util.function.Supplier
 import scala.language.implicitConversions
@@ -13,46 +13,34 @@ import scala.language.implicitConversions
  */
 object StringUtils {
 
-
   object bridge {
-    trait ToStringOpt[-T] extends TypeMapping[T, Option[String]] {
-      override def apply(i: T): Option[String]
-    }
 
-    object ToStringOpt {
-      def apply[S](func: S => Option[String]): ToStringOpt[S] = new ToStringOpt[S] {
-        override def apply(i: S): Option[String] = func(i)
-      }
+    import commons.lang3.scala.ToStringOpt
 
-    }
+    implicit val stringMappingImplicit: ToStringOpt[String] = ToStringOpt(i => Option.apply[String](i))
+    implicit val stringOptMappingImplicit: ToStringOpt[Option[String]] = ToStringOpt(identity)
 
-//    implicit val stringMappingImplicit: ToStringOpt[String] = ToStringOpt(i => Option.apply[String](i))
-//    implicit val stringOptMappingImplicit: ToStringOpt[Option[String]] = ToStringOpt(identity)
+//    val stringMapping: ToStringOpt[String] = ToStringOpt(i => Option.apply[String](i))
+//
+//    given ToStringOpt[String] = stringMapping
+//
+//    val stringOptMapping: ToStringOpt[Option[String]] = ToStringOpt(identity)
+//
+//    given ToStringOpt[Option[String]] = stringOptMapping
 
-    val stringMapping: ToStringOpt[String] = ToStringOpt(i => Option.apply[String](i))
-
-    given ToStringOpt[String] = stringMapping
-
-    val stringOptMapping: ToStringOpt[Option[String]] = ToStringOpt(identity)
-
-    given ToStringOpt[Option[String]] = stringOptMapping
-
-    given str2opt: Conversion[String, Option[String]] = Option(_)
+//    given stringMapping: ToStringOpt[String] = ToStringOpt(i => Option.apply[String](i))
+//
+//    given stringOptMapping: ToStringOpt[Option[String]] = ToStringOpt(identity)
 
     import org.apache.commons.lang3.{StringUtils => Strings}
 
     implicit class StringOptExt[T: ToStringOpt](x: T) {
 
-
       private def optFunc: ToStringOpt[T] = summon
 
       def strOpt: Option[String] = optFunc(x)
 
-      object ops {
-        def contains[T: ToStringOpt](seq: T): Boolean = Strings.contains(strOpt.orNull, seq.strOpt.orNull)
-
-        def contains(searchChar: Char): Boolean = Strings.contains(strOpt.orNull, searchChar)
-      }
+      val ops: StringCommons[T] = new StringCommons(x)
     }
 
   }

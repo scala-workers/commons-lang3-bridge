@@ -9,7 +9,7 @@ import org.apache.commons.lang3.{StringUtils => Strings}
  * @since 2022/08/28 21:04
  */
 class StringCommons[T: ToStringOpt](value: T) {
-  import commons.lang3.scala.StringUtils.bridge.StringExt
+  import commons.lang3.scala.StringUtils.bridge.StringOptExt
   def contains[To: ToStringOpt](seq: To): Boolean = Strings.contains(value.strOpt.orNull, seq.strOpt.orNull)
 
   def contains(searchChar: Char): Boolean = Strings.contains(value.strOpt.orNull, searchChar)

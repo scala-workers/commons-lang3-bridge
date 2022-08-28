@@ -19,7 +19,7 @@ object StringUtils {
     implicit val stringMappingImplicit: ToStringOpt[String] = ToStringOpt(i => Option(i))
     implicit val stringOptMappingImplicit: ToStringOpt[Option[String]] = ToStringOpt(identity)
 
-    implicit class StringExt[T: ToStringOpt](x: T)  {
+    implicit class StringOptExt[T: ToStringOpt](x: T)  {
       private def optFunc: ToStringOpt[T] = implicitly
       def strOpt: Option[String] = optFunc(x)
       val ops = new StringCommons[T](x)
