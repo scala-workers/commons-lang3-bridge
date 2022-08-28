@@ -1,4 +1,4 @@
-package commons.scala.bridge.lang3
+package commons.lang3.scala
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -33,7 +33,7 @@ class StringUtilsSpec extends AnyFlatSpec with Matchers{
    * See http://www.oracle.com/technetwork/articles/javase/supplementary-142654.html
    */
   private val CharUSuppCharLow = "\uD840"
-  import commons.scala.bridge.lang3.StringUtils.bridge._
+  import commons.lang3.scala.StringUtils.bridge._
 
   "Strings" should "test contains operators" in  {
 

@@ -1,4 +1,4 @@
-package commons.scala.bridge.lang3
+package commons.lang3.scala
 
 /**
  * TODO

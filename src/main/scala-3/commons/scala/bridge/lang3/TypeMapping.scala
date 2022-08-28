@@ -12,7 +12,7 @@ trait TypeMapping[-I, +O] extends (I => O) {
 }
 
 object TypeMapping {
-  def apply[S, T](func: S => T): TypeMapping[S, T] = new TypeMapping[S, T] {
+  def apply[S, T](func: S => T): scala.TypeMapping[S, T] = new TypeMapping[S, T] {
     override def apply(i: S): T = func(i)
   }
 }

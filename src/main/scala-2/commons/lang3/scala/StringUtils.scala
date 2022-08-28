@@ -1,4 +1,4 @@
-package commons.scala.bridge.lang3
+package commons.lang3.scala
 
 import java.util.function.Supplier
 import scala.language.implicitConversions
@@ -12,36 +12,18 @@ import scala.language.implicitConversions
  * @since 2022/08/22 18:58
  */
 object StringUtils {
-  trait ToStringOpt[-T] extends TypeMapping[T, Option[String]] {
-    override def apply(i: T): Option[String]
-  }
 
-  object ToStringOpt {
-    def apply[S](func: S => Option[String]): ToStringOpt[S] = new ToStringOpt[S] {
-      override def apply(i: S): Option[String] = func(i)
-    }
-
-  }
   object bridge {
-    import org.apache.commons.lang3.{StringUtils => Strings}
+    import commons.lang3.scala.ToStringOpt
 
     implicit val stringMappingImplicit: ToStringOpt[String] = ToStringOpt(i => Option(i))
     implicit val stringOptMappingImplicit: ToStringOpt[Option[String]] = ToStringOpt(identity)
 
     implicit class StringExt[T: ToStringOpt](x: T)  {
       private def optFunc: ToStringOpt[T] = implicitly
-      private def strOpt: Option[String] = optFunc(x)
-      val ops = new Ext(strOpt)
+      def strOpt: Option[String] = optFunc(x)
+      val ops = new StringCommons[T](x)
 
-      def contains[To: ToStringOpt](seq: Option[String]): Boolean = Strings.contains(x.strOpt.orNull, seq.orNull)
-
-      def contains(searchChar: Char): Boolean = Strings.contains(x.strOpt.orNull, searchChar)
-    }
-
-    class Ext(value: Option[String]) {
-      def contains(seq: Option[String]): Boolean = Strings.contains(value.orNull, seq.orNull)
-
-      def contains(searchChar: Char): Boolean = Strings.contains(value.orNull, searchChar)
     }
 
   }
