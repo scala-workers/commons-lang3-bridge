@@ -23,6 +23,7 @@ object StringUtils {
 
   }
   object bridge {
+    import org.apache.commons.lang3.{StringUtils => Strings}
 
     implicit val stringMappingImplicit: ToStringOpt[String] = ToStringOpt(i => Option(i))
     implicit val stringOptMappingImplicit: ToStringOpt[Option[String]] = ToStringOpt(identity)
@@ -31,10 +32,13 @@ object StringUtils {
       private def optFunc: ToStringOpt[T] = implicitly
       private def strOpt: Option[String] = optFunc(x)
       val ops = new Ext(strOpt)
+
+      def contains[To: ToStringOpt](seq: Option[String]): Boolean = Strings.contains(x.strOpt.orNull, seq.orNull)
+
+      def contains(searchChar: Char): Boolean = Strings.contains(x.strOpt.orNull, searchChar)
     }
 
     class Ext(value: Option[String]) {
-      import org.apache.commons.lang3.{StringUtils => Strings}
       def contains(seq: Option[String]): Boolean = Strings.contains(value.orNull, seq.orNull)
 
       def contains(searchChar: Char): Boolean = Strings.contains(value.orNull, searchChar)
