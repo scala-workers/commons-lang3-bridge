@@ -20,18 +20,6 @@ object StringUtils {
     implicit val stringMappingImplicit: ToStringOpt[String] = ToStringOpt(i => Option.apply[String](i))
     implicit val stringOptMappingImplicit: ToStringOpt[Option[String]] = ToStringOpt(identity)
 
-//    val stringMapping: ToStringOpt[String] = ToStringOpt(i => Option.apply[String](i))
-//
-//    given ToStringOpt[String] = stringMapping
-//
-//    val stringOptMapping: ToStringOpt[Option[String]] = ToStringOpt(identity)
-//
-//    given ToStringOpt[Option[String]] = stringOptMapping
-
-//    given stringMapping: ToStringOpt[String] = ToStringOpt(i => Option.apply[String](i))
-//
-//    given stringOptMapping: ToStringOpt[Option[String]] = ToStringOpt(identity)
-
     import org.apache.commons.lang3.{StringUtils => Strings}
 
     implicit class StringOptExt[T: ToStringOpt](x: T) {

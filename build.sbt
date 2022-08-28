@@ -6,7 +6,7 @@ lazy val scala211 = "2.11.12"
 lazy val scala312 = "3.1.2"
 lazy val supportedScalaVersions = List(scala213, scala212, scala211, scala312)
 
-ThisBuild / scalaVersion     := scala312
+ThisBuild / scalaVersion     := scala213
 ThisBuild / version          := "0.0.1"
 ThisBuild / organization     := "io.github.marchliu"
 ThisBuild / organizationName := "Mars Liu<mars.liu@outlook.com>"
@@ -15,6 +15,7 @@ ThisBuild / organizationHomepage := Some(url("https://marchliu.github.io/"))
 lazy val root = (project in file("."))
   .settings(
     name := "commons-lang3-bridge",
+    crossScalaVersions := supportedScalaVersions,
     libraryDependencies ++= Seq(
       "org.apache.commons" % "commons-lang3" % "3.12.0" % "provided",
       scalaTest % Test
