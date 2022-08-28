@@ -35,9 +35,9 @@ object StringUtils {
 
     class Ext(value: Option[String]) {
       import org.apache.commons.lang3.{StringUtils => Strings}
-      def contains(seq: Option[String]): Boolean = Strings.contains(strOpt.orNull, seq.orNull)
+      def contains(seq: Option[String]): Boolean = Strings.contains(value.orNull, seq.orNull)
 
-      def contains(searchChar: Char): Boolean = Strings.contains(strOpt.orNull, searchChar)
+      def contains(searchChar: Char): Boolean = Strings.contains(value.orNull, searchChar)
     }
 
   }

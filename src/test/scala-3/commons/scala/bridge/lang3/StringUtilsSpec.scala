@@ -35,7 +35,6 @@ class StringUtilsSpec extends AnyFlatSpec with Matchers{
   private val CharUSuppCharLow = "\uD840"
   import commons.scala.bridge.lang3.StringUtils.bridge._
 
-
   "Strings" should "test contains operators" in  {
 
     val nullStr:String = null

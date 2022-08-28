@@ -37,6 +37,8 @@ object StringUtils {
 
     given ToStringOpt[Option[String]] = stringOptMapping
 
+    given str2opt: Conversion[String, Option[String]] = Option(_)
+
     import org.apache.commons.lang3.{StringUtils => Strings}
 
     implicit class StringOptExt[T: ToStringOpt](x: T) {
@@ -44,10 +46,10 @@ object StringUtils {
 
       private def optFunc: ToStringOpt[T] = summon
 
-      private def strOpt: Option[String] = optFunc(x)
+      def strOpt: Option[String] = optFunc(x)
 
       object ops {
-        def contains(seq: Option[String]): Boolean = Strings.contains(strOpt.orNull, seq.orNull)
+        def contains[T: ToStringOpt](seq: T): Boolean = Strings.contains(strOpt.orNull, seq.strOpt.orNull)
 
         def contains(searchChar: Char): Boolean = Strings.contains(strOpt.orNull, searchChar)
       }
