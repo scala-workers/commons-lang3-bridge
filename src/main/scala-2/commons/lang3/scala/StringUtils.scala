@@ -31,45 +31,6 @@ object StringUtils {
   class StringHelper(str: String) {
     import org.apache.commons.lang3.{StringUtils => Strings}
 
-    def abbreviate(maxWidth: Int): String = Strings.abbreviate(str, maxWidth)
-
-    def abbreviate(offset: Int, maxWidth: Int): String = Strings.abbreviate(str, offset, maxWidth)
-
-    def abbreviate(abbrevMarker: String, maxWidth: Int): String =
-      Strings.abbreviate(str, abbrevMarker, maxWidth)
-
-    def abbreviate(abbrevMarker: String, offset: Int, maxWidth: Int): String =
-      Strings.abbreviate(str, abbrevMarker, offset, maxWidth)
-
-    def abbreviateMiddle(middle: String, length: Int): String =
-      Strings.abbreviateMiddle(str, middle, length)
-
-    def appendIfMissing(suffix: CharSequence, suffixes: CharSequence*): String =
-      Strings.appendIfMissing(str, suffix, suffixes: _*)
-
-    def appendIfMissingIgnoreCase(suffix: CharSequence, suffixes: CharSequence*): String =
-      Strings.appendIfMissingIgnoreCase(str, suffix, suffixes: _*)
-
-    def capitalize: String = Strings.capitalize(str)
-
-    def center(size: Int): String = Strings.center(str, size)
-
-    def center(size: Int, padChar: Char): String = Strings.center(str, size, padChar)
-
-    def center(size: Int, padStr: String): String = Strings.center(str, size, padStr)
-
-    def chomp: String = Strings.chomp(str)
-
-    def chop: String = Strings.chop(str)
-
-    def compare(other: String): Int = Strings.compare(str, other)
-
-    def compare(other: String, nullIsNull: Boolean): Int = Strings.compare(str, other, nullIsNull)
-
-    def compareIgnoreCase(other: String): Int = Strings.compareIgnoreCase(str, other)
-
-    def compareIgnoreCase(other: String, nullIsLess: Boolean): Int =
-      Strings.compareIgnoreCase(str, other, nullIsLess)
 
 
     def containsAnyChar(searchChars: Char*): Boolean = Strings.containsAny(str, searchChars: _*)
