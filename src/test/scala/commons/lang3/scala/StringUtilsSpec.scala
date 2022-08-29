@@ -1,7 +1,6 @@
 package commons.lang3.scala
 
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
+import org.scalatest.funsuite.AnyFunSuite
 
 /**
  * TODO
@@ -10,7 +9,7 @@ import org.scalatest.matchers.should.Matchers
  * @version 1.0.0
  * @since 2022/08/28 01:18
  */
-class StringUtilsSpec extends AnyFlatSpec with Matchers{
+class StringUtilsSpec extends AnyFunSuite {
 
   /**
    * Supplementary character U+20000
@@ -35,34 +34,34 @@ class StringUtilsSpec extends AnyFlatSpec with Matchers{
   private val CharUSuppCharLow = "\uD840"
   import commons.lang3.scala.StringUtils.bridge._
 
-  "Strings" should "test contains operators" in  {
+  test("test contains operators"){
 
     val nullStr:String = null
-    nullStr.ops.contains(' ') should be (false)
-    "".ops.contains(' ') should be (false)
+    assert(!nullStr.ops.contains(' '))
+    assert(!"".ops.contains(' '))
 
-    "".ops.contains(nullStr) should be (false)
-    nullStr.ops.contains(nullStr) should be (false)
+    assert(!"".ops.contains(nullStr))
+    assert(!nullStr.ops.contains(nullStr))
 
-    "abc".ops.contains('a') should be (true)
-    "abc".ops.contains('b') should be (true)
-    "abc".ops.contains('c') should be (true)
-    "abc".ops.contains('z') should be (false)
+    assert("abc".ops.contains('a'))
+    assert("abc".ops.contains('b'))
+    assert("abc".ops.contains('c'))
+    assert(!"abc".ops.contains('z'))
   }
 
-  "Options" should "test contains operators for option string" in {
+  test("test contains operators for option string") {
     val noneStr: Option[String] = None
-    noneStr.ops.contains(' ') should be(false)
-    Some("").ops.contains(' ') should be(false)
+    assert(!noneStr.ops.contains(' '))
+    assert(!Some("").ops.contains(' '))
 
-    Some("").ops.contains(None) should be(false)
+    assert(!Some("").ops.contains(None))
 
-    None.ops.contains(None) should be(false)
+    assert(!None.ops.contains(None))
 
-    Some("abc").ops.contains('a') should be(true)
-    Some("abc").ops.contains('b') should be(true)
-    Some("abc").ops.contains('c') should be(true)
-    Some("abc").ops.contains('z') should be(false)
+    assert(Some("abc").ops.contains('a'))
+    assert(Some("abc").ops.contains('b'))
+    assert(Some("abc").ops.contains('c'))
+    assert(!Some("abc").ops.contains('z'))
 
   }
 }
