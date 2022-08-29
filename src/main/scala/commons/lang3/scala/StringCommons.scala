@@ -11,7 +11,7 @@ import org.apache.commons.lang3.{StringUtils => Strings}
  */
 class StringCommons[T: ToStringOpt](value: T) {
 
-  import commons.lang3.scala.StringUtils.bridge.StringOptExt
+  import commons.lang3.scala.StringUtils.bridge._
 
   /**
    * * <p>Abbreviates a String using ellipses. This will turn
@@ -562,4 +562,90 @@ class StringCommons[T: ToStringOpt](value: T) {
    */
   def contains(searchChar: Char): Boolean = Strings.contains(value.strOpt.orNull, searchChar)
 
+  /**
+   * <p>Checks if the CharSequence contains any character in the given
+   * set of characters.</p>
+   *
+   * <p>A {@code None} CharSequence will return {@code false}.
+   * A {@code None} or zero length search array will return {@code false}.</p>
+   *
+   * <pre>
+   * None.containsAny(*)                          = false
+   * Some("").containsAny(*)                      = false
+   * Option(*).containsAny(None)                  = false
+   * Option(*).containsAny([])                    = false
+   * Some("zzabyycdxx").containsAny(['z', 'a'])   = true
+   * Some("zzabyycdxx").containsAny(['b', 'y'])   = true
+   * Some("zzabyycdxx").containsAny(['z', 'y'])   = true
+   * Some("aba").containsAny(['z'])               = false
+   * </pre>
+   *
+   * @param searchChars the chars to search for, may be null
+   * @return if any of the chars are found,
+   */
+  def containsAnyChar(searchChars: Char*): Boolean =
+    Strings.containsAny(value.strOpt.orNull, searchChars: _*)
+  def containsAnyChar(searchChars: Array[Char]): Boolean =
+    Strings.containsAny(value.strOpt.orNull, searchChars: _*)
+
+  /**
+   * <p>
+   * Checks if the CharSequence contains any character in the given set of characters.
+   * </p>
+   *
+   * <p>
+   * A {@code None} CharSequence will return {@code false}. A {@code null} search CharSequence will return
+   * {@code false}.
+   * </p>
+   *
+   * <pre>
+   * None.containsAny(*)                            = false
+   * Some("").containsAny(*)                        = false
+   * Option(*).containsAny(None)                    = false
+   * Option(*).containsAny("")                      = false
+   * Some("zzabyycdxx").containAny("za")            = true
+   * Some("zzabyycdxx").containAny("by")            = true
+   * Some("zzabyycdxx").containAny("zy")            = true
+   * Some("zzabyycdxx").containAny("\tx")           = true
+   * Some("zzabyycdxx").containAny("$.#yF")         = true
+   * Some("aba").containAny("z")                    = false
+   * </pre>
+   *
+   * @param searchChars the chars to search for, may be null
+   * @tparam S String or Option[String]
+   * @return the {@code true} if any of the chars are found, {@code false} if no match or null input
+   */
+  def containsAny[S: ToStringOpt](searchChars: S): Boolean =
+    Strings.containsAny(value.strOpt.orNull, searchChars.strOpt.orNull)
+
+  /**
+   * <p>
+   * Checks if the CharSequence contains any of the CharSequences in the given array.
+   * </p>
+   *
+   * <p>
+   * A {@code None} {@code cs} CharSequence will return {@code false}. A {@code null} or zero length search array will
+   * return {@code false}.
+   * </p>
+   *
+   * <pre>
+   * StringUtils.containsAny(null, *)            = false
+   * StringUtils.containsAny("", *)              = false
+   * StringUtils.containsAny(*, null)            = false
+   * StringUtils.containsAny(*, [])              = false
+   * StringUtils.containsAny("abcd", "ab", null) = true
+   * StringUtils.containsAny("abcd", "ab", "cd") = true
+   * StringUtils.containsAny("abc", "d", "abc")  = true
+   * </pre>
+   *
+   * * @param The array of CharSequences to search for, may be null. Individual CharSequences may be
+   * null as well.
+   *
+   * @return {@code true} if any of the search CharSequences are found, {@code false} otherwise
+   */
+  def containsAnyString(searchCharSequences: CharSequence*): Boolean =
+    Strings.containsAny(value.strOpt.orNull, searchCharSequences: _*)
+
+  def containsAnyString(searchCharSequences: Array[String]): Boolean =
+    Strings.containsAny(value.strOpt.orNull, searchCharSequences: _*)
 }
