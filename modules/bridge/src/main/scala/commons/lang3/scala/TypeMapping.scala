@@ -21,7 +21,7 @@ object TypeMapping extends TypeMappingImplicitOptsPolyHigher {
 }
 
 trait TypeMappingImplicitOptsPoly3 {
-  implicit def typeMappingImplicit1Poly2[I1]: TypeMapping[I1, I1] = TypeMappingInstances.get(1)
+  implicit def typeMappingImplicit1Poly3Identity[I <: I1, I1]: TypeMapping[I, I1] = TypeMappingInstances.get(1)
 }
 
 private[scala] object TypeMappingInstances {
