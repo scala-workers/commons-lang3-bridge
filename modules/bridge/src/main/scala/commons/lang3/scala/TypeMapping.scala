@@ -10,13 +10,12 @@ package commons.lang3.scala
   */
 trait TypeMapping[Input, Sum] {
   def index: Int
-  def setValue(any: Any): (Int, Any)
+  def setValue(any: Any): (Int, Any) = (index, any)
 }
 
 object TypeMapping extends TypeMappingImplicitOptsPolyHigher {
   def apply[Input, Sum](i: Int): TypeMapping[Input, Sum] = new TypeMapping[Input, Sum] {
-    override def index: Int                     = i
-    override def setValue(any: Any): (Int, Any) = (i, any)
+    override def index: Int = i
   }
 }
 
