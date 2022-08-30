@@ -2,37 +2,34 @@ package commons.lang3.scala
 
 import org.scalatest.funsuite.AnyFunSuite
 
-/**
- * TODO
- *
- * @author mars
- * @version 1.0.0
- * @since 2022/08/28 01:18
- */
+/** TODO
+  *
+  * @author
+  *   mars
+  * @version 1.0.0
+  * @since 2022/08/28
+  *   01:18
+  */
 class StringUtilsContainsSpec extends AnyFunSuite {
 
   import commons.lang3.scala.StringUtils.bridge._
 
-  /**
-   * Supplementary character U+20000
-   * See http://www.oracle.com/technetwork/articles/javase/supplementary-142654.html
-   */
+  /** Supplementary character U+20000 See http://www.oracle.com/technetwork/articles/javase/supplementary-142654.html
+    */
   private val CharU20000 = "\uD840\uDC00"
-  /**
-   * Supplementary character U+20001
-   * See http://www.oracle.com/technetwork/articles/javase/supplementary-142654.html
-   */
+
+  /** Supplementary character U+20001 See http://www.oracle.com/technetwork/articles/javase/supplementary-142654.html
+    */
   private val CharU20001 = "\uD840\uDC01"
-  /**
-   * Incomplete supplementary character U+20000, high surrogate only.
-   * See http://www.oracle.com/technetwork/articles/javase/supplementary-142654.html
-   */
+
+  /** Incomplete supplementary character U+20000, high surrogate only. See
+    * http://www.oracle.com/technetwork/articles/javase/supplementary-142654.html
+    */
   private val CharUSuppCharHigh = "\uDC00"
 
-  /**
-   * Incomplete supplementary character U+20000, low surrogate only.
-   * See http://www.oracle.com/technetwork/articles/javase/supplementary-142654.html
-   */
+  /** Incomplete supplementary character U+20000, low surrogate only. See
+    * http://www.oracle.com/technetwork/articles/javase/supplementary-142654.html
+    */
   private val CharUSuppCharLow = "\uD840"
 
   test("test string contains char") {
@@ -117,7 +114,7 @@ class StringUtilsContainsSpec extends AnyFunSuite {
   }
 
   test("test contains any string char array") {
-    val nullString: String = null
+    val nullString: String     = null
     val nullChars: Array[Char] = null
 
     assert(!nullString.ops.containsAnyChar(null))
@@ -137,7 +134,7 @@ class StringUtilsContainsSpec extends AnyFunSuite {
   }
 
   test("test option string contains any string char array") {
-    val noneString: String = null
+    val noneString: String     = null
     val nullChars: Array[Char] = null
 
     assert(!noneString.ops.containsAnyChar(null))
