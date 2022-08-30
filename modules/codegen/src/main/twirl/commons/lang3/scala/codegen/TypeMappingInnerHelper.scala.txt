@@ -1,0 +1,29 @@
+@()
+package commons.lang3.scala
+
+@paramType(start: Int, i1: Int) = { @for(i2 <- start to i1) { @if(i2 > start){ , } I@{i2} } }
+@paramFunc(start: Int, i1: Int) = { @for(i2 <- start to i1) { @if(i2 > start){ , } func@{i2}: I@{i2} => T } }
+@forMatch(start: Int, i1: Int) = { @for(i2 <- start to i1) {
+    case @{i2} => func@{i2}(setValue._2.asInstanceOf[I@{i2}])
+} }
+
+object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
+
+    @for(i1 <- 2 to 22) {
+        implicit class typeMappingImplicit@{i1}Poly[I, @paramType(1, i1)](val mapping: TypeMapping[I, (@paramType(1, i1))]) extends AnyVal {
+            def ops[T](@paramFunc(1, i1)): I => T = i => {
+                val setValue = mapping.setValue(i)
+                setValue._1 match {
+                    @forMatch(1, i1)
+                }
+            }
+        }
+    }
+
+}
+
+trait TypeMappingInnerHelperPoly {
+    implicit class typeMappingImplicit1Poly[I, I1](mapping: TypeMapping[I, I1]) {
+        def ops: I => I1 = (i: I) => i.asInstanceOf
+    }
+}
