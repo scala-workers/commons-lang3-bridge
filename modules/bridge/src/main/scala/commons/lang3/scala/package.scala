@@ -10,7 +10,7 @@ package object scala {
 
   def strToOpt[T: StrToOpt](t: T): Option[String] = {
     val mapping = implicitly[StrToOpt[T]]
-    mapping.ops(Option(_), identity).accept(t)
+    mapping.ops(t)(Option(_), identity)
   }
 
   // ↓ Simple to delete
@@ -19,30 +19,28 @@ package object scala {
 
     def strOpt[T: cusToList](t: T): List[Char] = {
       val mapping = implicitly[cusToList[T]]
-      mapping
-        .ops(
-          { s =>
-            println("这个是 Char")
-            List(s)
-          },
-          { s =>
-            println("这个是 String")
-            s.toList
-          },
-          t => {
-            println("这个是 None")
-            List.empty[Char]
-          },
-          s => {
-            println("这个是 Some")
-            s.toList.flatten
-          },
-          s => {
-            println("这个是 Option")
-            s.toList.flatten
-          }
-        )
-        .accept(t)
+      mapping.ops(t)(
+        { s =>
+          println("这个是 Char")
+          List(s)
+        },
+        { s =>
+          println("这个是 String")
+          s.toList
+        },
+        t => {
+          println("这个是 None")
+          List.empty[Char]
+        },
+        s => {
+          println("这个是 Some")
+          s.toList.flatten
+        },
+        s => {
+          println("这个是 Option")
+          s.toList.flatten
+        }
+      )
     }
 
     println(strOpt('2'))               // 这个是 Char
