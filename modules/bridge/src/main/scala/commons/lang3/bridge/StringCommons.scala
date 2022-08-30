@@ -2,6 +2,8 @@ package commons.lang3.bridge
 
 import org.apache.commons.lang3.{StringUtils => Strings}
 
+import scala.reflect.ClassTag
+
 /** TODO
   *
   * @author
@@ -445,9 +447,9 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   the {@code true} if any of the chars are found, {@code false} if no match or null input
     */
-  def containsAny[S: VarArgsOfPlain](searchArgs: S*): Boolean = uniformVarArgs(searchArgs) match {
-    case Left(chars: Seq[Char])  => Strings.containsAny(strOpt.orNull, chars: _*)
-    case Right(css: Seq[String]) => Strings.containsAny(strOpt.orNull, css: _*)
+  def containsAny[S: VarArgsOfPlain](searchArgs: S*)(implicit tt: ClassTag[S]): Boolean = uniformVarArgs(searchArgs) match {
+    case Left(chars: Seq[Char])        => Strings.containsAny(strOpt.orNull, chars: _*)
+    case Right(css: Seq[CharSequence]) => Strings.containsAny(strOpt.orNull, css: _*)
   }
 
   /** <p> Checks if the CharSequence contains any of the CharSequences in the given array. </p>

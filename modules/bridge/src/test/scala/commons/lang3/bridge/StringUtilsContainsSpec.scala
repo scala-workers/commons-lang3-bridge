@@ -148,4 +148,6 @@ class StringUtilsContainsSpec extends AnyFunSuite {
     assert(Some("zzabyycdxx").ops.containsAny('z', 'y'))
     assert(!Some("ab").ops.containsAny(new Array[Char]('z'): _*))
   }
+
+  test("test contains any string char array with bad supplement chars") {}
 }
