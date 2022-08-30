@@ -12,15 +12,7 @@ object StringUtils {
 
   object bridge {
 
-    implicit val stringMappingImplicit: ToStringOpt[String]            = ToStringOpt(i => Option.apply[String](i))
-    implicit val stringOptMappingImplicit: ToStringOpt[Option[String]] = ToStringOpt(identity)
-
-    implicit class StringOptExt[T: ToStringOpt](x: T) {
-
-      private def optFunc: ToStringOpt[T] = implicitly
-
-      def strOpt: Option[String] = optFunc(x)
-
+    implicit class StringOptExt[T: StrToOpt](x: T) {
       val ops: StringCommons[T] = new StringCommons(x)
     }
 

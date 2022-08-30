@@ -10,9 +10,9 @@ import org.apache.commons.lang3.{StringUtils => Strings}
   * @since 2022/08/28
   *   21:04
   */
-class StringCommons[T: ToStringOpt](value: T) {
+class StringCommons[T: StrToOpt](value: T) {
 
-  import commons.lang3.scala.StringUtils.bridge._
+  private def strOpt: Option[String] = strToOpt(value)
 
   /** * <p>Abbreviates a String using ellipses. This will turn "Now is the time for all good men" into "Now is the time for..."</p>
     *
@@ -31,7 +31,7 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @throws IllegalArgumentException
     *   if the width is too small
     */
-  def abbreviate(maxWidth: Int): Option[String] = Option(Strings.abbreviate(value.strOpt.orNull, maxWidth))
+  def abbreviate(maxWidth: Int): Option[String] = Option(Strings.abbreviate(strOpt.orNull, maxWidth))
 
   /** <p>Abbreviates a String using ellipses. This will turn "Now is the time for all good men" into "...is the time for..."</p>
     *
@@ -59,7 +59,7 @@ class StringCommons[T: ToStringOpt](value: T) {
     *   if the width is too small
     */
   def abbreviate(offset: Int, maxWidth: Int): Option[String] =
-    Option(Strings.abbreviate(value.strOpt.orNull, offset, maxWidth))
+    Option(Strings.abbreviate(strOpt.orNull, offset, maxWidth))
 
   /** <p>Abbreviates a String using another given String as replacement marker. This will turn "Now is the time for all good men" into "Now
     * is the time for..." if "..." was defined as the replacement marker.</p>
@@ -86,8 +86,8 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @throws IllegalArgumentException
     *   if the width is too small
     */
-  def abbreviate[Abb: ToStringOpt](abbrevMarker: Abb, maxWidth: Int): Option[String] =
-    Option(Strings.abbreviate(value.strOpt.orNull, abbrevMarker.strOpt.orNull, maxWidth))
+  def abbreviate[Abb: StrToOpt](abbrevMarker: Abb, maxWidth: Int): Option[String] =
+    Option(Strings.abbreviate(strOpt.orNull, strToOpt(abbrevMarker).orNull, maxWidth))
 
   /** <p>Abbreviates a String using a given replacement marker. This will turn "Now is the time for all good men" into "...is the time
     * for..." if "..." was defined as the replacement marker.</p>
@@ -120,8 +120,8 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @throws IllegalArgumentException
     *   if the width is too small
     */
-  def abbreviate[Abb: ToStringOpt](abbrevMarker: Abb, offset: Int, maxWidth: Int): Option[String] =
-    Option(Strings.abbreviate(value.strOpt.orNull, abbrevMarker.strOpt.orNull, offset, maxWidth))
+  def abbreviate[Abb: StrToOpt](abbrevMarker: Abb, offset: Int, maxWidth: Int): Option[String] =
+    Option(Strings.abbreviate(strOpt.orNull, strToOpt(abbrevMarker).orNull, offset, maxWidth))
 
   /** <p>Abbreviates a String to the length passed, replacing the middle characters with the supplied replacement String.</p>
     *
@@ -143,8 +143,8 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @return
     *   the abbreviated String if the above criteria is met, or the original String supplied for abbreviation.
     */
-  def abbreviateMiddle[M: ToStringOpt](middle: M, length: Int): Option[String] =
-    Option(Strings.abbreviateMiddle(value.strOpt.orNull, middle.strOpt.orNull, length))
+  def abbreviateMiddle[M: StrToOpt](middle: M, length: Int): Option[String] =
+    Option(Strings.abbreviateMiddle(strOpt.orNull, strToOpt(middle).orNull, length))
 
   /** Appends the suffix to the end of the string if the string does not already end with the suffix.
     *
@@ -157,8 +157,8 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @return
     *   A new Option[String] if suffix was appended, the same string otherwise.
     */
-  def appendIfMissing[S: ToStringOpt](suffix: S, suffixes: CharSequence*): Option[String] =
-    Option(Strings.appendIfMissing(value.strOpt.orNull, suffix.strOpt.orNull, suffixes: _*))
+  def appendIfMissing[S: StrToOpt](suffix: S, suffixes: CharSequence*): Option[String] =
+    Option(Strings.appendIfMissing(strOpt.orNull, strToOpt(suffix).orNull, suffixes: _*))
 
   /** Appends the suffix to the end of the string if the string does not already end with any of the suffixes.
     *
@@ -180,8 +180,8 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @return
     *   A new String if suffix was appended, the same string otherwise.
     */
-  def appendIfMissingIgnoreCase[S: ToStringOpt](suffix: S, suffixes: CharSequence*): Option[String] =
-    Option(Strings.appendIfMissingIgnoreCase(value.strOpt.orNull, suffix.strOpt.orNull, suffixes: _*))
+  def appendIfMissingIgnoreCase[S: StrToOpt](suffix: S, suffixes: CharSequence*): Option[String] =
+    Option(Strings.appendIfMissingIgnoreCase(strOpt.orNull, strToOpt(suffix).orNull, suffixes: _*))
 
   /** <p>Capitalizes a String changing the first character to title case as per {@link Character# toTitleCase ( int )}. No other characters
     * are changed.</p>
@@ -197,7 +197,7 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @see
     *   #uncapitalize(String)
     */
-  def capitalize: Option[String] = Option(Strings.capitalize(value.strOpt.orNull))
+  def capitalize: Option[String] = Option(Strings.capitalize(strOpt.orNull))
 
   /** <p>Centers a String in a larger String of size {@code size} using the space character (' ').</p>
     *
@@ -214,7 +214,7 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @return
     *   centered Option[String], {@code None} if None input
     */
-  def center(size: Int): Option[String] = Option(Strings.center(value.strOpt.orNull, size))
+  def center(size: Int): Option[String] = Option(Strings.center(strOpt.orNull, size))
 
   /** <p>Centers a String in a larger String of size {@code size}. Uses a supplied character as the value to pad the String with.</p>
     *
@@ -233,7 +233,7 @@ class StringCommons[T: ToStringOpt](value: T) {
     *   centered String, {@code null} if null String input
     */
   def center(size: Int, padChar: Char): Option[String] =
-    Option(Strings.center(value.strOpt.orNull, size, padChar))
+    Option(Strings.center(strOpt.orNull, size, padChar))
 
   /** <p>Centers a String in a larger String of size {@code size}. Uses a supplied character as the value to pad the String with.</p>
     *
@@ -253,8 +253,8 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @return
     *   centered String, {@code None} if None input
     */
-  def center[P: ToStringOpt](size: Int, padStr: P): Option[String] =
-    Option(Strings.center(value.strOpt.orNull, size, padStr.strOpt.orNull))
+  def center[P: StrToOpt](size: Int, padStr: P): Option[String] =
+    Option(Strings.center(strOpt.orNull, size, strToOpt(padStr).orNull))
 
   /** <p>Removes one newline from end of a String if it's there, otherwise leave it alone. A newline is &quot;{@code \n}&quot;, &quot;{@code
     * \r}&quot;, or &quot;{@code \r\n}&quot;.</p>
@@ -269,7 +269,7 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @return
     *   Option[String] without newline, {@code None} if null String input
     */
-  def chomp: Option[String] = Option(Strings.chomp(value.strOpt.orNull))
+  def chomp: Option[String] = Option(Strings.chomp(strOpt.orNull))
 
   /** <p>Remove the last character from a String.</p>
     *
@@ -282,7 +282,7 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @return
     *   String without last character, {@code None} if None String input
     */
-  def chop: Option[String] = Option(Strings.chop(value.strOpt.orNull))
+  def chop: Option[String] = Option(Strings.chop(strOpt.orNull))
 
   /** <p>Compare two Strings lexicographically, as per {@link String# compareTo ( String )}, returning :</p> <ul> <li>{@code int = 0}, if
     * {@code str1} is equal to {@code str2} (or both {@code null})</li> <li>{@code int < 0}, if {@code str1} is less than {@code str2}</li>
@@ -303,7 +303,7 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @return
     *   &lt; 0, 0, &gt; 0, if {@code this} is respectively less, equal or greater than {@code other}
     */
-  def compare[O: ToStringOpt](other: O): Int = Strings.compare(value.strOpt.orNull, other.strOpt.orNull)
+  def compare[O: StrToOpt](other: O): Int = Strings.compare(strOpt.orNull, strToOpt(other).orNull)
 
   /** <p>Compare two Strings lexicographically, as per {@link String# compareTo ( String )}, returning :</p> <ul> <li>{@code int = 0}, if
     * {@code str1} is equal to {@code str2} (or both {@code null})</li> <li>{@code int < 0}, if {@code str1} is less than {@code str2}</li>
@@ -327,8 +327,8 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @return
     *   &lt; 0, 0, &gt; 0, if {@code this} is respectively less, equal ou greater than {@code other}
     */
-  def compare[O: ToStringOpt](other: O, nullIsNull: Boolean): Int =
-    Strings.compare(value.strOpt.orNull, other.strOpt.orNull, nullIsNull)
+  def compare[O: StrToOpt](other: O, nullIsNull: Boolean): Int =
+    Strings.compare(strOpt.orNull, strToOpt(other).orNull, nullIsNull)
 
   /** <p>Compare two Strings lexicographically, ignoring case differences, as per {@link String# compareToIgnoreCase ( String )}, returning
     * :</p> <ul> <li>{@code int = 0}, if {@code str1} is equal to {@code str2} (or both {@code null})</li> <li>{@code int < 0}, if {@code
@@ -351,8 +351,8 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @return
     *   &lt; 0, 0, &gt; 0, if {@code this} is respectively less, equal ou greater than {@code other}, ignoring case differences.
     */
-  def compareIgnoreCase[O: ToStringOpt](other: O): Int =
-    Strings.compareIgnoreCase(value.strOpt.orNull, other.strOpt.orNull)
+  def compareIgnoreCase[O: StrToOpt](other: O): Int =
+    Strings.compareIgnoreCase(strOpt.orNull, strToOpt(other).orNull)
 
   /** <p>Compare two Strings lexicographically, ignoring case differences, as per {@link String# compareToIgnoreCase ( String )}, returning
     * :</p> <ul> <li>{@code int = 0}, if {@code str1} is equal to {@code str2} (or both {@code null})</li> <li>{@code int < 0}, if {@code
@@ -379,8 +379,8 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @return
     *   &lt; 0, 0, &gt; 0, if {@code this} is respectively less, equal ou greater than {@code other}, ignoring case differences.
     */
-  def compareIgnoreCase[O: ToStringOpt](other: O, nullIsLess: Boolean): Int =
-    Strings.compareIgnoreCase(value.strOpt.orNull, other.strOpt.orNull, nullIsLess)
+  def compareIgnoreCase[O: StrToOpt](other: O, nullIsLess: Boolean): Int =
+    Strings.compareIgnoreCase(strOpt.orNull, strToOpt(other).orNull, nullIsLess)
 
   /** * <p>Checks if CharSequence contains a search CharSequence, handling {@code null}. This method uses {@link String# indexOf ( String )}
     * if possible.</p>
@@ -397,8 +397,8 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @return
     *   true if the CharSequence contains the search CharSequence,
     */
-  def contains[To: ToStringOpt](searchSeq: To): Boolean =
-    Strings.contains(value.strOpt.orNull, searchSeq.strOpt.orNull)
+  def contains[To: StrToOpt](searchSeq: To): Boolean =
+    Strings.contains(strOpt.orNull, strToOpt(searchSeq).orNull)
 
   /** <p>Checks if CharSequence contains a search character, handling {@code null}. This method uses {@link String# indexOf ( int )} if
     * possible.</p>
@@ -412,7 +412,7 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @return
     *   true if the CharSequence contains the search character,
     */
-  def contains(searchChar: Char): Boolean = Strings.contains(value.strOpt.orNull, searchChar)
+  def contains(searchChar: Char): Boolean = Strings.contains(strOpt.orNull, searchChar)
 
   /** <p>Checks if the CharSequence contains any character in the given set of characters.</p>
     *
@@ -427,10 +427,8 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @return
     *   if any of the chars are found,
     */
-  def containsAnyChar(searchChars: Char*): Boolean =
-    Strings.containsAny(value.strOpt.orNull, searchChars: _*)
-  def containsAnyChar(searchChars: Array[Char]): Boolean =
-    Strings.containsAny(value.strOpt.orNull, searchChars: _*)
+  def containsAnyChar(searchChars: Char*): Boolean       = Strings.containsAny(strOpt.orNull, searchChars: _*)
+  def containsAnyChar(searchChars: Array[Char]): Boolean = Strings.containsAny(strOpt.orNull, searchChars: _*)
 
   /** <p> Checks if the CharSequence contains any character in the given set of characters. </p>
     *
@@ -447,8 +445,8 @@ class StringCommons[T: ToStringOpt](value: T) {
     * @return
     *   the {@code true} if any of the chars are found, {@code false} if no match or null input
     */
-  def containsAny[S: ToStringOpt](searchChars: S): Boolean =
-    Strings.containsAny(value.strOpt.orNull, searchChars.strOpt.orNull)
+  def containsAny[S: StrToOpt](searchChars: S): Boolean =
+    Strings.containsAny(strOpt.orNull, strToOpt(searchChars).orNull)
 
   /** <p> Checks if the CharSequence contains any of the CharSequences in the given array. </p>
     *
@@ -465,8 +463,8 @@ class StringCommons[T: ToStringOpt](value: T) {
     *   {@code true} if any of the search CharSequences are found, {@code false} otherwise
     */
   def containsAnyString(searchCharSequences: CharSequence*): Boolean =
-    Strings.containsAny(value.strOpt.orNull, searchCharSequences: _*)
+    Strings.containsAny(strOpt.orNull, searchCharSequences: _*)
 
   def containsAnyString(searchCharSequences: Array[String]): Boolean =
-    Strings.containsAny(value.strOpt.orNull, searchCharSequences: _*)
+    Strings.containsAny(strOpt.orNull, searchCharSequences: _*)
 }

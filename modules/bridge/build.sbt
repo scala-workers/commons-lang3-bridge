@@ -5,5 +5,3 @@ libraryDependencies += Dependents.scalactic
 libraryDependencies += Dependents.scalatest % Test
 
 CommonSettings.commonProjectSettings
-
-scalacOptions += "-Xfatal-warnings"

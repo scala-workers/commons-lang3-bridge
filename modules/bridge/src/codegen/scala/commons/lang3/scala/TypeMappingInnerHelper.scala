@@ -1,9 +1,13 @@
 package commons.lang3.scala
 
+trait Funcion1Impl[-I, +O] extends (I => O) {
+  def accept(i: I): O = apply(i)
+}
+
 object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
 
   implicit class typeMappingImplicit2Poly[I, I1, I2](val mapping: TypeMapping[I, (I1, I2)]) extends AnyVal {
-    def ops[T](func1: I1 => T, func2: I2 => T): I => T = i => {
+    def ops[T](func1: I1 => T, func2: I2 => T): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -16,7 +20,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
   }
 
   implicit class typeMappingImplicit3Poly[I, I1, I2, I3](val mapping: TypeMapping[I, (I1, I2, I3)]) extends AnyVal {
-    def ops[T](func1: I1 => T, func2: I2 => T, func3: I3 => T): I => T = i => {
+    def ops[T](func1: I1 => T, func2: I2 => T, func3: I3 => T): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -31,7 +35,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
   }
 
   implicit class typeMappingImplicit4Poly[I, I1, I2, I3, I4](val mapping: TypeMapping[I, (I1, I2, I3, I4)]) extends AnyVal {
-    def ops[T](func1: I1 => T, func2: I2 => T, func3: I3 => T, func4: I4 => T): I => T = i => {
+    def ops[T](func1: I1 => T, func2: I2 => T, func3: I3 => T, func4: I4 => T): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -48,7 +52,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
   }
 
   implicit class typeMappingImplicit5Poly[I, I1, I2, I3, I4, I5](val mapping: TypeMapping[I, (I1, I2, I3, I4, I5)]) extends AnyVal {
-    def ops[T](func1: I1 => T, func2: I2 => T, func3: I3 => T, func4: I4 => T, func5: I5 => T): I => T = i => {
+    def ops[T](func1: I1 => T, func2: I2 => T, func3: I3 => T, func4: I4 => T, func5: I5 => T): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -67,7 +71,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
   }
 
   implicit class typeMappingImplicit6Poly[I, I1, I2, I3, I4, I5, I6](val mapping: TypeMapping[I, (I1, I2, I3, I4, I5, I6)]) extends AnyVal {
-    def ops[T](func1: I1 => T, func2: I2 => T, func3: I3 => T, func4: I4 => T, func5: I5 => T, func6: I6 => T): I => T = i => {
+    def ops[T](func1: I1 => T, func2: I2 => T, func3: I3 => T, func4: I4 => T, func5: I5 => T, func6: I6 => T): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -89,27 +93,34 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
 
   implicit class typeMappingImplicit7Poly[I, I1, I2, I3, I4, I5, I6, I7](val mapping: TypeMapping[I, (I1, I2, I3, I4, I5, I6, I7)])
       extends AnyVal {
-    def ops[T](func1: I1 => T, func2: I2 => T, func3: I3 => T, func4: I4 => T, func5: I5 => T, func6: I6 => T, func7: I7 => T): I => T =
-      i => {
-        val setValue = mapping.setValue(i)
-        setValue._1 match {
+    def ops[T](
+      func1: I1 => T,
+      func2: I2 => T,
+      func3: I3 => T,
+      func4: I4 => T,
+      func5: I5 => T,
+      func6: I6 => T,
+      func7: I7 => T
+    ): Funcion1Impl[I, T] = i => {
+      val setValue = mapping.setValue(i)
+      setValue._1 match {
 
-          case 1 => func1(setValue._2.asInstanceOf[I1])
+        case 1 => func1(setValue._2.asInstanceOf[I1])
 
-          case 2 => func2(setValue._2.asInstanceOf[I2])
+        case 2 => func2(setValue._2.asInstanceOf[I2])
 
-          case 3 => func3(setValue._2.asInstanceOf[I3])
+        case 3 => func3(setValue._2.asInstanceOf[I3])
 
-          case 4 => func4(setValue._2.asInstanceOf[I4])
+        case 4 => func4(setValue._2.asInstanceOf[I4])
 
-          case 5 => func5(setValue._2.asInstanceOf[I5])
+        case 5 => func5(setValue._2.asInstanceOf[I5])
 
-          case 6 => func6(setValue._2.asInstanceOf[I6])
+        case 6 => func6(setValue._2.asInstanceOf[I6])
 
-          case 7 => func7(setValue._2.asInstanceOf[I7])
+        case 7 => func7(setValue._2.asInstanceOf[I7])
 
-        }
       }
+    }
   }
 
   implicit class typeMappingImplicit8Poly[I, I1, I2, I3, I4, I5, I6, I7, I8](val mapping: TypeMapping[I, (I1, I2, I3, I4, I5, I6, I7, I8)])
@@ -123,7 +134,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
       func6: I6 => T,
       func7: I7 => T,
       func8: I8 => T
-    ): I => T = i => {
+    ): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -160,7 +171,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
       func7: I7 => T,
       func8: I8 => T,
       func9: I9 => T
-    ): I => T = i => {
+    ): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -200,7 +211,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
       func8: I8 => T,
       func9: I9 => T,
       func10: I10 => T
-    ): I => T = i => {
+    ): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -243,7 +254,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
       func9: I9 => T,
       func10: I10 => T,
       func11: I11 => T
-    ): I => T = i => {
+    ): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -289,7 +300,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
       func10: I10 => T,
       func11: I11 => T,
       func12: I12 => T
-    ): I => T = i => {
+    ): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -338,7 +349,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
       func11: I11 => T,
       func12: I12 => T,
       func13: I13 => T
-    ): I => T = i => {
+    ): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -390,7 +401,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
       func12: I12 => T,
       func13: I13 => T,
       func14: I14 => T
-    ): I => T = i => {
+    ): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -445,7 +456,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
       func13: I13 => T,
       func14: I14 => T,
       func15: I15 => T
-    ): I => T = i => {
+    ): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -503,7 +514,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
       func14: I14 => T,
       func15: I15 => T,
       func16: I16 => T
-    ): I => T = i => {
+    ): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -564,7 +575,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
       func15: I15 => T,
       func16: I16 => T,
       func17: I17 => T
-    ): I => T = i => {
+    ): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -628,7 +639,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
       func16: I16 => T,
       func17: I17 => T,
       func18: I18 => T
-    ): I => T = i => {
+    ): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -695,7 +706,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
       func17: I17 => T,
       func18: I18 => T,
       func19: I19 => T
-    ): I => T = i => {
+    ): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -765,7 +776,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
       func18: I18 => T,
       func19: I19 => T,
       func20: I20 => T
-    ): I => T = i => {
+    ): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -860,7 +871,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
       func19: I19 => T,
       func20: I20 => T,
       func21: I21 => T
-    ): I => T = i => {
+    ): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -959,7 +970,7 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
       func20: I20 => T,
       func21: I21 => T,
       func22: I22 => T
-    ): I => T = i => {
+    ): Funcion1Impl[I, T] = i => {
       val setValue = mapping.setValue(i)
       setValue._1 match {
 
@@ -1015,6 +1026,6 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
 
 trait TypeMappingInnerHelperPoly {
   implicit class typeMappingImplicit1Poly[I, I1](mapping: TypeMapping[I, I1]) {
-    def ops: I => I1 = (i: I) => i.asInstanceOf
+    def ops: Funcion1Impl[I, I1] = (i: I) => i.asInstanceOf
   }
 }
