@@ -131,11 +131,8 @@ trait TypeMappingImplicitOptsPolyHigher extends TypeMappingImplicitOptsPolyLower
     TypeMappingInstances.get(1)
 
 }
-trait TypeMappingImplicitOptsPolyLower extends TypeMappingImplicitOptsPoly2 {
+trait TypeMappingImplicitOptsPolyLower extends TypeMappingImplicitOptsPoly3 {
   implicit def typeMappingImplicit2Lower[I <: I2, I1, I2]: TypeMapping[I, (I1, I2)] = TypeMappingInstances.get(2)
-
-  implicit def typeMappingImplicit2Lower[I3, I1, I2](implicit deptMapping: TypeMapping[I3, (I2)]): TypeMapping[I3, (I1, I2)] =
-    TypeMappingInstances.get(deptMapping.index + 1)
 
   implicit def typeMappingImplicit3Lower[I4, I1, I2, I3](implicit deptMapping: TypeMapping[I4, (I2, I3)]): TypeMapping[I4, (I1, I2, I3)] =
     TypeMappingInstances.get(deptMapping.index + 1)

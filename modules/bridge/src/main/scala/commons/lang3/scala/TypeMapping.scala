@@ -20,7 +20,7 @@ object TypeMapping extends TypeMappingImplicitOptsPolyHigher {
   }
 }
 
-trait TypeMappingImplicitOptsPoly2 {
+trait TypeMappingImplicitOptsPoly3 {
   implicit def typeMappingImplicit1Poly2[I1]: TypeMapping[I1, I1] = TypeMappingInstances.get(1)
 }
 
