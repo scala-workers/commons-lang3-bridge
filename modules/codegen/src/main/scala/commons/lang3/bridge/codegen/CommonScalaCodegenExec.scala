@@ -1,4 +1,4 @@
-package commons.lang3.scala.codegen
+package commons.lang3.bridge.codegen
 
 import java.io.PrintWriter
 import java.nio.charset.StandardCharsets
@@ -15,14 +15,14 @@ object CommonScalaCodegenExec {
     locally {
       val filePath = writePath.resolve("TypeMappingImplicitOptsPoly1.scala")
       Using.resource(new PrintWriter(filePath.toFile, StandardCharsets.UTF_8)) { writer =>
-        val linerContent = commons.lang3.scala.codegen.txt.TypeMappingImplicitOptsPoly1().body
+        val linerContent = commons.lang3.bridge.codegen.txt.TypeMappingImplicitOptsPoly1().body
         writer.println(linerContent)
       }
     }
     locally {
       val filePath = writePath.resolve("TypeMappingInnerHelper.scala")
       Using.resource(new PrintWriter(filePath.toFile, StandardCharsets.UTF_8)) { writer =>
-        val linerContent = commons.lang3.scala.codegen.txt.TypeMappingInnerHelper().body
+        val linerContent = commons.lang3.bridge.codegen.txt.TypeMappingInnerHelper().body
         writer.println(linerContent)
       }
     }

@@ -1,4 +1,4 @@
-package commons.lang3.scala
+package commons.lang3.bridge
 
 /** 封装 Apache Commons 的字符串工具函数，简化代码
   *

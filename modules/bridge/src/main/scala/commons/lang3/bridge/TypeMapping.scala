@@ -1,4 +1,4 @@
-package commons.lang3.scala
+package commons.lang3.bridge
 
 /** TODO
   *
@@ -22,7 +22,7 @@ trait TypeMappingImplicitOptsPoly3 {
   implicit def typeMappingImplicit1Poly3Identity[I <: I1, I1]: TypeMapping[I, I1] = TypeMappingInstances.get(1)
 }
 
-private[scala] object TypeMappingInstances {
+private[bridge] object TypeMappingInstances {
 
   private var typeMappingSumMap: Map[Int, TypeMapping[Any, Any]] = Map.empty
 

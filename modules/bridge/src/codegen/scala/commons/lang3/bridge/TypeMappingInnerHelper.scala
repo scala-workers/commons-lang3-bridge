@@ -1,4 +1,4 @@
-package commons.lang3.scala
+package commons.lang3.bridge
 
 object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
 

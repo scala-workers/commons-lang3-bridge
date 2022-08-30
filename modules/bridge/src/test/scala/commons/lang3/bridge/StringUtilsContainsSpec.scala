@@ -1,4 +1,4 @@
-package commons.lang3.scala
+package commons.lang3.bridge
 
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -11,8 +11,11 @@ import org.scalatest.funsuite.AnyFunSuite
   *   01:18
   */
 class StringUtilsContainsSpec extends AnyFunSuite {
+  val nullString: String         = null
+  val nullChars: Array[Char]     = null
+  val noneString: Option[String] = None
 
-  import commons.lang3.scala.StringUtils.bridge._
+  import commons.lang3.bridge.StringUtils.bridge._
 
   /** Supplementary character U+20000 See http://www.oracle.com/technetwork/articles/javase/supplementary-142654.html
     */
@@ -34,12 +37,11 @@ class StringUtilsContainsSpec extends AnyFunSuite {
 
   test("test string contains char") {
 
-    val nullStr: String = null
-    assert(!nullStr.ops.contains(' '))
+    assert(!nullString.ops.contains(' '))
     assert(!"".ops.contains(' '))
 
-    assert(!"".ops.contains(nullStr))
-    assert(!nullStr.ops.contains(nullStr))
+    assert(!"".ops.contains(nullString))
+    assert(!nullString.ops.contains(nullString))
 
     assert("abc".ops.contains('a'))
     assert("abc".ops.contains('b'))
@@ -48,8 +50,7 @@ class StringUtilsContainsSpec extends AnyFunSuite {
   }
 
   test("test option string contains char ") {
-    val noneStr: Option[String] = None
-    assert(!noneStr.ops.contains(' '))
+    assert(!noneString.ops.contains(' '))
     assert(!Some("").ops.contains(' '))
 
     assert(!Some("").ops.contains(None))
@@ -64,11 +65,10 @@ class StringUtilsContainsSpec extends AnyFunSuite {
   }
 
   test("test string contains string") {
-    val nullStr: String = null
-    assert(!nullStr.ops.contains(nullStr))
-    assert(!nullStr.ops.contains(""))
-    assert(!nullStr.ops.contains("a"))
-    assert(!"".ops.contains(nullStr))
+    assert(!nullString.ops.contains(nullString))
+    assert(!nullString.ops.contains(""))
+    assert(!nullString.ops.contains("a"))
+    assert(!"".ops.contains(nullString))
     assert("".ops.contains(""))
     assert(!"".ops.contains("a"))
     assert("abc".ops.contains("a"))
@@ -114,42 +114,38 @@ class StringUtilsContainsSpec extends AnyFunSuite {
   }
 
   test("test contains any string char array") {
-    val nullString: String     = null
-    val nullChars: Array[Char] = null
 
-    assert(!nullString.ops.containsAnyChar(null))
-    assert(!nullString.ops.containsAnyChar(new Array[Char](0): _*))
+    assert(!nullString.ops.containsAny(nullString))
+    assert(!nullString.ops.containsAny(new Array[Char](0): _*))
     assert(!nullString.ops.containsAnyChar('a', 'b'))
 
-    assert(!"".ops.containsAnyChar(null))
-    assert(!"".ops.containsAnyChar(new Array[Char](0): _*))
-    assert(!"".ops.containsAnyChar('a', 'b'))
+    assert(!"".ops.containsAny(nullString))
+    assert(!"".ops.containsAny(new Array[Char](0): _*))
+    assert(!"".ops.containsAny('a', 'b'))
 
-    assert(!"zzabyycdxx".ops.containsAnyChar(null))
-    assert(!"zzabyycdxx".ops.containsAnyChar(new Array[Char](0): _*))
-    assert("zzabyycdxx".ops.containsAnyChar('z', 'a'))
-    assert("zzabyycdxx".ops.containsAnyChar('b', 'y'))
-    assert("zzabyycdxx".ops.containsAnyChar('z', 'y'))
-    assert(!"ab".ops.containsAnyChar(new Array[Char]('z'): _*))
+    assert(!"zzabyycdxx".ops.containsAny(nullString))
+    assert(!"zzabyycdxx".ops.containsAny(new Array[Char](0): _*))
+    assert("zzabyycdxx".ops.containsAny('z', 'a'))
+    assert("zzabyycdxx".ops.containsAny("b", "y"))
+    assert("zzabyycdxx".ops.containsAny('z', 'y'))
+    assert(!"ab".ops.containsAny(new Array[Char]('z'): _*))
   }
 
   test("test option string contains any string char array") {
-    val noneString: String     = null
-    val nullChars: Array[Char] = null
 
-    assert(!noneString.ops.containsAnyChar(null))
-    assert(!noneString.ops.containsAnyChar(new Array[Char](0): _*))
-    assert(!noneString.ops.containsAnyChar('a', 'b'))
+    assert(!nullString.ops.containsAny(nullString))
+    assert(!nullString.ops.containsAny(new Array[Char](0): _*))
+    assert(!nullString.ops.containsAny('a', 'b'))
 
-    assert(!Some("").ops.containsAnyChar(null))
-    assert(!Some("").ops.containsAnyChar(new Array[Char](0): _*))
-    assert(!Some("").ops.containsAnyChar('a', 'b'))
+    assert(!Some("").ops.containsAny(nullString))
+    assert(!Some("").ops.containsAny(new Array[Char](0): _*))
+    assert(!Some("").ops.containsAny('a', 'b'))
 
-    assert(!Some("zzabyycdxx").ops.containsAnyChar(null))
-    assert(!Some("zzabyycdxx").ops.containsAnyChar(new Array[Char](0): _*))
-    assert(Some("zzabyycdxx").ops.containsAnyChar('z', 'a'))
-    assert(Some("zzabyycdxx").ops.containsAnyChar('b', 'y'))
-    assert(Some("zzabyycdxx").ops.containsAnyChar('z', 'y'))
-    assert(!Some("ab").ops.containsAnyChar(new Array[Char]('z'): _*))
+    assert(!Some("zzabyycdxx").ops.containsAny(nullString))
+    assert(!Some("zzabyycdxx").ops.containsAny(new Array[Char](0): _*))
+    assert(Some("zzabyycdxx").ops.containsAny("z", "a"))
+    assert(Some("zzabyycdxx").ops.containsAny('b', 'y'))
+    assert(Some("zzabyycdxx").ops.containsAny('z', 'y'))
+    assert(!Some("ab").ops.containsAny(new Array[Char]('z'): _*))
   }
 }

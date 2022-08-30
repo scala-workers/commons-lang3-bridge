@@ -1,4 +1,4 @@
-package commons.lang3.scala.codegen
+package commons.lang3.bridge.codegen
 
 object Scala3CodegenExec {
 
