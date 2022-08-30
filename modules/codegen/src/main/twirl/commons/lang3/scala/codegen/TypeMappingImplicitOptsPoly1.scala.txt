@@ -1,20 +1,16 @@
 @()
 package commons.lang3.scala
 
-@paramType(start: Int, i1: Int) = { @for(i2 <- 1 to i1) { @if(i2 > start){ , } I@{i2} } }
+@paramType(start: Int, i1: Int) = { @for(i2 <- start to i1) { @if(i2 > start){ , } I@{i2} } }
 
-trait TypeMappingImplicitOptsPoly1 extends TypeMappingImplicitOptsPoly2 {
-
-    @for(i1 <- 1 to 22) {
-        @if(i1 == 1) {
-            implicit def typeMappingImplicit2IDept[I <: I1, I1, I2]: TypeMapping[I, (I1, I2)] = TypeMappingInstances.get(1)
-        }
-        @if(i1 > 1) {
-            implicit def typeMappingImplicit@{i1}I1[I <: I@{i1}, @paramType(1, i1)]: TypeMapping[I, (@paramType(1, i1))] = TypeMappingInstances.get(@{i1})
-        }
-        @if(i1 > 2) {
-            implicit def typeMappingImplicit@{i1}Dept[I@{i1 + 1}, @paramType(1, i1)](implicit deptMapping: TypeMapping[I@{i1 + 1}, (@paramType(1, i1 - 1))]): TypeMapping[I@{i1 + 1}, (@paramType(1, i1))] = deptMapping.asInstanceOf
-        }
+trait TypeMappingImplicitOptsPolyHigher extends TypeMappingImplicitOptsPolyLower {
+    @for(i1 <- 2 to 22) {
+        implicit def typeMappingImplicit@{i1}Higher[I <: I1, @paramType(1, i1)]: TypeMapping[I, (@paramType(1, i1))] = TypeMappingInstances.get(1)
     }
-
+}
+trait TypeMappingImplicitOptsPolyLower extends TypeMappingImplicitOptsPoly2 {
+    implicit def typeMappingImplicit2Lower[I <: I2, I1, I2]: TypeMapping[I, (I1, I2)] = TypeMappingInstances.get(2)
+    @for(i1 <- 2 to 22) {
+        implicit def typeMappingImplicit@{i1}Lower[I@{i1 + 1}, @paramType(1, i1)](implicit deptMapping: TypeMapping[I@{i1 + 1}, (@paramType(2, i1))]): TypeMapping[I@{i1 + 1}, (@paramType(1, i1))] = TypeMappingInstances.get(deptMapping.index + 1)
+    }
 }
