@@ -1,6 +1,6 @@
 import ProjectKeys._
 
-libraryDependencies += Dependents.commonsIO
+libraryDependencies += Dependencies.commonsIO
 
 CommonSettings.codegenProjectSettings
 enablePlugins(SbtTwirl)

@@ -1,7 +1,7 @@
 import ProjectKeys._
 
-libraryDependencies += Dependents.commonsLang3 % Provided
-libraryDependencies += Dependents.scalactic
-libraryDependencies += Dependents.scalatest % Test
+libraryDependencies += Dependencies.commonsLang3 % Provided
+libraryDependencies += Dependencies.scalactic
+libraryDependencies += Dependencies.scalatest % Test
 
 CommonSettings.commonProjectSettings

@@ -1,7 +1,7 @@
 import sbt._
 import sbt.Keys._
 
-object Dependents {
+object Dependencies {
 
   object versions {
     val commonsLang3 = "3.12.0"
