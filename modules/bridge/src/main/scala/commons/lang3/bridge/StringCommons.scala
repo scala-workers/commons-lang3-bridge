@@ -20,6 +20,7 @@ class StringCommons[T: StrToOpt](value: T) {
     val mapping = TypeMapping.getMapping[StrToOpt, U]
     mapping.input(t).fold(Option(_), identity)
   }
+
   private def strOpt: Option[String] = strToOpt(value)
 
   /** * <p>Abbreviates a String using ellipses. This will turn "Now is the time for all good men" into "Now is the time for..."</p>
@@ -767,12 +768,18 @@ class StringCommons[T: StrToOpt](value: T) {
       .fold(
         chars => Strings.containsAny(strOpt.orNull, chars: _*),
         css =>
-          if (css.length == 1) { Strings.containsAny(strOpt.orNull, css.head) }
-          else { Strings.containsAny(strOpt.orNull, css: _*) },
+          if (css.length == 1) {
+            Strings.containsAny(strOpt.orNull, css.head)
+          } else {
+            Strings.containsAny(strOpt.orNull, css: _*)
+          },
         chars => Strings.containsAny(strOpt.orNull, chars.filter(_.isDefined).map(_.get): _*),
         oss =>
-          if (oss.length == 1) { Strings.containsAny(strOpt.orNull, oss.head.orNull) }
-          else { Strings.containsAny(strOpt.orNull, oss.map(_.orNull): _*) }
+          if (oss.length == 1) {
+            Strings.containsAny(strOpt.orNull, oss.head.orNull)
+          } else {
+            Strings.containsAny(strOpt.orNull, oss.map(_.orNull): _*)
+          }
       )
   }
 
@@ -798,7 +805,6 @@ class StringCommons[T: StrToOpt](value: T) {
     *
     * "abcd"ops.containsAnyIgnoreCase("ab", null) = true
     *
-<<<<<<< HEAD
     * Some("abcd").ops.containsAnyIgnoreCase(Some("ab"), Some("cd")) = true
     *
     * "abc".ops.containsAnyIgnoreCase("d", "abc") = true
@@ -807,9 +813,7 @@ class StringCommons[T: StrToOpt](value: T) {
     *
     * "ABC".ops.containsAnyIgnoreCase( "d", "abc") = true
     *
-    * </pre>
-=======
-    * None.containsIgnoreCase(*) = false
+    * </pre> None.containsIgnoreCase(*) = false
     *
     * Option(*).ops.containsIgnoreCase(None) = false
     *
@@ -824,7 +828,6 @@ class StringCommons[T: StrToOpt](value: T) {
     * StringUtils.containsIgnoreCase("abc", "A") = true
     *
     * StringUtils.containsIgnoreCase("abc", "Z") = false
->>>>>>> 344c8d7 (string utils contains ignore case)
     *
     * @param searchArgs
     *   The array of CharSequences to search for, may be null. Individual CharSequences may be null as well.
@@ -869,7 +872,6 @@ class StringCommons[T: StrToOpt](value: T) {
     * </pre>
     *
     * @param searchStr
-<<<<<<< HEAD
     *   the CharSequence to find, may be null
     * @tparam S
     *   String Or Option[String]
@@ -879,11 +881,4 @@ class StringCommons[T: StrToOpt](value: T) {
   def containsIgnoreCase[S: StrToOpt](searchStr: S): Boolean =
     Strings.containsIgnoreCase(strOpt.orNull, strToOpt(searchStr).orNull)
 
-=======
-    * @tparam S
-    * @return
-    */
-  def containsIgnoreCase[S: StrToOpt](searchStr: S): Boolean =
-    Strings.containsIgnoreCase(strOpt.orNull, strToOpt(searchStr).orNull)
->>>>>>> 344c8d7 (string utils contains ignore case)
 }
