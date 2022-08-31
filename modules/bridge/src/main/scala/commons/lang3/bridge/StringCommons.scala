@@ -22,9 +22,19 @@ class StringCommons[T: StrToOpt](value: T) {
     * max-3) + "...")}.</li> <li>If {@code maxWidth} is less than {@code 4}, throw an {@code IllegalArgumentException}.</li> <li>In no case
     * will it return a String of length greater than {@code maxWidth}.</li> </ul>
     *
-    * <pre> None.abbreviate(*) = None None.abbreviate(4) = Some("") Some("abcdefg").abbreviate(6) = Some("abc...")
-    * Some("abcdefg").abbreviate(7) = Some("abcdefg") Some("abcdefg").abbreviate(8) = Some("abcdefg") Some("abcdefg").abbreviate(4) =
-    * Some("a...") Some("abcdefg").abbreviate(3) = IllegalArgumentException </pre>
+    * None.ops.abbreviate(*) = None
+    *
+    * None.ops.abbreviate(4) = Some("")
+    *
+    * Some("abcdefg").ops.abbreviate(6) = Some("abc...")
+    *
+    * Some("abcdefg").ops.abbreviate(7) = Some("abcdefg")
+    *
+    * Some("abcdefg").ops.abbreviate(8) = Some("abcdefg")
+    *
+    * Some("abcdefg").ops.abbreviate(4) = Some("a...")
+    *
+    * Some("abcdefg").ops.abbreviate(3) = IllegalArgumentException
     *
     * @param maxWidth
     *   maximum length of result String, must be at least 4
@@ -43,13 +53,31 @@ class StringCommons[T: StrToOpt](value: T) {
     *
     * <p>In no case will it return a String of length greater than {@code maxWidth}.</p>
     *
-    * <pre> None.abbreviate(*, *) = None Some("").abbreviate(0, 4) = Some("") Some("abcdefghijklmno").abbreviate(-1, 10) =
-    * Some("abcdefg...") Some("abcdefghijklmno").abbreviate(0, 10) = Some("abcdefg...") Some("abcdefghijklmno").abbreviate(1, 10) =
-    * Some("abcdefg...") Some("abcdefghijklmno").abbreviate(4, 10) = Some("abcdefg...") Some("abcdefghijklmno").abbreviate(5, 10) =
-    * Some("...fghi...") Some("abcdefghijklmno").abbreviate(6, 10) = Some("...ghij...") Some("abcdefghijklmno").abbreviate(8, 10) =
-    * Some("...ijklmno") Some("abcdefghijklmno").abbreviate(10, 10) = Some("...ijklmno") Some("abcdefghijklmno").abbreviate(12, 10) =
-    * Some("...ijklmno") Some("abcdefghij").abbreviate(0, 3) = IllegalArgumentException Some("abcdefghij").abbreviate(5, 6) =
-    * IllegalArgumentException </pre>
+    * None.ops.abbreviate(*, *) = None
+    *
+    * Some("").ops.abbreviate(0, 4) = Some("")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate(-1, 10) = Some("abcdefg...")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate(0, 10) = Some("abcdefg...")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate(1, 10) = Some("abcdefg...")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate(4, 10) = Some("abcdefg...")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate(5, 10) = Some("...fghi...")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate(6, 10) = Some("...ghij...")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate(8, 10) = Some("...ijklmno")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate(10, 10) = Some("...ijklmno")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate(12, 10) = Some("...ijklmno")
+    *
+    * Some("abcdefghij").ops.abbreviate(0, 3) = IllegalArgumentException
+    *
+    * Some("abcdefghij").ops.abbreviate(5, 6) = IllegalArgumentException
     *
     * @param offset
     *   left edge of source String
@@ -71,11 +99,25 @@ class StringCommons[T: StrToOpt](value: T) {
     * is less than {@code abbrevMarker.length + 1}, throw an {@code IllegalArgumentException}.</li> <li>In no case will it return a String
     * of length greater than {@code maxWidth}.</li> </ul>
     *
-    * <pre> None.abbreviate(Some("..."), *) = None Some("abcdefg").abbreviate(None, *) = Some("abcdefg") Some("").abbreviate(Some("..."), 4)
-    * \= Some("") Some("abcdefg").abbreviate(Some("."), 5) = Some("abcd.") Some("abcdefg").abbreviate(Some("."), 7) = Some("abcdefg")
-    * Some("abcdefg").abbreviate(Some("."), 8) = Some("abcdefg") Some("abcdefg").abbreviate(Some(".."), 4) = Some("ab..")
-    * Some("abcdefg").abbreviate(Some(".."), 3) = Some("a..") Some("abcdefg").abbreviate(Some(".."), 2) = IllegalArgumentException
-    * Some("abcdefg").abbreviate(Some("..."), 3) = IllegalArgumentException </pre>
+    * None.abbreviate(Some("..."), *) = None
+    *
+    * Some("abcdefg").ops.abbreviate(None, *) = Some("abcdefg")
+    *
+    * Some("").ops.abbreviate(Some("..."), 4) = Some("")
+    *
+    * Some("abcdefg").ops.abbreviate(Some("."), 5) = Some("abcd.")
+    *
+    * Some("abcdefg").ops.abbreviate(Some("."), 7) = Some("abcdefg")
+    *
+    * Some("abcdefg").ops.abbreviate(Some("."), 8) = Some("abcdefg")
+    *
+    * Some("abcdefg").ops.abbreviate(Some(".."), 4) = Some("ab..")
+    *
+    * Some("abcdefg").ops.abbreviate(Some(".."), 3) = Some("a..")
+    *
+    * Some("abcdefg").ops.abbreviate(Some(".."), 2) = IllegalArgumentException
+    *
+    * Some("abcdefg").ops.abbreviate(Some("..."), 3) = IllegalArgumentException
     *
     * @param abbrevMarker
     *   the String used as replacement marker
@@ -100,14 +142,33 @@ class StringCommons[T: StrToOpt](value: T) {
     *
     * <p>In no case will it return a String of length greater than {@code maxWidth}.</p>
     *
-    * <pre> None.abbreviate(None, *, *) = None Some("abcdefghijklmno").abbreviate(None, *, *) = Some("abcdefghijklmno")
-    * Some("").abbreviate("...", 0, 4) = Some("") Some("abcdefghijklmno").abbreviate("---", -1, 10) = Some("abcdefg---")
-    * Some("abcdefghijklmno").abbreviate(",", 0, 10) = Some("abcdefghi,") Some("abcdefghijklmno").abbreviate(",", 1, 10) =
-    * Some("abcdefghi,") Some("abcdefghijklmno").abbreviate(",", 2, 10) = Some("abcdefghi,") Some("abcdefghijklmno").abbreviate("::", 4, 10)
-    * \= Some("::efghij::") Some("abcdefghijklmno").abbreviate("...", 6, 10) = Some("...ghij...") Some("abcdefghijklmno").abbreviate("*", 9,
-    * 10) = Some("*ghijklmno") Some("abcdefghijklmno").abbreviate("'", 10, 10) = Some("'ghijklmno") Some("abcdefghijklmno").abbreviate("!",
-    * 12, 10) = Some("!ghijklmno") Some("abcdefghij").abbreviate("abra", 0, 4) = IllegalArgumentException
-    * Some("abcdefghij").abbreviate("...", 5, 6) = IllegalArgumentException </pre>
+    * None.ops.abbreviate(None, *, *) = None
+    *
+    * Some("abcdefghijklmno").ops.abbreviate(None, *, *) = Some("abcdefghijklmno")
+    *
+    * Some("").ops.abbreviate("...", 0, 4) = Some("")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate("---", -1, 10) = Some("abcdefg---")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate(",", 0, 10) = Some("abcdefghi,")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate(",", 1, 10) = Some("abcdefghi,")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate(",", 2, 10) = Some("abcdefghi,")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate("::", 4, 10) = Some("::efghij::")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate("...", 6, 10) = Some("...ghij...")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate("*", 9, 10) = Some("*ghijklmno")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate("'", 10, 10) = Some("'ghijklmno")
+    *
+    * Some("abcdefghijklmno").ops.abbreviate("!", 12, 10) = Some("!ghijklmno")
+    *
+    * Some("abcdefghij").ops.abbreviate("abra", 0, 4) = IllegalArgumentException
+    *
+    * Some("abcdefghij").ops.abbreviate("...", 5, 6) = IllegalArgumentException
     *
     * @param abbrevMarker
     *   the String used as replacement marker
@@ -133,8 +194,15 @@ class StringCommons[T: StrToOpt](value: T) {
     * String and the first and last characters of the supplied String for abbreviation</li> </ul> <p>Otherwise, the returned String will be
     * the same as the supplied String for abbreviation. </p>
     *
-    * <pre> None.abbreviateMiddle(None, 0) = None Some("abc").abbreviateMiddle(None, 0) = Some("abc") Some("abc").abbreviateMiddle(".", 0) =
-    * Some("abc") Some("abc").abbreviateMiddle(".", 3) = Some("abc") Some("abcdef").abbreviateMiddle(".", 4) = Some("ab.f") </pre>
+    * None.ops.abbreviateMiddle(None, 0) = None
+    *
+    * Some("abc").ops.abbreviateMiddle(None, 0) = Some("abc")
+    *
+    * Some("abc").ops.abbreviateMiddle(".", 0) = Some("abc")
+    *
+    * Some("abc").ops.abbreviateMiddle(".", 3) = Some("abc")
+    *
+    * Some("abcdef").ops.abbreviateMiddle(".", 4) = Some("ab.f")
     *
     * @param middle
     *   the String to replace the middle characters with, may be null
@@ -164,14 +232,39 @@ class StringCommons[T: StrToOpt](value: T) {
 
   /** Appends the suffix to the end of the string if the string does not already end with any of the suffixes.
     *
-    * <pre> None.appendIfMissing(None) = None Some("abc").appendIfMissing(None) = Some("abc") Some("").appendIfMissing("xyz") = Some("xyz")
-    * Some("abc").appendIfMissing("xyz") = Some("abcxyz") Some("abcxyz").appendIfMissing("xyz") = Some("abcxyz")
-    * Some("abcXYZ").appendIfMissing("xyz") = Some("abcXYZxyz") </pre> <p>With additional suffixes,</p> <pre> None.appendIfMissing(None,
-    * None) = None Some("abc").appendIfMissing(null, null) = Some("abc") Some("").appendIfMissing("xyz", null) = Some("xyz")
-    * Some("abc").appendIfMissing(Some("xyz"), new CharSequence[]{null}) = Some("abcxyz") Some("abc").appendIfMissing("xyz", "") =
-    * Some("abc") Some("abc").appendIfMissing("xyz", "mno") = Some("abcxyz") Some("abcxyz").appendIfMissing("xyz", "mno") = Some("abcxyz")
-    * Some("abcmno").appendIfMissing("xyz", "mno") = Some("abcmno") Some("abcXYZ").appendIfMissing("xyz", "mno") = Some("abcXYZxyz")
-    * Some("abcMNO").appendIfMissing("xyz", "mno") = Some("abcMNOxyz") </pre>
+    * None.appendIfMissing(None) = None
+    *
+    * Some("abc").ops.appendIfMissing(None) = Some("abc")
+    *
+    * Some("").ops.appendIfMissing("xyz") = Some("xyz")
+    *
+    * Some("abc").ops.appendIfMissing("xyz") = Some("abcxyz")
+    *
+    * Some("abcxyz").ops.appendIfMissing("xyz") = Some("abcxyz")
+    *
+    * Some("abcXYZ").ops.appendIfMissing("xyz") = Some("abcXYZxyz")
+    *
+    * With additional suffixes
+    *
+    * None.ops.appendIfMissing(None, None) = None
+    *
+    * Some("abc").ops.appendIfMissing(null, null) = Some("abc")
+    *
+    * Some("").ops.appendIfMissing("xyz", null) = Some("xyz")
+    *
+    * Some("abc").ops.appendIfMissing(Some("xyz"), new CharSequence[]{null}) = Some("abcxyz")
+    *
+    * Some("abc").ops.appendIfMissing("xyz", "") = Some("abc")
+    *
+    * Some("abc").ops.appendIfMissing("xyz", "mno") = Some("abcxyz")
+    *
+    * Some("abcxyz").ops.appendIfMissing("xyz", "mno") = Some("abcxyz")
+    *
+    * Some("abcmno").ops.appendIfMissing("xyz", "mno") = Some("abcmno")
+    *
+    * Some("abcXYZ").ops.appendIfMissing("xyz", "mno") = Some("abcXYZxyz")
+    *
+    * Some("abcMNO").ops.appendIfMissing("xyz", "mno") = Some("abcMNOxyz")
     *
     * @param suffix
     *   The suffix to append to the end of the string.
@@ -191,8 +284,15 @@ class StringCommons[T: StrToOpt](value: T) {
     * <p>For a word based algorithm, see {@link org.apache.commons.lang3.text.WordUtils# capitalize ( String )}. A {@code null} input String
     * returns {@code null}.</p>
     *
-    * <pre> None.capitalize = None Some("").capitalize = Some("") Some("cat").capitalize = "Cat" Some("cAt") .capitalize = "CAt"
-    * Some("'cat'").capitalize = "'cat'" </pre>
+    * None.ops.capitalize = None
+    *
+    * Some("").ops.capitalize = Some("")
+    *
+    * Some("cat").ops.capitalize = Some("Cat")
+    *
+    * Some("cAt").ops.capitalize = Some("CAt")
+    *
+    * Some("'cat'").ops.capitalize = Some("'cat'")
     *
     * @return
     *   the capitalized String, {@code null} if null String input
@@ -208,8 +308,17 @@ class StringCommons[T: StrToOpt](value: T) {
     *
     * <p>Equivalent to {@code center(str, size, " ")}.</p>
     *
-    * <pre> None.center(*) = None Some("").center(4) = Some(" ") Some("ab").center(-1) = Some("ab") Some("ab").center(4) = Some(" ab ")
-    * Some("abcd").center(2) = Some("abcd") Some("a").center(4) = Some(" a ") </pre>
+    * None.ops.center(*) = None
+    *
+    * Some("").ops.center(4) = Some(" ")
+    *
+    * Some("ab").ops.center(-1) = Some("ab")
+    *
+    * Some("ab").ops.center(4) = Some(" ab ")
+    *
+    * Some("abcd").ops.center(2) = Some("abcd")
+    *
+    * Some("a").ops.center(4) = Some(" a ")
     *
     * @param size
     *   the int size of new String, negative treated as zero
@@ -223,28 +332,52 @@ class StringCommons[T: StrToOpt](value: T) {
     * <p>If the size is less than the String length, the String is returned. A {@code null} String returns {@code null}. A negative size is
     * treated as zero.</p>
     *
-    * <pre> None.center(*, *) = None Some("").center(4, ' ') = Some(" ") Some("ab").center(-1, ' ') = Some("ab") Some("ab").center(4, ' ') =
-    * Some(" ab ") Some("abcd").center(2, ' ') = Some("abcd") Some("a").center(4, ' ') = Some(" a ") Some("a").center(4, 'y') = Some("yayy")
-    * </pre>
+    * None.ops.center(*, *) = None
+    *
+    * Some("").ops.center(4, ' ') = Some(" ")
+    *
+    * Some("ab").ops.center(-1, ' ') = Some("ab")
+    *
+    * Some("ab").ops.center(4, ' ') = Some(" ab ")
+    *
+    * Some("abcd").ops.center(2, ' ') = Some("abcd")
+    *
+    * Some("a").ops.center(4, ' ') = Some(" a ")
+    *
+    * Some("a").ops.center(4, 'y') = Some("yayy")
     *
     * @param size
     *   the int size of new String, negative treated as zero
     * @param padChar
     *   the character to pad the new String with
     * @return
-    *   centered String, {@code null} if null String input
+    *   centered String, {@code None} if None String input
     */
   def center(size: Int, padChar: Char): Option[String] =
     Option(Strings.center(strOpt.orNull, size, padChar))
 
   /** <p>Centers a String in a larger String of size {@code size}. Uses a supplied character as the value to pad the String with.</p>
     *
-    * <p>If the size is less than the String length, the String is returned. A {@code null} String returns {@code null}. A negative size is
+    * <p>If the size is less than the String length, the String is returned. A {@code None} String returns {@code None}. A negative size is
     * treated as zero.</p>
     *
-    * <pre> None.center(*, *) = None Some("").center(4, " ") = Some(" ") Some("ab").center(-1, " ") = Some("ab") Some("ab").center(4, " ") =
-    * Some(" ab ") Some("abcd").center(2, " ") = Some("abcd") Some("a").center(4, " ") = Some(" a ") Some("a").center(4, "yz") =
-    * Some("yayz") Some("abc").center(7, None) = Some(" abc ") Some("abc").center(7, "") = Some(" abc ") </pre>
+    * None.ops.center(*, *) = None
+    *
+    * Some("").ops.center(4, " ") = Some(" ")
+    *
+    * Some("ab").ops.center(-1, " ") = Some("ab")
+    *
+    * Some("ab").ops.center(4, " ") = Some(" ab ")
+    *
+    * Some("abcd").ops.center(2, " ") = Some("abcd")
+    *
+    * Some("a").ops.center(4, " ") = Some(" a ")
+    *
+    * Some("a").ops.center(4, "yz") = Some("yayz")
+    *
+    * Some("abc").ops.center(7, None) = Some(" abc ")
+    *
+    * Some("abc").ops.center(7, "") = Some(" abc ")
     *
     * @param size
     *   the int size of new String, negative treated as zero
@@ -263,10 +396,27 @@ class StringCommons[T: StrToOpt](value: T) {
     *
     * <p>NOTE: This method changed in 2.0. It now more closely matches Perl chomp.</p>
     *
-    * <pre> None.chomp = None Some("").chomp = Some("") Some("abc \r").chomp = Some("abc ") Some("abc\n").chomp = Some("abc")
-    * Some("abc\r\n").chomp = Some("abc") Some("abc\r\n\r\n").chomp = Some("abc\r\n") Some("abc\n\r").chomp = Some("abc\n")
-    * Some("abc\n\rabc").chomp = Some("abc\n\rabc") Some("\r").chomp = Some("") Some("\n").chomp = Some("") Some("\r\n").chomp = Some("")
-    * </pre>
+    * None.ops.chomp = None
+    *
+    * Some("").ops.chomp = Some("")
+    *
+    * Some("abc \r").ops.chomp = Some("abc ")
+    *
+    * Some("abc\n").ops.chomp = Some("abc")
+    *
+    * Some("abc\r\n").ops.chomp = Some("abc")
+    *
+    * Some("abc\r\n\r\n").ops.chomp = Some("abc\r\n")
+    *
+    * Some("abc\n\r").ops.chomp = Some("abc\n")
+    *
+    * Some("abc\n\rabc").ops.chomp = Some("abc\n\rabc")
+    *
+    * Some("\r").ops.chomp = Some("")
+    *
+    * Some("\n").ops.chomp = Some("")
+    *
+    * Some("\r\n").ops.chomp = Some("")
     *
     * @return
     *   Option[String] without newline, {@code None} if null String input
@@ -277,9 +427,27 @@ class StringCommons[T: StrToOpt](value: T) {
     *
     * <p>If the String ends in {@code \r\n}, then remove both of them.</p>
     *
-    * <pre> None.chop = None Some("").chop = Some("") Some("abc \r").chop = Some("abc ") Some("abc\n").chop = Some("abc")
-    * Some("abc\r\n").chop = Some("abc") Some("abc").chop = Some("ab") Some("abc\nabc").chop = Some("abc\nab") Some("a").chop = Some("")
-    * Some("\r").chop = Some("") Some("\n").chop = Some("") Some("\r\n").chop = Some("") </pre>
+    * None.ops.chop = None
+    *
+    * Some("").ops.chop = Some("")
+    *
+    * Some("abc \r").ops.chop = Some("abc ")
+    *
+    * Some("abc\n").ops.chop = Some("abc")
+    *
+    * Some("abc\r\n").ops.chop = Some("abc")
+    *
+    * Some("abc").ops.chop = Some("ab")
+    *
+    * Some("abc\nabc").ops.chop = Some("abc\nab")
+    *
+    * Some("a").ops.chop = Some("")
+    *
+    * Some("\r").ops.chop = Some("")
+    *
+    * Some("\n").ops.chop = Some("")
+    *
+    * Some("\r\n").ops.chop = Some("")
     *
     * @return
     *   String without last character, {@code None} if None String input
@@ -290,13 +458,25 @@ class StringCommons[T: StrToOpt](value: T) {
     * {@code str1} is equal to {@code str2} (or both {@code null})</li> <li>{@code int < 0}, if {@code str1} is less than {@code str2}</li>
     * <li>{@code int > 0}, if {@code str1} is greater than {@code str2}</li> </ul>
     *
-    * <p>This is a {@code null} safe version of :</p> <blockquote><pre>str1.compareTo(str2)</pre></blockquote>
+    * <p>This is a {@code None} safe version of :</p> <blockquote><pre>str1.compareTo(str2)</pre></blockquote>
     *
-    * <p>{@code null} value is considered less than non-{@code null} value. Two {@code null} references are considered equal.</p>
+    * <p>{@code None} value is considered less than non-{@code None} value. Two {@code None} references are considered equal.</p>
     *
-    * <pre> StringUtils.compare(null, null) = 0 StringUtils.compare(null , "a") &lt; 0 StringUtils.compare("a", null) &gt; 0
-    * StringUtils.compare("abc", "abc") = 0 StringUtils.compare("a", "b") &lt; 0 StringUtils.compare("b", "a") &gt; 0
-    * StringUtils.compare("a", "B") &gt; 0 StringUtils.compare("ab", "abc") &lt; 0 </pre>
+    * None.ops.compare(None) = 0
+    *
+    * None.ops.compare("a") &lt; 0
+    *
+    * Some("a").ops.compare(null) &gt; 0
+    *
+    * "abc".ops.compare("abc") = 0
+    *
+    * Some("a").ops.compare("b") &lt; 0
+    *
+    * Some("b").ops.compare(Some("a")) &gt; 0
+    *
+    * Some("a").ops.compare("B") &gt; 0
+    *
+    * "ab".ops.copare("abc") &lt; 0
     *
     * @param other
     *   the String to compare to
@@ -316,9 +496,25 @@ class StringCommons[T: StrToOpt](value: T) {
     * <p>{@code null} inputs are handled according to the {@code nullIsLess} parameter. Two {@code null} references are considered
     * equal.</p>
     *
-    * <pre> None.compare(None, *) = 0 None.compare(Some("a"), true) &lt; 0 None.compare(Some("a"), false) &gt; 0 Some("a").compare(None,
-    * true) &gt; 0 Some("a").compare(None, false) &lt; 0 Some("abc").compare(Some("abc"), *) = 0 Some("a").compare(Some("b"), *) &lt; 0
-    * Some("b").compare("a", *) &gt; 0 Some("a").compare("B", *) &gt; 0 Some("ab").compare("abc", *) &lt; 0 </pre>
+    * None.ops.compare(None, *) = 0
+    *
+    * None.ops.compare(Some("a"), true) &lt; 0
+    *
+    * None.ops.compare(Some("a"), false) &gt; 0
+    *
+    * Some("a").ops.compare(None, true) &gt; 0
+    *
+    * Some("a").ops.compare(None, false) &lt; 0
+    *
+    * Some("abc").ops.compare(Some("abc"), *) = 0
+    *
+    * Some("a").ops.compare(Some("b"), *) &lt; 0
+    *
+    * Some("b").ops.compare("a", *) &gt; 0
+    *
+    * Some("a").ops.compare("B", *) &gt; 0
+    *
+    * Some("ab").ops.compare("abc", *) &lt; 0
     *
     * @param other
     *   the String to compare to
@@ -333,18 +529,35 @@ class StringCommons[T: StrToOpt](value: T) {
     Strings.compare(strOpt.orNull, strToOpt(other).orNull, nullIsNull)
 
   /** <p>Compare two Strings lexicographically, ignoring case differences, as per {@link String# compareToIgnoreCase ( String )}, returning
-    * :</p> <ul> <li>{@code int = 0}, if {@code str1} is equal to {@code str2} (or both {@code null})</li> <li>{@code int < 0}, if {@code
-    * str1} is less than {@code str2}</li> <li>{@code int > 0}, if {@code str1} is greater than {@code str2}</li> </ul>
+    * :</p> <ul> <li>{@code int = 0}, if {@code str} is equal to {@code other} (or both {@code None})</li> <li>{@code int < 0}, if {@code
+    * str} is less than {@code other}</li> <li>{@code int > 0}, if {@code str} is greater than {@code other}</li> </ul>
     *
-    * <p>This is a {@code null} safe version of :</p> <blockquote><pre>str1.compareToIgnoreCase(str2)</pre></blockquote>
+    * <p>This is a {@code None} safe version of :</p>
     *
-    * <p>{@code null} value is considered less than non-{@code null} value. Two {@code null} references are considered equal. Comparison is
+    * <blockquote><pre>str.ops.compareToIgnoreCase(other)</pre></blockquote>
+    *
+    * <p>{@code None} value is considered less than non-{@code None} value. Two {@code None} references are considered equal. Comparison is
     * case insensitive.</p>
     *
-    * <pre> None.compareToIgnoreCase(None) = 0 None.compareToIgnoreCase(None , "a") &lt; 0 Some("a").compareToIgnoreCase(None) &gt; 0
-    * Some("abc").compareToIgnoreCase("abc") = 0 Some("abc").compareToIgnoreCase("ABC") = 0 Some("a").compareToIgnoreCase("b") &lt; 0
-    * Some("b").compareToIgnoreCase("a") &gt; 0 Some("a").compareToIgnoreCase("B") &lt; 0 Some("A").compareToIgnoreCase("b") &lt; 0
-    * Some("ab").compareToIgnoreCase("ABC") &lt; 0 </pre>
+    * None.ops.compareToIgnoreCase(None) = 0
+    *
+    * None.ops.compareToIgnoreCase(None , "a") &lt; 0
+    *
+    * Some("a").ops.compareToIgnoreCase(None) &gt; 0
+    *
+    * Some("abc").ops.compareToIgnoreCase("abc") = 0
+    *
+    * Some("abc").ops.compareToIgnoreCase("ABC") = 0
+    *
+    * Some("a").ops.compareToIgnoreCase("b") &lt; 0
+    *
+    * Some("b").ops.compareToIgnoreCase("a") &gt; 0
+    *
+    * Some("a").ops.compareToIgnoreCase("B") &lt; 0
+    *
+    * Some("A").ops.compareToIgnoreCase("b") &lt; 0
+    *
+    * Some("ab").ops.compareToIgnoreCase("ABC") &lt; 0
     *
     * @param other
     *   the String to compare to
@@ -357,20 +570,37 @@ class StringCommons[T: StrToOpt](value: T) {
     Strings.compareIgnoreCase(strOpt.orNull, strToOpt(other).orNull)
 
   /** <p>Compare two Strings lexicographically, ignoring case differences, as per {@link String# compareToIgnoreCase ( String )}, returning
-    * :</p> <ul> <li>{@code int = 0}, if {@code str1} is equal to {@code str2} (or both {@code null})</li> <li>{@code int < 0}, if {@code
-    * str1} is less than {@code str2}</li> <li>{@code int > 0}, if {@code str1} is greater than {@code str2}</li> </ul>
+    * :</p> <ul> <li>{@code int = 0}, if {@code str} is equal to {@code other} (or both {@code None})</li> <li>{@code int < 0}, if {@code
+    * str} is less than {@code str}</li> <li>{@code int > 0}, if {@code str} is greater than {@code other}</li> </ul>
     *
-    * <p>This is a {@code null} safe version of :</p> <blockquote><pre>str1.compareToIgnoreCase(str2)</pre></blockquote>
+    * <p>This is a {@code None} safe version of :</p> <blockquote><pre>str1.compareToIgnoreCase(str2)</pre></blockquote>
     *
-    * <p>{@code null} inputs are handled according to the {@code nullIsLess} parameter. Two {@code null} references are considered equal.
+    * <p>{@code None} inputs are handled according to the {@code nullIsLess} parameter. Two {@code None} references are considered equal.
     * Comparison is case insensitive.</p>
     *
-    * <pre> StringUtils.compareIgnoreCase(null, null, *) = 0 StringUtils.compareIgnoreCase(null , "a", true) &lt; 0
-    * StringUtils.compareIgnoreCase(null , "a", false) &gt; 0 StringUtils.compareIgnoreCase("a", null, true) &gt; 0
-    * StringUtils.compareIgnoreCase("a", null, false) &lt; 0 StringUtils.compareIgnoreCase("abc", "abc", *) = 0
-    * StringUtils.compareIgnoreCase("abc", "ABC", *) = 0 StringUtils.compareIgnoreCase("a", "b", *) &lt; 0
-    * StringUtils.compareIgnoreCase("b", "a", *) &gt; 0 StringUtils.compareIgnoreCase("a", "B", *) &lt; 0 StringUtils.compareIgnoreCase("A",
-    * "b", *) &lt; 0 StringUtils.compareIgnoreCase("ab", "abc", *) &lt; 0 </pre>
+    * None.ops.compareIgnoreCase(None, *) = 0
+    *
+    * None.ops.compareIgnoreCase("a", true) &lt; 0
+    *
+    * None.ops.compareIgnoreCase("a", false) &gt; 0
+    *
+    * "a".ops.compareIgnoreCase(null, true) &gt; 0
+    *
+    * Some("a").ops.compareIgnoreCase(null, false) &lt; 0
+    *
+    * "abc".ops.compareIgnoreCase(Some("abc"), *) = 0
+    *
+    * "abc".ops.compareIgnoreCase("ABC", *) = 0
+    *
+    * "a".ops.compareIgnoreCase("b", *) &lt; 0
+    *
+    * Some("b").compareIgnoreCase("a", *) &gt; 0
+    *
+    * Some("a").compareIgnoreCase("B", *) &lt; 0
+    *
+    * Some("A").compareIgnoreCase("b", *) &lt; 0
+    *
+    * "ab".compareIgnoreCase("abc", *) &lt; 0
     *
     * @param other
     *   the String to compare to
@@ -416,59 +646,78 @@ class StringCommons[T: StrToOpt](value: T) {
     */
   def contains(searchChar: Char): Boolean = Strings.contains(strOpt.orNull, searchChar)
 
-  /** <p>Checks if the CharSequence contains any character in the given set of characters.</p>
+  /** <p> Checks if the CharSequence contains any character or character sequence in the given set of characters or set of character
+    * sequences. </p>
     *
     * <p>A {@code None} CharSequence will return {@code false}. A {@code None} or zero length search array will return {@code false}.</p>
     *
-    * <pre> None.containsAny(*) = false Some("").containsAny(*) = false Option(*).containsAny(None) = false Option(*).containsAny([]) =
-    * false Some("zzabyycdxx").containsAny(['z', 'a']) = true Some("zzabyycdxx").containsAny(['b', 'y']) = true
-    * Some("zzabyycdxx").containsAny(['z', 'y']) = true Some("aba").containsAny(['z']) = false </pre>
+    * None.ops.containsAny(*) = false
+    *
+    * Some("").ops.containsAny(*) = false
+    *
+    * Option(*).ops.containsAny(None) = false
+    *
+    * Option(*).ops.containsAny([]) = false
+    *
+    * Some("zzabyycdxx").ops.containsAny(['z', 'a']) = true
+    *
+    * Some("zzabyycdxx").ops.containsAny(['b', 'y']) = true
+    *
+    * Some("zzabyycdxx").ops.containsAny(['z', 'y']) = true
+    *
+    * Some("aba").ops.containsAny(['z']) = false
+    *
+    * None.ops.containsAny(*) = false
+    *
+    * Some("").ops.containsAny(*) = false
+    *
+    * Option(*).ops.containsAny(None) = false
+    *
+    * Option(*).ops.containsAny("") = false
+    *
+    * Some("zzabyycdxx").ops.containAny("za") = true
+    *
+    * Some("zzabyycdxx").ops.containAny("by") = true
+    *
+    * Some("zzabyycdxx").ops.containAny("zy") = true
+    *
+    * Some("zzabyycdxx").ops.containAny("\tx") = true
+    *
+    * Some("zzabyycdxx").ops.containAny("$.#yF") = true
+    *
+    * Some("aba").ops.containAny("z") = false
     *
     * @param searchChars
     *   the chars to search for, may be null
     * @return
     *   if any of the chars are found,
     */
-  def containsAnyChar(searchChars: Char*): Boolean       = Strings.containsAny(strOpt.orNull, searchChars: _*)
-  def containsAnyChar(searchChars: Array[Char]): Boolean = Strings.containsAny(strOpt.orNull, searchChars: _*)
-
-  /** <p> Checks if the CharSequence contains any character in the given set of characters. </p>
-    *
-    * <p> A {@code None} CharSequence will return {@code false}. A {@code null} search CharSequence will return {@code false}. </p>
-    *
-    * <pre> None.containsAny(*) = false Some("").containsAny(*) = false Option(*).containsAny(None) = false Option(*).containsAny("") =
-    * false Some("zzabyycdxx").containAny("za") = true Some("zzabyycdxx").containAny("by") = true Some("zzabyycdxx").containAny("zy") = true
-    * Some("zzabyycdxx").containAny("\tx") = true Some("zzabyycdxx").containAny("$.#yF") = true Some("aba").containAny("z") = false </pre>
-    *
-    * @param searchChars
-    *   the chars to search for, may be null
-    * @tparam S
-    *   String or Option[String]
-    * @return
-    *   the {@code true} if any of the chars are found, {@code false} if no match or null input
-    */
-  def containsAny[S: VarArgsOfPlain](searchArgs: S*)(implicit tt: ClassTag[S]): Boolean = uniformVarArgs(searchArgs) match {
-    case Left(chars: Seq[Char])        => Strings.containsAny(strOpt.orNull, chars: _*)
-    case Right(css: Seq[CharSequence]) => Strings.containsAny(strOpt.orNull, css: _*)
+  def containsAny[S: VarArgsOfCharOrString](searchArgs: S*)(implicit tt: ClassTag[S]): Boolean = {
+    uniformCharStringVarArgs(searchArgs) match {
+      case Left(chars: Seq[Char]) => Strings.containsAny(strOpt.orNull, chars.toArray[Char]: _*)
+      case Right(css: Seq[CharSequence]) =>
+        if (css.length == 1) {
+          Strings.containsAny(strOpt.orNull, css.head)
+        } else {
+          Strings.containsAny(strOpt.orNull, css.toArray[CharSequence]: _*)
+        }
+    }
   }
 
-  /** <p> Checks if the CharSequence contains any of the CharSequences in the given array. </p>
+  /** <p> Checks if CharSequence contains a search CharSequence irrespective of case, handling {@code None}. Case-insensitivity is defined
+    * as by {@link String# equalsIgnoreCase ( String )}.
     *
-    * <p> A {@code None} {@code cs} CharSequence will return {@code false}. A {@code null} or zero length search array will return {@code
-    * false}. </p>
+    * <p>A {@code None} CharSequence will return {@code false}.</p>
     *
-    * <pre> StringUtils.containsAny(null, *) = false StringUtils.containsAny("", *) = false StringUtils.containsAny(*, null) = false
-    * StringUtils.containsAny(*, []) = false StringUtils.containsAny("abcd", "ab", null) = true StringUtils.containsAny("abcd", "ab", "cd")
-    * \= true StringUtils.containsAny("abc", "d", "abc") = true </pre>
+    * <pre> None.containsIgnoreCase(*) = false Option(*).ops.containsIgnoreCase(None) = false "".ops.containsIgnoreCase "") = true
+    * StringUtils.containsIgnoreCase("abc", "") = true StringUtils.containsIgnoreCase("abc", "a") = true
+    * StringUtils.containsIgnoreCase("abc", "z") = false StringUtils.containsIgnoreCase("abc", "A") = true
+    * StringUtils.containsIgnoreCase("abc", "Z") = false </pre>
     *
-    * * @param The array of CharSequences to search for, may be null. Individual CharSequences may be null as well.
-    *
+    * @param searchArgs
     * @return
-    *   {@code true} if any of the search CharSequences are found, {@code false} otherwise
     */
-  def containsAnyString(searchCharSequences: CharSequence*): Boolean =
-    Strings.containsAny(strOpt.orNull, searchCharSequences: _*)
-
-  def containsAnyString(searchCharSequences: Array[String]): Boolean =
-    Strings.containsAny(strOpt.orNull, searchCharSequences: _*)
+  def containsAnyIgnoreCase(searchArgs: CharSequence*): Boolean = {
+    Strings.containsAnyIgnoreCase(strOpt.orNull, uniformStringVarArgs(searchArgs): _*)
+  }
 }
