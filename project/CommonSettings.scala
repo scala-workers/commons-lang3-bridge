@@ -74,7 +74,7 @@ object CommonSettings {
     ),
     description := "Scala Bridge For Apache Commons Lang3 Library",
     licenses    := List("MIT" -> new URL("https://github.com/MarchLiu/commons-lang3-bridge/blob/master/LICENSE")),
-    homepage    := Some(url("https://github.com/MarchLiu/jaskell-core")),
+    homepage    := Some(url("https://github.com/MarchLiu/commons-lang3-brdge")),
     // Remove all additional repository other than Maven Central from POM
     pomIncludeRepository := { _ => false },
     publishTo := {
