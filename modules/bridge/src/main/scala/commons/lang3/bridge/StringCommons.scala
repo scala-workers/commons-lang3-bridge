@@ -1,8 +1,7 @@
 package commons.lang3.bridge
 
-import org.apache.commons.lang3.{StringUtils => Strings}
 import commons.lang3.bridge.{TypeMappingInnerHelper => helper}
-import scala.reflect.ClassTag
+import org.apache.commons.lang3.{StringUtils => Strings}
 
 /** TODO
   *
@@ -761,7 +760,7 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   the {@code true} if any of the chars are found, {@code false} if no match or null input
     */
-  def containsAny[S: VarArgsOfCharOrString](searchArgs: S*)(implicit tt: ClassTag[S]): Boolean = {
+  def containsAny[S: VarArgsOfCharOrString](searchArgs: S*): Boolean = {
     val mapping = TypeMapping.getMapping[VarArgsOfCharOrString, S]
     mapping
       .input(searchArgs)
@@ -838,7 +837,7 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   {@code true} if any of the search CharSequences are found, {@code false} otherwise
     */
-  def containsAnyIgnoreCase[S: VarArgsOfString](searchArgs: S*)(implicit tt: ClassTag[S]): Boolean = {
+  def containsAnyIgnoreCase[S: VarArgsOfString](searchArgs: S*): Boolean = {
     val mapping = TypeMapping.getMapping[VarArgsOfString, S]
     mapping
       .input(searchArgs)
@@ -853,7 +852,9 @@ class StringCommons[T: StrToOpt](value: T) {
     *
     * <p>A {@code null} CharSequence will return {@code false}.</p>
     *
-    * <pre> None.ops.containsIgnoreCase(*) = false
+    * <pre>
+    *
+    * None.ops.containsIgnoreCase(*) = false
     *
     * Option(*).ops.containsIgnoreCase(null) = false
     *
@@ -880,5 +881,221 @@ class StringCommons[T: StrToOpt](value: T) {
     */
   def containsIgnoreCase[S: StrToOpt](searchStr: S): Boolean =
     Strings.containsIgnoreCase(strOpt.orNull, strToOpt(searchStr).orNull)
+
+  /** <p> Checks that the CharSequence does not contain certain characters. </p>
+    *
+    * <p>
+    *
+    * A {@code None} CharSequence will return {@code true}. A {@code null} invalid character array will return {@code true}. An empty String
+    * ("") always returns true.</p>
+    *
+    * <pre>
+    *
+    * None.ops.containsNone(*) = true
+    *
+    * Option(*).ops.containsNone(null) = true
+    *
+    * Some("").ops.containsNone(*) = true
+    *
+    * "ab".ops.containsNone("") = true
+    *
+    * Some("abab").ops.containsNone("xyz") = true
+    *
+    * "ab1".ops.containsNone("xyz") = true
+    *
+    * "abz".ops.containsNone("xyz") = false
+    *
+    * </pre>
+    *
+    * @param invalidChars
+    *   a String of invalid chars, may be null
+    * @return
+    *   true if it contains none of the invalid chars, or is null
+    */
+  def containsNone(invalidChars: String): Boolean =
+    Strings.containsNone(strOpt.orNull, invalidChars)
+
+  /** <p> Checks that the CharSequence does not contain certain option characters. </p>
+    *
+    * <p>
+    *
+    * A {@code None} CharSequence will return {@code true}. A {@code None} invalid character array will return {@code true}. An empty String
+    * (Some("")) always returns true.</p>
+    *
+    * <pre>
+    *
+    * None.ops.containsNone(*) = true
+    *
+    * Option(*).ops.containsNone(None) = true
+    *
+    * Some("").ops.containsNone(*) = true
+    *
+    * "ab".ops.containsNone(Some("")) = true
+    *
+    * Some("abab").ops.containsNone(Some("xyz")) = true
+    *
+    * "ab1".ops.containsNone(Some("xyz")) = true
+    *
+    * "abz".ops.containsNone(Some("xyz")) = false
+    *
+    * </pre>
+    *
+    * @param invalidChars
+    *   a String of invalid chars, may be null
+    * @return
+    *   true if it contains none of the invalid chars, or is null
+    */
+  def containsNone(invalidChars: Option[String]): Boolean =
+    Strings.containsNone(strOpt.orNull, invalidChars.orNull)
+
+  /** <p>Checks that the CharSequence does not contain certain characters.</p>
+    *
+    * <p>A {@code null} CharSequence will return {@code true}. A {@code null} invalid character array will return {@code true}. An empty
+    * CharSequence (length()=0) always returns true.</p>
+    *
+    * <pre>
+    *
+    * None.ops.containsNone(*) = true
+    *
+    * *.ops.containsNone(null) = true
+    *
+    * "".ops.containsNone(*) = true
+    *
+    * "ab".ops.containsNone('') = true
+    *
+    * "abab".ops.containsNone('xyz') = true
+    *
+    * "ab1".ops.containsNone('xyz') = true
+    *
+    * "abz".ops.containsNone('xyz') = false
+    *
+    * </pre>
+    *
+    * @param invalidChars
+    *   an array of invalid chars, may be null
+    * @tparam S
+    *   var args of chars
+    * @return
+    *   true if it contains none of the invalid chars, or is null
+    */
+  def containsNone[I: VarArgsOfChar](invalidChars: I*): Boolean = {
+    val mapping = TypeMapping.getMapping[VarArgsOfChar, I]
+    mapping
+      .input(invalidChars)
+      .fold(
+        chars => Strings.containsNone(strOpt.orNull, chars: _*),
+        ocs => Strings.containsNone(strOpt.orNull, ocs.filter(_.isDefined).map(_.get): _*)
+      )
+  }
+
+  /** <p>Checks if the CharSequence contains only certain characters.</p>
+    *
+    * <p>A {@code null} CharSequence will return {@code false}. A {@code null} valid character String will return {@code false}. An empty
+    * String (length()=0) always returns {@code true}.</p>
+    *
+    * <pre>
+    *
+    * None.ops.containsOnly(*) = false
+    *
+    * *.ops.containsOnly(null) = false
+    *
+    * "".ops.containsOnly(*) = true
+    *
+    * Some("ab").ops.containsOnly("") = false
+    *
+    * "abab".ops.containsOnly("abc") = true
+    *
+    * "ab1".ops.containsOnly("abc") = false
+    *
+    * "abz".ops.containsOnly("abc") = false
+    *
+    * </pre>
+    *
+    * @param validChars
+    *   a String of valid chars, may be null
+    * @return
+    *   true if it only contains valid chars and is non-null
+    */
+  def containsOnly(validChars: String): Boolean =
+    Strings.containsOnly(strOpt.orNull, validChars)
+
+  /** <p>Checks if the CharSequence contains only certain option characters.</p>
+    *
+    * <p>A {@code None} CharSequence will return {@code false}. A {@code None} valid character String will return {@code false}. An empty
+    * String (length()=0) always returns {@code true}.</p>
+    *
+    * <pre>
+    *
+    * None.ops.containsOnly(*) = false
+    *
+    * *.ops.containsOnly(None) = false
+    *
+    * "".ops.containsOnly(*) = true
+    *
+    * Some("ab").ops.containsOnly(Some("")) = false
+    *
+    * "abab".ops.containsOnly(Some("abc")) = true
+    *
+    * "ab1".ops.containsOnly(Some("abc")) = false
+    *
+    * "abz".ops.containsOnly(Some("abc")) = false
+    *
+    * </pre>
+    *
+    * @param validChars
+    *   a Option String of valid chars, may be None
+    * @return
+    *   true if it only contains valid chars and is non-null
+    */
+  def containsOnly(validChars: Option[String]): Boolean =
+    Strings.containsOnly(strOpt.orNull, validChars.orNull)
+
+  /** <p>Checks if the CharSequence contains only certain characters.</p>
+    *
+    * <p>A {@code null} CharSequence will return {@code false}. A {@code null} valid character array will return {@code false}. An empty
+    * CharSequence (length()=0) always returns {@code true}.</p>
+    *
+    * <pre>
+    *
+    * None.ops.containsOnly(*) = false
+    *
+    * *.ops.containsOnly(null) = false
+    *
+    * Some("").containsOnly(*) = true
+    *
+    * "ab".ops.containsOnly('') = false
+    *
+    * Some("abab").ops.containsOnly('abc') = true
+    *
+    * "ab1".ops.containsOnly('abc') = false
+    *
+    * "abz".ops.containsOnly('abc') = false
+    *
+    * </pre>
+    * @param valid
+    *   an array of valid chars, may be null
+    * @tparam V
+    *   var args of char
+    * @return
+    *   true if it only contains valid chars and is non-null
+    */
+  def containsOnly[V: VarArgsOfChar](valid: V*): Boolean = {
+    val mapping = TypeMapping.getMapping[VarArgsOfChar, V]
+    mapping
+      .input(valid)
+      .fold(
+        chars => Strings.containsOnly(strOpt.orNull, chars: _*),
+        ocs => Strings.containsOnly(strOpt.orNull, ocs.filter(_.isDefined).map(_.get): _*)
+      )
+  }
+
+  /** <p>Check whether the given CharSequence contains any whitespace characters.</p>
+    *
+    * <p>Whitespace is defined by {@link Character# isWhitespace ( char )}.</p>
+    *
+    * @return
+    *   if the CharSequence is not empty and contains at least 1 (breaking) whitespace character
+    */
+  def containsWhitespace: Boolean = Strings.containsWhitespace(strOpt.orNull)
 
 }
