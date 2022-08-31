@@ -5,12 +5,12 @@ package commons.lang3.bridge
 
 trait TypeMappingImplicitOptsPolyHigher extends TypeMappingImplicitOptsPolyLower {
     @for(i1 <- 2 to 22) {
-        implicit def typeMappingImplicit@{i1}Higher[I <: I1, @paramType(1, i1)]: TypeMapping[I, (@paramType(1, i1))] = TypeMapping(1)
+        @@inline implicit def typeMappingImplicit@{i1}Higher[I <: I1, @paramType(1, i1)]: TypeMapping[I, (@paramType(1, i1))] = TypeMapping(1)
     }
 }
 trait TypeMappingImplicitOptsPolyLower extends TypeMappingImplicitOptsPoly3 {
     implicit def typeMappingImplicit2Lower[I <: I2, I1, I2]: TypeMapping[I, (I1, I2)] = TypeMapping(2)
     @for(i1 <- 3 to 22) {
-        implicit def typeMappingImplicit@{i1}Lower[I@{i1 + 1}, @paramType(1, i1)](implicit deptMapping: TypeMapping[I@{i1 + 1}, (@paramType(2, i1))]): TypeMapping[I@{i1 + 1}, (@paramType(1, i1))] = TypeMapping(deptMapping.index + 1)
+        @@inline implicit def typeMappingImplicit@{i1}Lower[I@{i1 + 1}, @paramType(1, i1)](implicit deptMapping: TypeMapping[I@{i1 + 1}, (@paramType(2, i1))]): TypeMapping[I@{i1 + 1}, (@paramType(1, i1))] = TypeMapping(deptMapping.index + 1)
     }
 }
