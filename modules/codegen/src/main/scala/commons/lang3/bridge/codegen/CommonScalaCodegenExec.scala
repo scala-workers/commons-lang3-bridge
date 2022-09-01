@@ -10,7 +10,7 @@ object CommonScalaCodegenExec {
   def main(arr: Array[String]): Unit = {
     val rootString = arr(0)
     val rootPath   = Paths.get(rootString)
-    val writePath  = rootPath.resolve(Paths.get("commons", "lang3", "scala"))
+    val writePath  = rootPath.resolve(Paths.get("commons", "lang3", "bridge"))
     Files.createDirectories(writePath)
     locally {
       val filePath = writePath.resolve("TypeMappingImplicitOptsPoly1.scala")
