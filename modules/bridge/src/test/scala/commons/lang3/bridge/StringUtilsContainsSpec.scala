@@ -17,7 +17,7 @@ class StringUtilsContainsSpec extends AnyFunSuite {
   val nullChars: Array[Char]     = null
   val noneString: Option[String] = None
 
-  import commons.lang3.bridge.StringUtils.bridge._
+  import commons.lang3.bridge.StringUtils.ops._
 
   /** Supplementary character U+20000 See http://www.oracle.com/technetwork/articles/javase/supplementary-142654.html
     */
