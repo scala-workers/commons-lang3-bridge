@@ -55,13 +55,13 @@ object CommonSettings {
 
   val pushSettings = Seq(
     version              := "0.0.1",
-    organization         := "io.github.marchliu",
-    organizationName     := "Mars Liu<mars.liu@outlook.com>",
-    organizationHomepage := Some(url("https://marchliu.github.io/")),
+    organization         := "net.scalax",
+    organizationName     := "Scala Workers",
+    organizationHomepage := Some(url("https://github.com/scala-workers")),
     scmInfo := Some(
       ScmInfo(
-        url("https://github.com/MarchLiu/common-lang3-bridge"),
-        "scm:git@github.com:MarchLiu/common-lang3-bridge.git"
+        url("https://github.com/scala-workers/commons-lang3-bridge"),
+        "scm:git@github.com:scala-workers/commons-lang3-bridge.git"
       )
     ),
     developers := List(
@@ -70,11 +70,17 @@ object CommonSettings {
         name = "Liu Xin",
         email = "mars.liu@outlook.com",
         url = url("https://marchliu.github.io/")
+      ),
+      Developer(
+        id = "djx314",
+        name = "djx314",
+        email = "djx314@sina.cn",
+        url = url("https://github.com/djx314")
       )
     ),
     description := "Scala Bridge For Apache Commons Lang3 Library",
-    licenses    := List("MIT" -> new URL("https://github.com/MarchLiu/commons-lang3-bridge/blob/master/LICENSE")),
-    homepage    := Some(url("https://github.com/MarchLiu/commons-lang3-brdge")),
+    licenses    := List("MIT" -> new URL("https://github.com/scala-workers/commons-lang3-bridge/blob/master/LICENSE")),
+    homepage    := Some(url("https://github.com/scala-workers/commons-lang3-brdge")),
     // Remove all additional repository other than Maven Central from POM
     pomIncludeRepository := { _ => false },
     publishTo := {

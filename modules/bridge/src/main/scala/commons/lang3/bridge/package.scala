@@ -1,34 +1,28 @@
 package commons.lang3
 
-import commons.lang3.bridge.{TypeMappingInnerHelper => helper}
+import java.nio.charset.Charset
 
 package object bridge {
-  import helper._
-
   type StrToOpt[T] = TypeMapping[T, (String, Option[String])]
 
-  type VarArgsOfCharOrString[T] =
-    TypeMapping[Seq[T], (Seq[Char], Seq[CharSequence], Seq[Option[Char]], Seq[Option[CharSequence]])]
+  type CharToOpt[T] = TypeMapping[T, (Char, Option[Char])]
 
-  /*def uniformCharStringVarArgs[T: VarArgsOfCharOrString](arr: Seq[T]): Either[Seq[Char], Seq[CharSequence]] = {
-    val mapping = implicitly[VarArgsOfCharOrString[T]]
-    mapping.ops(arr)(
-      Left(_),
-      Right(_),
-      { chars => Left(chars.filter(_.isDefined).map(_.get)) },
-      { css => Right(css.map(_.orNull)) }
-    )
-  }
+  type VarArgsOfCharOrString[U] =
+    TypeMapping[Seq[U], (Seq[Char], Seq[CharSequence], Seq[Option[Char]], Seq[Option[CharSequence]])]
 
-  type VarArgsOfString[T] =
-    TypeMapping[Seq[T], (Seq[CharSequence], Seq[Option[CharSequence]])]
+  type VarArgsOfChar[U] =
+    TypeMapping[Seq[U], (Seq[Char], Seq[Option[Char]])]
 
-  def uniformStringVarArgs[T: VarArgsOfString](arr: Seq[T]): Seq[CharSequence] = {
-    val mapping = implicitly[VarArgsOfString[T]]
-    mapping.ops(arr)(
-      identity,
-      { css => css.map(_.orNull) }
-    )
-  }*/
+  type StringOrVarArgsOfChar[U] =
+    TypeMapping[Seq[U], (String, Option[String], Seq[Char], Seq[Option[Char]])]
+
+  type VarArgsOfString[U] =
+    TypeMapping[Seq[U], (Seq[CharSequence], Seq[Option[CharSequence]])]
+
+  type CharsetOrName[T] =
+    TypeMapping[T, (Charset, Option[Charset], String, Option[String])]
+
+  type CharOrString[T] =
+    TypeMapping[T, (Char, String, Option[String])]
 
 }

@@ -10,7 +10,7 @@ package commons.lang3.bridge
   */
 object StringUtils {
 
-  object bridge {
+  object ops {
 
     implicit class StringOptExt[T: StrToOpt](x: T) {
       val ops: StringCommons[T] = new StringCommons(x)
