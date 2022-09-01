@@ -2,6 +2,8 @@ package commons.lang3.bridge
 
 import org.scalatest.funsuite.AnyFunSuite
 
+import java.util.Locale
+
 /** TODO
   *
   * @author
@@ -117,7 +119,7 @@ class StringUtilsContainsSpec extends AnyFunSuite {
 
     assert(!nullString.ops.containsAny(nullString))
     assert(!nullString.ops.containsAny(new Array[Char](0): _*))
-    assert(!nullString.ops.containsAnyChar('a', 'b'))
+    assert(!nullString.ops.containsAny('a', 'b'))
 
     assert(!"".ops.containsAny(nullString))
     assert(!"".ops.containsAny(new Array[Char](0): _*))
@@ -149,5 +151,148 @@ class StringUtilsContainsSpec extends AnyFunSuite {
     assert(!Some("ab").ops.containsAny(new Array[Char]('z'): _*))
   }
 
-  test("test contains any string char array with bad supplement chars") {}
+  test("test contains any string or char array with bad supplement chars") {
+    assert(!CharUSuppCharHigh.ops.containsAny(CharU20001.toCharArray: _*))
+    assert(!("abc" + CharUSuppCharHigh + "xyz").ops.containsAny(CharU20001.toCharArray: _*))
+    assert(CharUSuppCharLow.indexOf(CharU20001) == -1)
+    assert(!Some(CharUSuppCharLow).ops.containsAny(CharU20001.toCharArray: _*))
+    assert(!CharU20001.ops.containsAny(CharUSuppCharHigh.toCharArray: _*))
+    assert(CharU20001.indexOf(CharUSuppCharLow) == 0)
+    assert(Some(CharU20001).ops.containsAny(CharUSuppCharLow.toCharArray: _*))
+  }
+
+  test("test contains any string or char array with supplement chars") {
+    assert((CharU20000 + CharU20001).ops.containsAny(CharU20000.toCharArray: _*))
+    assert(("a" + CharU20000 + CharU20001).ops.containsAny("a".toCharArray: _*))
+    assert((CharU20000 + "a" + CharU20001).ops.containsAny("a".toCharArray: _*))
+    assert((CharU20000 + CharU20001 + "a").ops.containsAny("a".toCharArray: _*))
+    assert(Some(CharU20000 + CharU20001).ops.containsAny(CharU20001.toCharArray: _*))
+    assert(CharU20000.ops.containsAny(CharU20000.toCharArray: _*))
+    // Sanity check:
+    assert(-1 == CharU20000.indexOf(CharU20001))
+    assert(0 == CharU20000.indexOf(CharU20001.charAt(0)))
+    assert(-1 == CharU20000.indexOf(CharU20001.charAt(1)))
+    // Test:
+    assert(!Some(CharU20000).ops.containsAny(CharU20001.toCharArray: _*))
+    assert(!CharU20001.ops.containsAny(CharU20000.toCharArray: _*))
+  }
+
+  test("test string contains any string") {
+    assert(!nullString.ops.containsAny(nullString))
+    assert(!nullString.ops.containsAny(""))
+    assert(!nullString.ops.containsAny("ab"))
+
+    assert(!"".ops.containsAny(nullString))
+    assert(!"".ops.containsAny(""))
+    assert(!"".ops.containsAny(""))
+    assert(!"".ops.containsAny("ab"))
+
+    assert(!"zzabyycdxx".ops.containsAny(nullString))
+    assert(!"zzabyycdxx".ops.containsAny(""))
+    assert("zzabyycdxx".ops.containsAny("za"))
+    assert("zzabyycdxx".ops.containsAny("by"))
+    assert("zzabyycdxx".ops.containsAny("zy"))
+    assert(!"ab".ops.containsAny("z"))
+
+  }
+
+  test("test option string contains any string") {
+    assert(!noneString.ops.containsAny(nullString))
+    assert(!noneString.ops.containsAny(""))
+    assert(!noneString.ops.containsAny("ab"))
+
+    assert(!Some("").ops.containsAny(nullString))
+    assert(!Some("").ops.containsAny(""))
+    assert(!Some("").ops.containsAny("ab"))
+
+    assert(!Some("zzabyycdxx").ops.containsAny(nullString))
+    assert(!Some("zzabyycdxx").ops.containsAny(""))
+    assert(Some("zzabyycdxx").ops.containsAny(Some("za")))
+    assert(Some("zzabyycdxx").ops.containsAny("by"))
+    assert(Some("zzabyycdxx").ops.containsAny("zy"))
+    assert(!Some("ab").ops.containsAny("z"))
+  }
+
+  test("test string contains any string array") {
+    assert(!nullString.ops.containsAny(nullString))
+    assert(!nullString.ops.containsAny(new Array[String](0): _*))
+    assert(!noneString.ops.containsAny(Array[String]("hello"): _*))
+    assert(!Some("").ops.containsAny(noneString))
+    assert(!"".ops.containsAny(new Array[String](0): _*))
+    assert(!Some("").ops.containsAny(Array[String]("hello"): _*))
+    assert(!Some("hello, goodbye").ops.containsAny(noneString))
+    assert(!"hello, goodbye".ops.containsAny(new Array[String](0): _*))
+    assert("hello, goodbye".ops.containsAny(Array[String]("hello", "goodbye"): _*))
+    assert(Some("hello, goodbye").ops.containsAny(Array[String]("hello", "Goodbye"): _*))
+    assert(!"hello, goodbye".ops.containsAny(Array[String]("Hello", "Goodbye"): _*))
+    assert(!Some("hello, goodbye").ops.containsAny(Array[String]("Hello", null): _*))
+    assert(!"hello, null".ops.containsAny(Array[String]("Hello", null): _*))
+    // Javadoc examples:
+    assert("abcd".ops.containsAny("ab", null))
+    assert(Some("abcd").ops.containsAny("ab", "cd"))
+    assert("abc".ops.containsAny("d", "abc"))
+  }
+
+  test("test string contains any ignore case string array") {
+    assert(!(nullString.ops.containsAnyIgnoreCase(nullString)))
+    assert(!nullString.ops.containsAnyIgnoreCase(new Array[String](0): _*))
+    assert(!noneString.ops.containsAnyIgnoreCase(Array[String]("hello"): _*))
+    assert(!"".ops.containsAnyIgnoreCase(nullString))
+    assert(!Some("").ops.containsAnyIgnoreCase(new Array[String](0): _*))
+    assert(!Some("").ops.containsAnyIgnoreCase(Array[String]("hello"): _*))
+    assert(!Some("hello, goodbye").ops.containsAnyIgnoreCase(nullString))
+    assert(!"hello, goodbye".ops.containsAnyIgnoreCase(new Array[String](0): _*))
+    assert("hello, goodbye".ops.containsAnyIgnoreCase(Array[String]("hello", "goodbye"): _*))
+    assert("hello, goodbye".ops.containsAnyIgnoreCase(Array[String]("hello", "Goodbye"): _*))
+    assert(Some("hello, goodbye").ops.containsAnyIgnoreCase(Array[String]("Hello", "Goodbye"): _*))
+    assert("hello, goodbye".ops.containsAnyIgnoreCase(Array[String]("Hello", null): _*))
+    assert("hello, null".ops.containsAnyIgnoreCase(Array[String]("Hello", null): _*))
+    // Javadoc examples:
+    assert("abcd".ops.containsAnyIgnoreCase("ab", null))
+    assert(Some("abcd").ops.containsAnyIgnoreCase("ab", "cd"))
+    assert("abc".ops.containsAnyIgnoreCase("d", "abc"))
+  }
+
+  test("test string contains any string with bad supplementary chars") {
+    assert(!CharUSuppCharHigh.ops.containsAny(CharU20001))
+    assert(-1 == CharUSuppCharLow.indexOf(CharU20001))
+    assert(!Some(CharUSuppCharLow).ops.containsAny(CharU20001))
+    assert(!CharU20001.ops.containsAny(CharUSuppCharHigh))
+    assert(0 == CharU20001.indexOf(CharUSuppCharLow))
+    assert(CharU20001.ops.containsAnyIgnoreCase(CharUSuppCharLow))
+  }
+
+  test("test string contains any string with supplementary chars") {
+    assert(Some(CharU20000 + CharU20001).ops.containsAny(CharU20000))
+    assert((CharU20000 + CharU20001).ops.containsAny(Some(CharU20001)))
+    assert(CharU20000.ops.containsAny(CharU20000))
+    // Sanity check:
+    assert(-1 == CharU20000.indexOf(CharU20001))
+    assert(0 == CharU20000.indexOf(CharU20001.charAt(0)))
+    assert(-1 == CharU20000.indexOf(CharU20001.charAt(1)))
+    // Test:
+    assert(!CharU20000.ops.containsAny(CharU20001))
+    assert(!CharU20001.ops.containsAny(CharU20000))
+  }
+
+  test("test string contains ignore case locale independence") {
+    val locales = Array(Locale.ENGLISH, new Locale("tr"), Locale.GERMAN)
+
+    val tdata = Array(Array("i", "I"), Array("I", "i"), Array("\u03C2", "\u03C3"), Array("\u03A3", "\u03C2"), Array("\u03A3", "\u03C3"))
+
+    val fdata = Array(Array("\u00DF", "SS"))
+
+    for (testLocale <- locales) {
+      Locale.setDefault(testLocale)
+      for (j <- 0 until tdata.length) {
+        assert(tdata(j)(0).ops.containsIgnoreCase(tdata(j)(1)), Locale.getDefault + ": " + j + " " + tdata(j)(0) + " " + tdata(j)(1))
+      }
+      for (j <- 0 until fdata.length) {
+        assertFalse(
+          StringUtils.containsIgnoreCase(fdata(j)(0), fdata(j)(1)),
+          Locale.getDefault + ": " + j + " " + fdata(j)(0) + " " + fdata(j)(1)
+        )
+      }
+    }
+  }
 }
