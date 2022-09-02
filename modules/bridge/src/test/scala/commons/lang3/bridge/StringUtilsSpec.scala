@@ -296,4 +296,42 @@ class StringUtilsSpec extends AnyFunSuite {
     assertAbbreviateWithAbbrevMarkerAndOffset("_ghijklmno", "_", 16, 10)
     assertAbbreviateWithAbbrevMarkerAndOffset("+ghijklmno", "+", Integer.MAX_VALUE, 10)
   }
+
+  test("test abbreviate middle") {
+    // javadoc examples
+    assert(noneString.ops.abbreviateMiddle(null, 0).isEmpty)
+    assert("abc".ops.abbreviateMiddle(null, 0).contains("abc"))
+    assert("abc".ops.abbreviateMiddle(Some("."), 0).contains("abc"))
+    assert("abc".ops.abbreviateMiddle(Some("."), 3).contains("abc"))
+    assert(Some("abcdef").ops.abbreviateMiddle(".", 4).contains("ab.f"))
+
+    // JIRA issue (LANG-405) example (slightly different than actual expected result)
+    assert(
+      Some("A very long text with unimportant stuff in the middle but interesting start and " + "end to see if the text is complete.").ops
+        .abbreviateMiddle("...", 50)
+        .contains("A very long text with un...f the text is complete.")
+    )
+
+    // Test a much longer text :)
+    val longText = "Start text" + "x".ops.repeat(10000) + "Close text"
+    assert(longText.ops.abbreviateMiddle("->", 22).contains("Start text->Close text"))
+
+    // Test negative length
+    assert("abc".ops.abbreviateMiddle(".", -1).contains("abc"))
+
+    // Test boundaries
+    // Fails to change anything as method ensures first and last char are kept
+    assert(Some("abc").ops.abbreviateMiddle(".", 1).contains("abc"))
+    assert("abc".ops.abbreviateMiddle(Some("."), 2).contains("abc"))
+
+    // Test length of n=1
+    assert(Some("a").ops.abbreviateMiddle(".", 1).contains("a"))
+
+    // Test smallest length that can lead to success
+    assert("abcd".ops.abbreviateMiddle(".", 3).contains("a.d"))
+
+    // More from LANG-405
+    assert("abcdef".ops.abbreviateMiddle("..", 4).contains("a..f"))
+    assert("abcdef".ops.abbreviateMiddle(".", 5).contains("ab.ef"))
+  }
 }
