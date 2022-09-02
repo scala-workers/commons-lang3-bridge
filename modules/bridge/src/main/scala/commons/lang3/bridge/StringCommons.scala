@@ -824,18 +824,20 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
   def containsAny[S: VarArgsOfCharOrString](searchArgs: S*): Boolean = {
     def dealWithSeqChar(chars: Seq[Char]): Boolean = Strings.containsAny(strOrNull, chars.toArray[Char]: _*)
 
-    def dealWithSeqCharSequence(css: Seq[CharSequence]): Boolean = if (css.length == 1)
-      Strings.containsAny(strOrNull, css.head)
-    else
-      Strings.containsAny(strOrNull, css: _*)
+    def dealWithSeqCharSequence(css: Seq[CharSequence]): Boolean =
+      if (css.length == 1) {
+        Strings.containsAny(strOrNull, css.head)
+      } else {
+        Strings.containsAny(strOrNull, css: _*)
+      }
 
     def mapping             = TypeMapping.getMapping[VarArgsOfCharOrString, S]
     def charOptSeqMapper    = getMapper[Seq[Option[Char]], Seq[Char]].func
     def charSeqOptSeqMapper = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
 
-    if (searchArgs == null)
+    if (searchArgs == null) {
       Strings.containsAny(strOrNull, null)
-    else
+    } else {
       mapping
         .input(searchArgs)
         .fold(
@@ -844,6 +846,7 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
           charOptSeqMapper.andThen(dealWithSeqChar),
           charSeqOptSeqMapper.andThen(dealWithSeqCharSequence)
         )
+    }
   }
 
   /** <p> Checks if the CharSequence contains any of the CharSequences in the given array, ignoring case. </p>
@@ -906,15 +909,16 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     def mapping                                     = TypeMapping.getMapping[VarArgsOfString, S]
     def charSeqSeqOptMappper                        = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
 
-    if (searchArgs == null)
+    if (searchArgs == null) {
       Strings.equalsAnyIgnoreCase(strOrNull, null)
-    else
+    } else {
       mapping
         .input(searchArgs)
         .fold(
           dealWithSeqCharSeq,
           charSeqSeqOptMappper.andThen(dealWithSeqCharSeq)
         )
+    }
   }
 
   /** <p>Checks if CharSequence contains a search CharSequence irrespective of case, handling {@code null}. Case-insensitivity is defined as
@@ -1220,10 +1224,11 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     def mapperSeqString                            = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
     def dealWithSeqString(strs: Seq[CharSequence]) = Strings.endsWithAny(strOrNull, strs: _*)
 
-    if (searchStrings == null)
+    if (searchStrings == null) {
       Strings.endsWithAny(strOrNull, null)
-    else
+    } else {
       mapping.input(searchStrings).fold(dealWithSeqString, mapperSeqString.andThen(dealWithSeqString))
+    }
   }
 
   def equalsAnyIgnoreCase[S: VarArgsOfString](searchStrings: S*): Boolean = {
@@ -1231,10 +1236,11 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     def mapperSeqString                            = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
     def dealWithSeqString(strs: Seq[CharSequence]) = Strings.equalsAnyIgnoreCase(strOrNull, strs: _*)
 
-    if (searchStrings == null)
+    if (searchStrings == null) {
       Strings.equalsAnyIgnoreCase(strOrNull, null)
-    else
+    } else {
       mapping.input(searchStrings).fold(dealWithSeqString, mapperSeqString.andThen(dealWithSeqString))
+    }
   }
 
   def equalsIgnoreCase[S: TypeMapping[*, (String, Option[String])]](other: S): Boolean = {
@@ -1288,8 +1294,9 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     def dealWithChar(char: Char)                      = Strings.indexOfAny(strOrNull, char)
     def dealWithString(string: CharSequence)          = Strings.indexOfAny(strOrNull, string)
 
-    if (searchArgs == null) indexOfNull
-    else if (searchArgs.length == 1)
+    if (searchArgs == null) {
+      indexOfNull
+    } else if (searchArgs.length == 1) {
       mapping2
         .input(searchArgs.head)
         .fold(
@@ -1298,7 +1305,7 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
           opt => opt.map(dealWithChar).getOrElse(indexOfNull),
           opt => opt.map(dealWithString).getOrElse(indexOfNull)
         )
-    else
+    } else {
       mapping
         .input(searchArgs)
         .fold(
@@ -1307,6 +1314,7 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
           mapperSeqChar.andThen(dealWithSeqChar),
           mapperSeqString.andThen(dealWithSeqString)
         )
+    }
   }
 
   // 实现存疑，Tag，osc.head.get 可能抛异常
@@ -1375,10 +1383,11 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
   def join(arr: Array[Object]): String = Strings.join(arr, strOrNull)
 
   def joinWith(objs: Object*): String = {
-    if (objs == null)
+    if (objs == null) {
       Strings.joinWith(strOrNull, null)
-    else
+    } else {
       Strings.joinWith(strOrNull, objs: _*)
+    }
   }
 
   def lastIndexOf[S: TypeMapping[*, (Char, String, Option[String])]](searchArg: S): Int = {
@@ -1411,9 +1420,11 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
     def result = mapping.input(searchArgs).fold(dealWithCharSeqSeq, seqOptMapper.andThen(dealWithCharSeqSeq))
 
-    if (searchArgs == null)
+    if (searchArgs == null) {
       Strings.lastIndexOfAny(strOrNull, null)
-    else result
+    } else {
+      result
+    }
   }
 
   def lastIndexOfIgnoreCase[S: TypeMapping[*, (String, Option[String])]](searchStr: S): Int = {
@@ -1479,9 +1490,11 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
     def result = prefixesMapping.input(prefixes).fold(dealWithCharSeqSeq, getCharSeqOptionMapper.andThen(dealWithCharSeqSeq))
 
-    if (prefixes == null)
+    if (prefixes == null) {
       Option(Strings.prependIfMissing(strOrNull, prefixStr, null))
-    else Option(result)
+    } else {
+      Option(result)
+    }
   }
 
   def prependIfMissingIgnoreCase[P: TypeMapping[*, (String, Option[String])], Ps: VarArgsOfString](
@@ -1496,10 +1509,11 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     def dealWithCharSeqSeq(strs: Seq[CharSequence]) = Strings.prependIfMissingIgnoreCase(strOrNull, prefixStr, strs: _*)
     def result = prefixesMapping.input(prefixes).fold(dealWithCharSeqSeq, getCharSeqOptionMapper.andThen(dealWithCharSeqSeq))
 
-    if (prefixes == null)
+    if (prefixes == null) {
       Option(Strings.prependIfMissingIgnoreCase(strOrNull, prefixStr, null))
-    else
+    } else {
       Option(result)
+    }
   }
 
   def remove(rmv: Char): Option[String] = Option(Strings.remove(strOrNull, rmv))
