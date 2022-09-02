@@ -1,13 +1,13 @@
 package commons.lang3.bridge
 
-package impl {
+package impl:
 
   class CusInnerApply[O[_] <: Tuple](index: Int, value: Any):
     def fold[U](func: O[U]): U =
       func.drop(index - 1).asInstanceOf[NonEmptyTuple].head.asInstanceOf[Any => U](value)
   end CusInnerApply
 
-}
+end impl
 
 object TypeMappingInnerHelper:
 
