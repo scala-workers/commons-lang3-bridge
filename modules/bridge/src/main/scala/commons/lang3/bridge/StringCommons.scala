@@ -1276,9 +1276,8 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
   def indexOf(searchChar: Char): Int = Strings.indexOf(strOrNull, searchChar)
 
   def indexOfAny[S: VarArgsOfCharOrString](searchArgs: S*): Int = {
-    def mapping = TypeMapping.getMapping[VarArgsOfCharOrString, S]
-    val mapping2 =
-      TypeMapping.getMapping[TypeMapping[*, (Char, CharSequence, Option[Char], Option[SeqCharSequence])], S](mapping.asInstanceOf)
+    def mapping     = TypeMapping.getMapping[VarArgsOfCharOrString, S]
+    val mapping2    = mapping.asInstanceOf[TypeMapping[S, (Char, CharSequence, Option[Char], Option[SeqCharSequence])]]
     def indexOfNull = Strings.indexOfAny(strOrNull, null)
 
     def mapperSeqChar   = getMapper[Seq[Option[Char]], Seq[Char]].func
