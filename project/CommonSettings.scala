@@ -25,7 +25,6 @@ object CommonSettings {
     )
     val compat = scalaVersion match {
       case Some((2, scalaMajor)) if scalaMajor == 11 => Seq("-Xexperimental")
-      case Some((3, scalaMajor))                     => Seq("-Ykind-projector")
       case _                                         => Nil
     }
     common ++ compat
@@ -104,11 +103,6 @@ object CommonSettings {
     },
     Test / unmanagedSourceDirectories ++= genDirectory(sourceDirectory.value, "test", parVersion.value)
   )
-
-  def addCompilerPlugins(v: String, mudules: ModuleID*): Seq[Def.Setting[Seq[ModuleID]]] = CrossVersion.partialVersion(v) match {
-    case Some((2, _)) => mudules.map(addCompilerPlugin)
-    case _            => Seq.empty
-  }
 
   val commonProjectSettings  = pushSettings ++ commonSetting ++ Seq(crossScalaVersions := supportedScalaVersions)
   val codegenProjectSettings = commonSetting
