@@ -881,7 +881,7 @@ object InnerTypeMappingClass {
 
 }
 
-object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
+object TypeMappingInnerHelper {
 
   implicit class typeMappingImplicit2Poly[I, I1, I2](val mapping: TypeMapping[I, (I1, I2)]) {
     @inline def input[T](i: I): InnerTypeMappingClass.CusInnerApply2[I1, I2] =
@@ -1114,10 +1114,4 @@ object TypeMappingInnerHelper extends TypeMappingInnerHelperPoly {
     ] = new InnerTypeMappingClass.CusInnerApply22(index = mapping.index, value = i)
   }
 
-}
-
-trait TypeMappingInnerHelperPoly {
-  implicit class typeMappingImplicit1Poly[I, I1](mapping: TypeMapping[I, I1]) {
-    @inline def input(i: I): I1 = i.asInstanceOf
-  }
 }

@@ -19,6 +19,13 @@ object Scala2CodegenExec {
         writer.println(linerContent)
       }
     }
+    locally {
+      val filePath = writePath.resolve("TypeMappingInnerHelper.scala")
+      Using.resource(new PrintWriter(filePath.toFile, StandardCharsets.UTF_8)) { writer =>
+        val linerContent = commons.lang3.bridge.codegen.txt.TypeMappingInnerHelper().body
+        writer.println(linerContent)
+      }
+    }
   }
 
 }
