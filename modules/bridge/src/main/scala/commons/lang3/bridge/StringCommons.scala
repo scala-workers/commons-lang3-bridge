@@ -1,10 +1,43 @@
 package commons.lang3.bridge
 
 import commons.lang3.bridge.{TypeMappingInnerHelper => helper}
-import org.apache.commons.lang3.{CharSet, StringUtils => Strings}
+import org.apache.commons.lang3.{StringUtils => Strings}
 
+import java.nio.charset.Charset
 import java.util.Locale
 import java.util.function.Supplier
+
+private object privateUtils {
+  import helper._
+
+  @inline def getMapper[I, O](implicit map: SingleTypeMap[I, O]): SingleTypeMap[I, O] = map
+
+  @FunctionalInterface
+  trait SingleTypeMap[I, O] {
+    protected def input(i: I): O
+    def func: I => O = i => this.input(i)
+  }
+
+  object SingleTypeMap {
+    implicit def toStrOptImplicit[U: TypeMapping[*, (String, Option[String])]]: SingleTypeMap[U, Option[String]] = strToOpt
+    implicit def seqOptionCharToSeqCharImplicit: SingleTypeMap[Seq[Option[Char]], Seq[Char]]                     = tranCharSeqOptFunc
+    implicit def seqOptionCharSequenceToSeqCharSequenceImplicit: SingleTypeMap[Seq[Option[CharSequence]], Seq[CharSequence]] =
+      tranCharSeqSeqOptFunc
+  }
+
+  implicit class funcToStringOptOrNull[T](val func: T => Option[String]) {
+    def orNull: T => String = func.andThen(_.orNull)
+  }
+
+  private def strToOpt[U: TypeMapping[*, (String, Option[String])]](t: U): Option[String] = {
+    val mapping = TypeMapping.getMapping[TypeMapping[*, (String, Option[String])], U]
+    mapping.input(t).fold(Option(_), identity)
+  }
+
+  private def tranCharSeqOptFunc(seq: Seq[Option[Char]]): Seq[Char] = seq.filter(_.isDefined).map(_.get)
+
+  private def tranCharSeqSeqOptFunc(seq: Seq[Option[CharSequence]]): Seq[CharSequence] = seq.map(_.orNull)
+}
 
 /** TODO
   *
@@ -14,16 +47,19 @@ import java.util.function.Supplier
   * @since 2022/08/28
   *   21:04
   */
-class StringCommons[T: StrToOpt](value: T) {
+class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   import helper._
+  import privateUtils._
 
-  private def strToOpt[U: StrToOpt](t: U): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, U]
-    mapping.input(t).fold(Option(_), identity)
+  @inline private def strOpt: Option[String] = {
+    val toStrOpt = getMapper[T, Option[String]].func
+    toStrOpt(value)
   }
-
-  private def strOpt: Option[String] = strToOpt(value)
+  @inline private def strOrNull: String = {
+    val mapping = TypeMapping.getMapping[TypeMapping[*, (String, Option[String])], T]
+    mapping.input(value).fold(identity, _.orNull)
+  }
 
   /** * <p>Abbreviates a String using ellipses. This will turn "Now is the time for all good men" into "Now is the time for..."</p>
     *
@@ -56,7 +92,7 @@ class StringCommons[T: StrToOpt](value: T) {
     * @throws IllegalArgumentException
     *   if the width is too small
     */
-  def abbreviate(maxWidth: Int): Option[String] = Option(Strings.abbreviate(strOpt.orNull, maxWidth))
+  @inline def abbreviate(maxWidth: Int): Option[String] = Option(Strings.abbreviate(strOrNull, maxWidth))
 
   /** <p>Abbreviates a String using ellipses. This will turn "Now is the time for all good men" into "...is the time for..."</p>
     *
@@ -105,8 +141,7 @@ class StringCommons[T: StrToOpt](value: T) {
     * @throws IllegalArgumentException
     *   if the width is too small
     */
-  def abbreviate(offset: Int, maxWidth: Int): Option[String] =
-    Option(Strings.abbreviate(strOpt.orNull, offset, maxWidth))
+  @inline def abbreviate(offset: Int, maxWidth: Int): Option[String] = Option(Strings.abbreviate(strOrNull, offset, maxWidth))
 
   /** <p>Abbreviates a String using another given String as replacement marker. This will turn "Now is the time for all good men" into "Now
     * is the time for..." if "..." was defined as the replacement marker.</p>
@@ -151,8 +186,10 @@ class StringCommons[T: StrToOpt](value: T) {
     * @throws IllegalArgumentException
     *   if the width is too small
     */
-  def abbreviate[Abb: StrToOpt](abbrevMarker: Abb, maxWidth: Int): Option[String] =
-    Option(Strings.abbreviate(strOpt.orNull, strToOpt(abbrevMarker).orNull, maxWidth))
+  def abbreviate[Abb: TypeMapping[*, (String, Option[String])]](abbrevMarker: Abb, maxWidth: Int): Option[String] = {
+    val toStrOpt = getMapper[Abb, Option[String]].func.orNull
+    Option(Strings.abbreviate(strOrNull, toStrOpt(abbrevMarker), maxWidth))
+  }
 
   /** <p>Abbreviates a String using a given replacement marker. This will turn "Now is the time for all good men" into "...is the time
     * for..." if "..." was defined as the replacement marker.</p>
@@ -208,8 +245,10 @@ class StringCommons[T: StrToOpt](value: T) {
     * @throws IllegalArgumentException
     *   if the width is too small
     */
-  def abbreviate[Abb: StrToOpt](abbrevMarker: Abb, offset: Int, maxWidth: Int): Option[String] =
-    Option(Strings.abbreviate(strOpt.orNull, strToOpt(abbrevMarker).orNull, offset, maxWidth))
+  def abbreviate[Abb: TypeMapping[*, (String, Option[String])]](abbrevMarker: Abb, offset: Int, maxWidth: Int): Option[String] = {
+    val toStrOpt = getMapper[Abb, Option[String]].func.orNull
+    Option(Strings.abbreviate(strOrNull, toStrOpt(abbrevMarker), offset, maxWidth))
+  }
 
   /** <p>Abbreviates a String to the length passed, replacing the middle characters with the supplied replacement String.</p>
     *
@@ -242,8 +281,10 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   the abbreviated String if the above criteria is met, or the original String supplied for abbreviation.
     */
-  def abbreviateMiddle[M: StrToOpt](middle: M, length: Int): Option[String] =
-    Option(Strings.abbreviateMiddle(strOpt.orNull, strToOpt(middle).orNull, length))
+  def abbreviateMiddle[M: TypeMapping[*, (String, Option[String])]](middle: M, length: Int): Option[String] = {
+    val toStrOpt = getMapper[M, Option[String]].func.orNull
+    Option(Strings.abbreviateMiddle(strOrNull, toStrOpt(middle), length))
+  }
 
   /** Appends the suffix to the end of the string if the string does not already end with the suffix.
     *
@@ -256,8 +297,10 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   A new Option[String] if suffix was appended, the same string otherwise.
     */
-  def appendIfMissing[S: StrToOpt](suffix: S, suffixes: CharSequence*): Option[String] =
-    Option(Strings.appendIfMissing(strOpt.orNull, strToOpt(suffix).orNull, suffixes: _*))
+  def appendIfMissing[S: TypeMapping[*, (String, Option[String])]](suffix: S, suffixes: CharSequence*): Option[String] = {
+    val toStrOpt = getMapper[S, Option[String]].func.orNull
+    Option(Strings.appendIfMissing(strOrNull, toStrOpt(suffix), suffixes: _*))
+  }
 
   /** Appends the suffix to the end of the string if the string does not already end with any of the suffixes.
     *
@@ -312,8 +355,10 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   A new String if suffix was appended, the same string otherwise.
     */
-  def appendIfMissingIgnoreCase[S: StrToOpt](suffix: S, suffixes: CharSequence*): Option[String] =
-    Option(Strings.appendIfMissingIgnoreCase(strOpt.orNull, strToOpt(suffix).orNull, suffixes: _*))
+  def appendIfMissingIgnoreCase[S: TypeMapping[*, (String, Option[String])]](suffix: S, suffixes: CharSequence*): Option[String] = {
+    val toStrOpt = getMapper[S, Option[String]].func.orNull
+    Option(Strings.appendIfMissingIgnoreCase(strOrNull, toStrOpt(suffix), suffixes: _*))
+  }
 
   /** <p>Capitalizes a String changing the first character to title case as per {@link Character# toTitleCase ( int )}. No other characters
     * are changed.</p>
@@ -329,7 +374,7 @@ class StringCommons[T: StrToOpt](value: T) {
     * @see
     *   #uncapitalize(String)
     */
-  def capitalize: Option[String] = Option(Strings.capitalize(strOpt.orNull))
+  @inline def capitalize: Option[String] = Option(Strings.capitalize(strOrNull))
 
   /** <p>Centers a String in a larger String of size {@code size} using the space character (' ').</p>
     *
@@ -359,7 +404,7 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   centered Option[String], {@code None} if None input
     */
-  def center(size: Int): Option[String] = Option(Strings.center(strOpt.orNull, size))
+  @inline def center(size: Int): Option[String] = Option(Strings.center(strOrNull, size))
 
   /** <p>Centers a String in a larger String of size {@code size}. Uses a supplied character as the value to pad the String with.</p>
     *
@@ -391,8 +436,7 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   centered String, {@code null} if null String input
     */
-  def center(size: Int, padChar: Char): Option[String] =
-    Option(Strings.center(strOpt.orNull, size, padChar))
+  @inline def center(size: Int, padChar: Char): Option[String] = Option(Strings.center(strOrNull, size, padChar))
 
   /** <p>Centers a String in a larger String of size {@code size}. Uses a supplied character as the value to pad the String with.</p>
     *
@@ -412,8 +456,10 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   centered String, {@code None} if None input
     */
-  def center[P: StrToOpt](size: Int, padStr: P): Option[String] =
-    Option(Strings.center(strOpt.orNull, size, strToOpt(padStr).orNull))
+  def center[P: TypeMapping[*, (String, Option[String])]](size: Int, padStr: P): Option[String] = {
+    val toStrOpt = getMapper[P, Option[String]].func.orNull
+    Option(Strings.center(strOrNull, size, toStrOpt(padStr)))
+  }
 
   /** <p>Removes one newline from end of a String if it's there, otherwise leave it alone. A newline is &quot;{@code \n}&quot;, &quot;{@code
     * \r}&quot;, or &quot;{@code \r\n}&quot;.</p>
@@ -449,7 +495,7 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   Option[String] without newline, {@code None} if null String input
     */
-  def chomp: Option[String] = Option(Strings.chomp(strOpt.orNull))
+  def chomp: Option[String] = Option(Strings.chomp(strOrNull))
 
   /** <p>Remove the last character from a String.</p>
     *
@@ -484,7 +530,7 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   String without last character, {@code None} if None String input
     */
-  def chop: Option[String] = Option(Strings.chop(strOpt.orNull))
+  def chop: Option[String] = Option(Strings.chop(strOrNull))
 
   /** <p>Compare two Strings lexicographically, as per {@link String# compareTo ( String )}, returning :</p> <ul> <li>{@code int = 0}, if
     * {@code str1} is equal to {@code str2} (or both {@code null})</li> <li>{@code int < 0}, if {@code str1} is less than {@code str2}</li>
@@ -521,7 +567,10 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   &lt; 0, 0, &gt; 0, if {@code this} is respectively less, equal or greater than {@code other}
     */
-  def compare[O: StrToOpt](other: O): Int = Strings.compare(strOpt.orNull, strToOpt(other).orNull)
+  def compare[O: TypeMapping[*, (String, Option[String])]](other: O): Int = {
+    val toStrOpt = getMapper[O, Option[String]].func.orNull
+    Strings.compare(strOrNull, toStrOpt(other))
+  }
 
   /** <p>Compare two Strings lexicographically, as per {@link String# compareTo ( String )}, returning :</p> <ul> <li>{@code int = 0}, if
     * {@code str1} is equal to {@code str2} (or both {@code null})</li> <li>{@code int < 0}, if {@code str1} is less than {@code str2}</li>
@@ -565,8 +614,10 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   &lt; 0, 0, &gt; 0, if {@code this} is respectively less, equal ou greater than {@code other}
     */
-  def compare[O: StrToOpt](other: O, nullIsNull: Boolean): Int =
-    Strings.compare(strOpt.orNull, strToOpt(other).orNull, nullIsNull)
+  def compare[O: TypeMapping[*, (String, Option[String])]](other: O, nullIsNull: Boolean): Int = {
+    val toStrOpt = getMapper[O, Option[String]].func.orNull
+    Strings.compare(strOrNull, toStrOpt(other), nullIsNull)
+  }
 
   /** <p>Compare two Strings lexicographically, ignoring case differences, as per {@link String# compareToIgnoreCase ( String )}, returning
     * :</p> <ul> <li>{@code int = 0}, if {@code str1} is equal to {@code str2} (or both {@code null})</li> <li>{@code int < 0}, if {@code
@@ -608,8 +659,10 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   &lt; 0, 0, &gt; 0, if {@code this} is respectively less, equal ou greater than {@code other}, ignoring case differences.
     */
-  def compareIgnoreCase[O: StrToOpt](other: O): Int =
-    Strings.compareIgnoreCase(strOpt.orNull, strToOpt(other).orNull)
+  def compareIgnoreCase[O: TypeMapping[*, (String, Option[String])]](other: O): Int = {
+    val toStrOpt = getMapper[O, Option[String]].func.orNull
+    Strings.compareIgnoreCase(strOrNull, toStrOpt(other))
+  }
 
   /** <p>Compare two Strings lexicographically, ignoring case differences, as per {@link String# compareToIgnoreCase ( String )}, returning
     * :</p> <ul> <li>{@code int = 0}, if {@code str1} is equal to {@code str2} (or both {@code null})</li> <li>{@code int < 0}, if {@code
@@ -650,8 +703,10 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   &lt; 0, 0, &gt; 0, if {@code this} is respectively less, equal ou greater than {@code other}, ignoring case differences.
     */
-  def compareIgnoreCase[O: StrToOpt](other: O, nullIsLess: Boolean): Int =
-    Strings.compareIgnoreCase(strOpt.orNull, strToOpt(other).orNull, nullIsLess)
+  def compareIgnoreCase[O: TypeMapping[*, (String, Option[String])]](other: O, nullIsLess: Boolean): Int = {
+    val toStrOpt = getMapper[O, Option[String]].func.orNull
+    Strings.compareIgnoreCase(strOrNull, toStrOpt(other), nullIsLess)
+  }
 
   /** * <p>Checks if CharSequence contains a search CharSequence, handling {@code null}. This method uses {@link String# indexOf ( String )}
     * if possible.</p>
@@ -681,8 +736,11 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   true if the CharSequence contains the search CharSequence,
     */
-  def contains[To: StrToOpt](searchSeq: To): Boolean =
-    Strings.contains(strOpt.orNull, strToOpt(searchSeq).orNull)
+  def contains[To: TypeMapping[*, (String, Option[String])]](searchSeq: To): Boolean = {
+    val toStrOpt = getMapper[To, Option[String]].func.orNull
+    val str1     = toStrOpt(searchSeq)
+    Strings.contains(strOrNull, str1)
+  }
 
   /** <p>Checks if CharSequence contains a search character, handling {@code null}. This method uses {@link String# indexOf ( int )} if
     * possible.</p>
@@ -706,7 +764,7 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   true if the CharSequence contains the search character,
     */
-  def contains(searchChar: Char): Boolean = Strings.contains(strOpt.orNull, searchChar)
+  @inline def contains(searchChar: Char): Boolean = Strings.contains(strOrNull, searchChar)
 
   /** <p> Checks if the CharSequence contains any character or string in the given set of characters. </p>
     *
@@ -764,28 +822,28 @@ class StringCommons[T: StrToOpt](value: T) {
     *   the {@code true} if any of the chars are found, {@code false} if no match or null input
     */
   def containsAny[S: VarArgsOfCharOrString](searchArgs: S*): Boolean = {
-    if (searchArgs == null) {
-      return Strings.containsAny(strOpt.orNull, null)
-    }
-    val mapping = TypeMapping.getMapping[VarArgsOfCharOrString, S]
-    mapping
-      .input(searchArgs)
-      .fold(
-        chars => Strings.containsAny(strOpt.orNull, chars: _*),
-        css =>
-          if (css.length == 1) {
-            Strings.containsAny(strOpt.orNull, css.head)
-          } else {
-            Strings.containsAny(strOpt.orNull, css: _*)
-          },
-        chars => Strings.containsAny(strOpt.orNull, chars.filter(_.isDefined).map(_.get): _*),
-        oss =>
-          if (oss.length == 1) {
-            Strings.containsAny(strOpt.orNull, oss.head.orNull)
-          } else {
-            Strings.containsAny(strOpt.orNull, oss.map(_.orNull): _*)
-          }
-      )
+    def dealWithSeqChar(chars: Seq[Char]): Boolean = Strings.containsAny(strOrNull, chars.toArray[Char]: _*)
+
+    def dealWithSeqCharSequence(css: Seq[CharSequence]): Boolean = if (css.length == 1)
+      Strings.containsAny(strOrNull, css.head)
+    else
+      Strings.containsAny(strOrNull, css: _*)
+
+    def mapping             = TypeMapping.getMapping[VarArgsOfCharOrString, S]
+    def charOptSeqMapper    = getMapper[Seq[Option[Char]], Seq[Char]].func
+    def charSeqOptSeqMapper = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
+
+    if (searchArgs == null)
+      Strings.containsAny(strOrNull, null)
+    else
+      mapping
+        .input(searchArgs)
+        .fold(
+          dealWithSeqChar,
+          dealWithSeqCharSequence,
+          charOptSeqMapper.andThen(dealWithSeqChar),
+          charSeqOptSeqMapper.andThen(dealWithSeqCharSequence)
+        )
   }
 
   /** <p> Checks if the CharSequence contains any of the CharSequences in the given array, ignoring case. </p>
@@ -844,16 +902,19 @@ class StringCommons[T: StrToOpt](value: T) {
     *   {@code true} if any of the search CharSequences are found, {@code false} otherwise
     */
   def containsAnyIgnoreCase[S: VarArgsOfString](searchArgs: S*): Boolean = {
-    if (searchArgs == null) {
-      return Strings.equalsAnyIgnoreCase(strOpt.orNull, null)
-    }
-    val mapping = TypeMapping.getMapping[VarArgsOfString, S]
-    mapping
-      .input(searchArgs)
-      .fold(
-        strs => Strings.containsAnyIgnoreCase(strOpt.orNull, strs: _*),
-        oss => Strings.containsAnyIgnoreCase(strOpt.orNull, oss.map(_.orNull): _*)
-      )
+    def dealWithSeqCharSeq(strs: Seq[CharSequence]) = Strings.containsAnyIgnoreCase(strOrNull, strs: _*)
+    def mapping                                     = TypeMapping.getMapping[VarArgsOfString, S]
+    def charSeqSeqOptMappper                        = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
+
+    if (searchArgs == null)
+      Strings.equalsAnyIgnoreCase(strOrNull, null)
+    else
+      mapping
+        .input(searchArgs)
+        .fold(
+          dealWithSeqCharSeq,
+          charSeqSeqOptMappper.andThen(dealWithSeqCharSeq)
+        )
   }
 
   /** <p>Checks if CharSequence contains a search CharSequence irrespective of case, handling {@code null}. Case-insensitivity is defined as
@@ -888,8 +949,10 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   true if the CharSequence contains the search CharSequence irrespective of case or false if not or {@code null} string input
     */
-  def containsIgnoreCase[S: StrToOpt](searchStr: S): Boolean =
-    Strings.containsIgnoreCase(strOpt.orNull, strToOpt(searchStr).orNull)
+  def containsIgnoreCase[S: TypeMapping[*, (String, Option[String])]](searchStr: S): Boolean = {
+    val toStrOrNull = getMapper[S, Option[String]].func.orNull
+    Strings.containsIgnoreCase(strOrNull, toStrOrNull(searchStr))
+  }
 
   /** <p> Checks that the CharSequence does not contain certain characters. </p>
     *
@@ -921,8 +984,7 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   true if it contains none of the invalid chars, or is null
     */
-  def containsNone(invalidChars: String): Boolean =
-    Strings.containsNone(strOpt.orNull, invalidChars)
+  @inline def containsNone(invalidChars: String): Boolean = Strings.containsNone(strOrNull, invalidChars)
 
   /** <p> Checks that the CharSequence does not contain certain option characters. </p>
     *
@@ -954,8 +1016,7 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   true if it contains none of the invalid chars, or is null
     */
-  def containsNone(invalidChars: Option[String]): Boolean =
-    Strings.containsNone(strOpt.orNull, invalidChars.orNull)
+  @inline def containsNone(invalidChars: Option[String]): Boolean = Strings.containsNone(strOrNull, invalidChars.orNull)
 
   /** <p>Checks that the CharSequence does not contain certain characters.</p>
     *
@@ -988,13 +1049,10 @@ class StringCommons[T: StrToOpt](value: T) {
     *   true if it contains none of the invalid chars, or is null
     */
   def containsNone[I: VarArgsOfChar](invalidChars: I*): Boolean = {
-    val mapping = TypeMapping.getMapping[VarArgsOfChar, I]
-    mapping
-      .input(invalidChars)
-      .fold(
-        chars => Strings.containsNone(strOpt.orNull, chars: _*),
-        ocs => Strings.containsNone(strOpt.orNull, ocs.filter(_.isDefined).map(_.get): _*)
-      )
+    def dealWithSeqChar(chars: Seq[Char]): Boolean = Strings.containsNone(strOrNull, chars: _*)
+    def charSeqMapper                              = getMapper[Seq[Option[Char]], Seq[Char]].func
+    val mapping                                    = TypeMapping.getMapping[VarArgsOfChar, I]
+    mapping.input(invalidChars).fold(dealWithSeqChar, charSeqMapper.andThen(dealWithSeqChar))
   }
 
   /** <p>Checks if the CharSequence contains only certain characters.</p>
@@ -1025,8 +1083,7 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   true if it only contains valid chars and is non-null
     */
-  def containsOnly(validChars: String): Boolean =
-    Strings.containsOnly(strOpt.orNull, validChars)
+  @inline def containsOnly(validChars: String): Boolean = Strings.containsOnly(strOrNull, validChars)
 
   /** <p>Checks if the CharSequence contains only certain option characters.</p>
     *
@@ -1056,8 +1113,7 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   true if it only contains valid chars and is non-null
     */
-  def containsOnly(validChars: Option[String]): Boolean =
-    Strings.containsOnly(strOpt.orNull, validChars.orNull)
+  def containsOnly(validChars: Option[String]): Boolean = Strings.containsOnly(strOrNull, validChars.orNull)
 
   /** <p>Checks if the CharSequence contains only certain characters.</p>
     *
@@ -1089,13 +1145,10 @@ class StringCommons[T: StrToOpt](value: T) {
     *   true if it only contains valid chars and is non-null
     */
   def containsOnly[V: VarArgsOfChar](valid: V*): Boolean = {
-    val mapping = TypeMapping.getMapping[VarArgsOfChar, V]
-    mapping
-      .input(valid)
-      .fold(
-        chars => Strings.containsOnly(strOpt.orNull, chars: _*),
-        ocs => Strings.containsOnly(strOpt.orNull, ocs.filter(_.isDefined).map(_.get): _*)
-      )
+    val mapping                           = TypeMapping.getMapping[VarArgsOfChar, V]
+    val charSeqMapper                     = getMapper[Seq[Option[Char]], Seq[Char]].func
+    def dealWithSeqChar(chars: Seq[Char]) = Strings.containsOnly(strOrNull, chars: _*)
+    mapping.input(valid).fold(dealWithSeqChar, charSeqMapper.andThen(dealWithSeqChar))
   }
 
   /** <p>Check whether the given CharSequence contains any whitespace characters.</p>
@@ -1105,193 +1158,162 @@ class StringCommons[T: StrToOpt](value: T) {
     * @return
     *   if the CharSequence is not empty and contains at least 1 (breaking) whitespace character
     */
-  def containsWhitespace: Boolean = Strings.containsWhitespace(strOpt.orNull)
+  def containsWhitespace: Boolean = Strings.containsWhitespace(strOrNull)
 
-  def countMatches(ch: Char): Int = Strings.countMatches(strOpt.orNull, ch)
+  def countMatches(ch: Char): Int = Strings.countMatches(strOrNull, ch)
 
-  def countMatches[S: StrToOpt](sub: S): Int = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    mapping
-      .input(sub)
-      .fold(
-        sub => Strings.countMatches(strOpt.orNull, sub),
-        os => Strings.countMatches(strOpt.orNull, os.orNull)
-      )
+  def countMatches[S: TypeMapping[*, (String, Option[String])]](sub: S): Int = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(sub)
+    Strings.countMatches(strOrNull, str1)
   }
 
-  def defaultIfBlank[S: StrToOpt](defaultStr: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val result = mapping
-      .input(defaultStr)
-      .fold(
-        str => Strings.defaultIfBlank(strOpt.orNull, str),
-        os => Strings.defaultIfBlank(strOpt.orNull, os.orNull)
-      )
+  def defaultIfBlank[S: TypeMapping[*, (String, Option[String])]](defaultStr: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(defaultStr)
+    val result = Strings.defaultIfBlank(strOrNull, str1)
     Option(result)
   }
 
-  def defaultIfEmpty[S: StrToOpt](defaultStr: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val result = mapping
-      .input(defaultStr)
-      .fold(
-        str => Strings.defaultIfEmpty(strOpt.orNull, str),
-        os => Strings.defaultIfEmpty(strOpt.orNull, os.orNull)
-      )
+  def defaultIfEmpty[S: TypeMapping[*, (String, Option[String])]](defaultStr: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(defaultStr)
+    val result = Strings.defaultIfEmpty(strOrNull, str1)
     Option(result)
   }
 
-  def defaultString: String = Strings.defaultString(strOpt.orNull)
+  def defaultString: String = Strings.defaultString(strOrNull)
 
-  def defaultString[S: StrToOpt](defaultStr: S): String = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val result = mapping
-      .input(defaultStr)
-      .fold(
-        str => Strings.defaultString(strOpt.orNull, str),
-        os => Strings.defaultString(strOpt.orNull, os.orNull)
-      )
+  def defaultString[S: TypeMapping[*, (String, Option[String])]](defaultStr: S): String = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(defaultStr)
+    val result = Strings.defaultString(strOrNull, str1)
     result
   }
 
-  def orDefault: Option[String] = Some(Strings.defaultString(strOpt.orNull))
+  def orDefault: Option[String] = Some(Strings.defaultString(strOrNull))
 
-  def orDefault[S: StrToOpt](defaultStr: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val result = mapping
-      .input(defaultStr)
-      .fold(
-        str => Strings.defaultString(strOpt.orNull, str),
-        os => Strings.defaultString(strOpt.orNull, os.orNull)
-      )
+  def orDefault[S: TypeMapping[*, (String, Option[String])]](defaultStr: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(defaultStr)
+    val result = Strings.defaultString(strOrNull, str1)
     Option(result)
   }
 
   def deleteWhitespace(): Option[String] = strOpt.map(Strings.deleteWhitespace)
 
-  def difference[S: StrToOpt](other: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val result = mapping
-      .input(other)
-      .fold(
-        str => Strings.difference(strOpt.orNull, str),
-        os => Strings.difference(strOpt.orNull, os.orNull)
-      )
+  def difference[S: TypeMapping[*, (String, Option[String])]](other: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(other)
+    val result = Strings.difference(strOrNull, str1)
     Option(result)
   }
 
-  def endsWith[S: StrToOpt](suffix: S): Boolean = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    mapping
-      .input(suffix)
-      .fold(
-        str => Strings.endsWith(strOpt.orNull, str),
-        os => Strings.endsWith(strOpt.orNull, os.orNull)
-      )
+  def endsWith[S: TypeMapping[*, (String, Option[String])]](suffix: S): Boolean = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(suffix)
+    Strings.endsWith(strOrNull, str1)
   }
 
   def endWithAny[S: VarArgsOfString](searchStrings: S*): Boolean = {
-    if (searchStrings == null) {
-      return Strings.endsWithAny(strOpt.orNull, null)
-    }
+    def mapping                                    = TypeMapping.getMapping[VarArgsOfString, S]
+    def mapperSeqString                            = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
+    def dealWithSeqString(strs: Seq[CharSequence]) = Strings.endsWithAny(strOrNull, strs: _*)
 
-    val mapping = TypeMapping.getMapping[VarArgsOfString, S]
-    mapping
-      .input(searchStrings)
-      .fold(
-        strs => Strings.endsWithAny(strOpt.orNull, strs: _*),
-        os => Strings.endsWithAny(strOpt.orNull, os.map(_.orNull): _*)
-      )
+    if (searchStrings == null)
+      Strings.endsWithAny(strOrNull, null)
+    else
+      mapping.input(searchStrings).fold(dealWithSeqString, mapperSeqString.andThen(dealWithSeqString))
   }
 
   def equalsAnyIgnoreCase[S: VarArgsOfString](searchStrings: S*): Boolean = {
-    if (searchStrings == null) {
-      return Strings.equalsAnyIgnoreCase(strOpt.orNull, null)
-    }
+    def mapping                                    = TypeMapping.getMapping[VarArgsOfString, S]
+    def mapperSeqString                            = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
+    def dealWithSeqString(strs: Seq[CharSequence]) = Strings.equalsAnyIgnoreCase(strOrNull, strs: _*)
 
-    val mapping = TypeMapping.getMapping[VarArgsOfString, S]
-    mapping
-      .input(searchStrings)
-      .fold(
-        strs => Strings.equalsAnyIgnoreCase(strOpt.orNull, strs: _*),
-        os => Strings.equalsAnyIgnoreCase(strOpt.orNull, os.map(_.orNull): _*)
-      )
+    if (searchStrings == null)
+      Strings.equalsAnyIgnoreCase(strOrNull, null)
+    else
+      mapping.input(searchStrings).fold(dealWithSeqString, mapperSeqString.andThen(dealWithSeqString))
   }
 
-  def equalsIgnoreCase[S: StrToOpt](other: S): Boolean = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    mapping
-      .input(other)
-      .fold(
-        str => Strings.equalsIgnoreCase(strOpt.orNull, str),
-        os => Strings.equalsIgnoreCase(strOpt.orNull, os.orNull)
-      )
+  def equalsIgnoreCase[S: TypeMapping[*, (String, Option[String])]](other: S): Boolean = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(other)
+    Strings.equalsIgnoreCase(strOrNull, str1)
   }
 
-  def getBytes[C: CharsetOrName](charset: C): Array[Byte] = {
-    val mapping = TypeMapping.getMapping[CharsetOrName, C]
+  def getBytes[C: TypeMapping[*, (Charset, Option[Charset], String, Option[String])]](charset: C): Array[Byte] = {
+    val mapping = TypeMapping.getMapping[TypeMapping[*, (Charset, Option[Charset], String, Option[String])], C]
+
+    def dealWithCharsetOptFunc(c: Charset): Array[Byte] = Strings.getBytes(strOrNull, c)
+    def dealWithStringOptFunc(c: String): Array[Byte]   = Strings.getBytes(strOrNull, c)
+    def dealWithCharsetOpt                              = dealWithCharsetOptFunc _
+    def dealWithStringOpt                               = dealWithStringOptFunc _
+
     mapping
       .input(charset)
       .fold(
-        chs => Strings.getBytes(strOpt.orNull, chs),
-        ochs => Strings.getBytes(strOpt.orNull, ochs.orNull),
-        name => Strings.getBytes(strOpt.orNull, name),
-        optn => Strings.getBytes(strOpt.orNull, optn.orNull)
+        dealWithCharsetOpt,
+        dealWithCharsetOpt.compose(_.orNull),
+        dealWithStringOpt,
+        dealWithStringOpt.compose(_.orNull)
       )
   }
 
-  def getDigits: String =
-    Strings.getDigits(strOpt.orNull)
+  def getDigits: String = Strings.getDigits(strOrNull)
 
-  def getIfBlank(defaultSupplier: Supplier[String]): String =
-    Strings.getIfBlank(strOpt.orNull, defaultSupplier)
+  def getIfBlank(defaultSupplier: Supplier[String]): String = Strings.getIfBlank(strOrNull, defaultSupplier)
 
-  def getIfEmpty(defaultSupplier: Supplier[String]): String =
-    Strings.getIfEmpty(strOpt.orNull, defaultSupplier)
+  def getIfEmpty(defaultSupplier: Supplier[String]): String = Strings.getIfEmpty(strOrNull, defaultSupplier)
 
-  def indexOf[S: StrToOpt](searchSeq: S): Int = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    mapping
-      .input(searchSeq)
-      .fold(
-        strs => Strings.indexOf(strOpt.orNull, strs),
-        os => Strings.indexOf(strOpt.orNull, os.orNull)
-      )
+  def indexOf[S: TypeMapping[*, (String, Option[String])]](searchSeq: S): Int = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(searchSeq)
+    Strings.indexOf(strOrNull, str1)
   }
 
-  def indexOf(searchChar: Char): Int = Strings.indexOf(strOpt.orNull, searchChar)
+  def indexOf(searchChar: Char): Int = Strings.indexOf(strOrNull, searchChar)
 
   def indexOfAny[S: VarArgsOfCharOrString](searchArgs: S*): Int = {
-    if (searchArgs == null) {
-      return Strings.indexOfAny(strOpt.orNull, null)
-    }
-    if (searchArgs.length == 1) {
-      searchArgs.head match {
-        case c: Char   => Strings.indexOfAny(strOpt.orNull, c)
-        case s: String => Strings.indexOfAny(strOpt.orNull, s)
-        case opt: Option[_] =>
-          opt match {
-            case Some(c: Char)     => Strings.indexOfAny(strOpt.orNull, c)
-            case Some(str: String) => Strings.indexOfAny(strOpt.orNull, str)
-            case _                 => Strings.indexOfAny(strOpt.orNull, null)
-          }
-      }
-    }
+    def mapping = TypeMapping.getMapping[VarArgsOfCharOrString, S]
+    val mapping2 =
+      TypeMapping.getMapping[TypeMapping[*, (Char, CharSequence, Option[Char], Option[SeqCharSequence])], S](mapping.asInstanceOf)
+    def indexOfNull = Strings.indexOfAny(strOrNull, null)
 
-    val mapping = TypeMapping.getMapping[VarArgsOfCharOrString, S]
-    mapping
-      .input(searchArgs)
-      .fold(
-        chars => Strings.indexOfAny(strOpt.orNull, chars: _*),
-        strings => Strings.indexOfAny(strOpt.orNull, strings: _*),
-        ocs => Strings.indexOfAny(strOpt.orNull, ocs.filter(_.isDefined).map(_.get): _*),
-        oss => Strings.indexOfAny(strOpt.orNull, oss.map(_.orNull): _*)
-      )
+    def mapperSeqChar   = getMapper[Seq[Option[Char]], Seq[Char]].func
+    def mapperSeqString = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
+
+    def dealWithSeqChar(chars: Seq[Char])             = Strings.indexOfAny(strOrNull, chars: _*)
+    def dealWithSeqString(strings: Seq[CharSequence]) = Strings.indexOfAny(strOrNull, strings: _*)
+    def dealWithChar(char: Char)                      = Strings.indexOfAny(strOrNull, char)
+    def dealWithString(string: CharSequence)          = Strings.indexOfAny(strOrNull, string)
+
+    if (searchArgs == null) indexOfNull
+    else if (searchArgs.length == 1)
+      mapping2
+        .input(searchArgs.head)
+        .fold(
+          dealWithChar,
+          dealWithString,
+          opt => opt.map(dealWithChar).getOrElse(indexOfNull),
+          opt => opt.map(dealWithString).getOrElse(indexOfNull)
+        )
+    else
+      mapping
+        .input(searchArgs)
+        .fold(
+          dealWithSeqChar,
+          dealWithSeqString,
+          mapperSeqChar.andThen(dealWithSeqChar),
+          mapperSeqString.andThen(dealWithSeqString)
+        )
   }
 
+  // 实现存疑，Tag，osc.head.get 可能抛异常
   def indexOfAnyBut[S: VarArgsOfChar](searchChars: S*): Int = {
     if (searchChars == null) {
-      return Strings.indexOfAnyBut(strOpt.orNull, null)
+      return Strings.indexOfAnyBut(strOrNull, null)
     }
 
     val mapping = TypeMapping.getMapping[VarArgsOfChar, S]
@@ -1299,549 +1321,537 @@ class StringCommons[T: StrToOpt](value: T) {
       .input(searchChars)
       .fold(
         chars =>
-          if (chars.length == 1) { Strings.indexOfAnyBut(strOpt.orNull, chars.head) }
-          else { Strings.indexOfAnyBut(strOpt.orNull, chars: _*) },
+          if (chars.length == 1) { Strings.indexOfAnyBut(strOrNull, chars.head) }
+          else { Strings.indexOfAnyBut(strOrNull, chars: _*) },
         ocs =>
-          if (ocs.length == 1) { Strings.indexOfAnyBut(strOpt.orNull, ocs.head.get) }
-          else { Strings.indexOfAnyBut(strOpt.orNull, ocs.filter(_.isDefined).map(_.get): _*) }
+          if (ocs.length == 1) { Strings.indexOfAnyBut(strOrNull, ocs.head.get) }
+          else { Strings.indexOfAnyBut(strOrNull, ocs.filter(_.isDefined).map(_.get): _*) }
       )
   }
 
-  def indexOfDifference[S: StrToOpt](cs: S): Int = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    mapping
-      .input(cs)
-      .fold(
-        str => Strings.indexOfDifference(strOpt.orNull, str),
-        os => Strings.indexOfDifference(strOpt.orNull, os.orNull)
-      )
+  def indexOfDifference[S: TypeMapping[*, (String, Option[String])]](cs: S): Int = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(cs)
+    Strings.indexOfDifference(strOrNull, str1)
   }
 
-  def indexOfIgnoreCase[S: StrToOpt](searchStr: S): Int = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    mapping
-      .input(searchStr)
-      .fold(
-        str => Strings.indexOfIgnoreCase(strOpt.orNull, str),
-        os => Strings.indexOfIgnoreCase(strOpt.orNull, os.orNull)
-      )
+  def indexOfIgnoreCase[S: TypeMapping[*, (String, Option[String])]](searchStr: S): Int = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(searchStr)
+    Strings.indexOfIgnoreCase(strOrNull, str1)
   }
 
-  def indexOfIgnoreCase[S: StrToOpt](searchStr: S, startPos: Int): Int = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    mapping
-      .input(searchStr)
-      .fold(
-        str => Strings.indexOfIgnoreCase(strOpt.orNull, str, startPos),
-        os => Strings.indexOfIgnoreCase(strOpt.orNull, os.orNull, startPos)
-      )
+  def indexOfIgnoreCase[S: TypeMapping[*, (String, Option[String])]](searchStr: S, startPos: Int): Int = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(searchStr)
+    Strings.indexOfIgnoreCase(strOrNull, str1, startPos)
   }
 
-  def isAlpha: Boolean = Strings.isAlpha(strOpt.orNull)
+  def isAlpha: Boolean = Strings.isAlpha(strOrNull)
 
-  def isAlphanumeric: Boolean = Strings.isAlphanumeric(strOpt.orNull)
+  def isAlphanumeric: Boolean = Strings.isAlphanumeric(strOrNull)
 
-  def isAlphanumericSpace: Boolean = Strings.isAlphanumericSpace(strOpt.orNull)
+  def isAlphanumericSpace: Boolean = Strings.isAlphanumericSpace(strOrNull)
 
-  def isAlphaSpace: Boolean = Strings.isAlphaSpace(strOpt.orNull)
+  def isAlphaSpace: Boolean = Strings.isAlphaSpace(strOrNull)
 
-  def isAsciiPrintable: Boolean = Strings.isAsciiPrintable(strOpt.orNull)
+  def isAsciiPrintable: Boolean = Strings.isAsciiPrintable(strOrNull)
 
-  def isBlank: Boolean = Strings.isBlank(strOpt.orNull)
+  def isBlank: Boolean = Strings.isBlank(strOrNull)
 
-  def isEmpty: Boolean = Strings.isEmpty(strOpt.orNull)
+  def isEmpty: Boolean = Strings.isEmpty(strOrNull)
 
-  def isMixedCase: Boolean = Strings.isMixedCase(strOpt.orNull)
+  def isMixedCase: Boolean = Strings.isMixedCase(strOrNull)
 
-  def isNotBlank: Boolean = Strings.isNotBlank(strOpt.orNull)
+  def isNotBlank: Boolean = Strings.isNotBlank(strOrNull)
 
-  def isNotEmpty: Boolean = Strings.isNotEmpty(strOpt.orNull)
+  def isNotEmpty: Boolean = Strings.isNotEmpty(strOrNull)
 
-  def isNumeric: Boolean = Strings.isNumeric(strOpt.orNull)
+  def isNumeric: Boolean = Strings.isNumeric(strOrNull)
 
-  def isNumericSpace: Boolean = Strings.isNumericSpace(strOpt.orNull)
+  def isNumericSpace: Boolean = Strings.isNumericSpace(strOrNull)
 
-  def isWhitespace: Boolean = Strings.isWhitespace(strOpt.orNull)
+  def isWhitespace: Boolean = Strings.isWhitespace(strOrNull)
 
-  def join(arr: Array[Object]): String = Strings.join(arr, strOpt.orNull)
+  def join(arr: Array[Object]): String = Strings.join(arr, strOrNull)
 
   def joinWith(objs: Object*): String = {
-    if (objs == null) {
-      return Strings.joinWith(strOpt.orNull, null)
-    }
-    Strings.joinWith(strOpt.orNull, objs: _*)
+    if (objs == null)
+      Strings.joinWith(strOrNull, null)
+    else
+      Strings.joinWith(strOrNull, objs: _*)
   }
 
-  def lastIndexOf[S: CharOrString](searchArg: S): Int = {
-    val mapping = TypeMapping.getMapping[CharOrString, S]
+  def lastIndexOf[S: TypeMapping[*, (Char, String, Option[String])]](searchArg: S): Int = {
+    val mapping = TypeMapping.getMapping[TypeMapping[*, (Char, String, Option[String])], S]
     mapping
       .input(searchArg)
       .fold(
-        ch => Strings.lastIndexOf(strOpt.orNull, ch),
-        str => Strings.lastIndexOf(strOpt.orNull, str),
-        ostr => Strings.indexOf(strOpt.orNull, ostr.orNull)
+        ch => Strings.lastIndexOf(strOrNull, ch),
+        str => Strings.lastIndexOf(strOrNull, str),
+        ostr => Strings.indexOf(strOrNull, ostr.orNull)
       )
   }
 
-  def lastIndexOf[S: CharOrString](searchArg: S, startPos: Int): Int = {
-    val mapping = TypeMapping.getMapping[CharOrString, S]
+  def lastIndexOf[S: TypeMapping[*, (Char, String, Option[String])]](searchArg: S, startPos: Int): Int = {
+    val mapping = TypeMapping.getMapping[TypeMapping[*, (Char, String, Option[String])], S]
     mapping
       .input(searchArg)
       .fold(
-        ch => Strings.lastIndexOf(strOpt.orNull, ch, startPos),
-        str => Strings.lastIndexOf(strOpt.orNull, str, startPos),
-        ostr => Strings.indexOf(strOpt.orNull, ostr.orNull, startPos)
+        ch => Strings.lastIndexOf(strOrNull, ch, startPos),
+        str => Strings.lastIndexOf(strOrNull, str, startPos),
+        ostr => Strings.indexOf(strOrNull, ostr.orNull, startPos)
       )
   }
 
   def lastIndexOfAny[S: VarArgsOfString](searchArgs: S*): Int = {
-    if (searchArgs == null) {
-      return Strings.lastIndexOfAny(strOpt.orNull, null)
-    }
-    val mapping = TypeMapping.getMapping[VarArgsOfString, S]
-    mapping
-      .input(searchArgs)
-      .fold(
-        strs => Strings.lastIndexOfAny(strOpt.orNull, strs: _*),
-        ostrs => Strings.lastIndexOfAny(strOpt.orNull, ostrs.map(_.orNull): _*)
-      )
+    def mapping      = TypeMapping.getMapping[VarArgsOfString, S]
+    def seqOptMapper = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
+
+    def dealWithCharSeqSeq(strs: Seq[CharSequence]) = Strings.lastIndexOfAny(strOrNull, strs: _*)
+
+    def result = mapping.input(searchArgs).fold(dealWithCharSeqSeq, seqOptMapper.andThen(dealWithCharSeqSeq))
+
+    if (searchArgs == null)
+      Strings.lastIndexOfAny(strOrNull, null)
+    else result
   }
 
-  def lastIndexOfIgnoreCase[S: StrToOpt](searchStr: S): Int = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    mapping
-      .input(searchStr)
-      .fold(
-        str => Strings.lastIndexOfIgnoreCase(strOpt.orNull, str),
-        ostr => Strings.lastIndexOfIgnoreCase(strOpt.orNull, ostr.orNull)
-      )
+  def lastIndexOfIgnoreCase[S: TypeMapping[*, (String, Option[String])]](searchStr: S): Int = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(searchStr)
+    Strings.lastIndexOfIgnoreCase(strOrNull, str1)
   }
 
-  def lastIndexOfIgnoreCase[S: StrToOpt](searchStr: S, startPos: Int): Int = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    mapping
-      .input(searchStr)
-      .fold(
-        str => Strings.lastIndexOfIgnoreCase(strOpt.orNull, str, startPos),
-        ostr => Strings.lastIndexOfIgnoreCase(strOpt.orNull, ostr.orNull, startPos)
-      )
+  def lastIndexOfIgnoreCase[S: TypeMapping[*, (String, Option[String])]](searchStr: S, startPos: Int): Int = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(searchStr)
+    Strings.lastIndexOfIgnoreCase(strOrNull, str1, startPos)
   }
 
-  def lastOrdinalIndexOf[S: StrToOpt](searchStr: S, ordinal: Int): Int = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    mapping
-      .input(searchStr)
-      .fold(
-        str => Strings.lastOrdinalIndexOf(strOpt.orNull, str, ordinal),
-        ostr => Strings.lastOrdinalIndexOf(strOpt.orNull, ostr.orNull, ordinal)
-      )
+  def lastOrdinalIndexOf[S: TypeMapping[*, (String, Option[String])]](searchStr: S, ordinal: Int): Int = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(searchStr)
+    Strings.lastOrdinalIndexOf(strOrNull, str1, ordinal)
   }
 
-  def left(len: Int): Option[String] = Option(Strings.left(strOpt.orNull, len))
+  def left(len: Int): Option[String] = Option(Strings.left(strOrNull, len))
 
-  def leftPad(size: Int): Option[String] = Option(Strings.leftPad(strOpt.orNull, size))
+  def leftPad(size: Int): Option[String] = Option(Strings.leftPad(strOrNull, size))
 
-  def leftPad(size: Int, padChar: Char): Option[String] = Option(Strings.leftPad(strOpt.orNull, size, padChar))
+  def leftPad(size: Int, padChar: Char): Option[String] = Option(Strings.leftPad(strOrNull, size, padChar))
 
-  def leftPad[P: StrToOpt](size: Int, padStr: P): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, P]
-    val ps      = mapping.input(padStr).fold(identity, _.orNull)
-    Option(Strings.leftPad(strOpt.orNull, size, ps))
+  def leftPad[P: TypeMapping[*, (String, Option[String])]](size: Int, padStr: P): Option[String] = {
+    val mapper = getMapper[P, Option[String]].func.orNull
+    val ps     = mapper(padStr)
+    Option(Strings.leftPad(strOrNull, size, ps))
   }
 
-  def length: Int = Strings.length(strOpt.orNull)
+  def length: Int = Strings.length(strOrNull)
 
-  def lowerCase: Option[String] = Option(Strings.lowerCase(strOpt.orNull))
+  def lowerCase: Option[String] = Option(Strings.lowerCase(strOrNull))
 
-  def lowerCase(locale: Locale): Option[String] = Option(Strings.lowerCase(strOpt.orNull, locale))
+  def lowerCase(locale: Locale): Option[String] = Option(Strings.lowerCase(strOrNull, locale))
 
-  def mid(pos: Int, len: Int): String = Strings.mid(strOpt.orNull, pos, len)
+  def mid(pos: Int, len: Int): String = Strings.mid(strOrNull, pos, len)
 
-  def normalizeSpace: String = Strings.normalizeSpace(strOpt.orNull)
+  def normalizeSpace: String = Strings.normalizeSpace(strOrNull)
 
-  def ordinalIndexOf[S: StrToOpt](searchStr: S, ordinal: Int): Int = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    mapping
-      .input(searchStr)
-      .fold(
-        str => Strings.ordinalIndexOf(strOpt.orNull, str, ordinal),
-        ostr => Strings.ordinalIndexOf(strOpt.orNull, ostr.orNull, ordinal)
-      )
+  def ordinalIndexOf[S: TypeMapping[*, (String, Option[String])]](searchStr: S, ordinal: Int): Int = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(searchStr)
+    Strings.ordinalIndexOf(strOrNull, str1, ordinal)
   }
 
-  def overlay[O: StrToOpt](overlay: O, start: Int, end: Int): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, O]
-    val result = mapping
-      .input(overlay)
-      .fold(
-        str => Strings.overlay(strOpt.orNull, str, start, end),
-        ostr => Strings.overlay(strOpt.orNull, ostr.orNull, start, end)
-      )
-    Option(result)
+  def overlay[O: TypeMapping[*, (String, Option[String])]](overlay: O, start: Int, end: Int): Option[String] = {
+    val mapper  = getMapper[O, Option[String]].func.orNull
+    val str1    = mapper(overlay)
+    val result2 = Strings.overlay(strOrNull, str1, start, end)
+    Option(result2)
   }
 
-  def prependIfMissing[P: StrToOpt, Ps: VarArgsOfString](prefix: P, prefixes: Ps*): Option[String] = {
-    val prefixMapping = TypeMapping.getMapping[StrToOpt, P]
-    val prefixStr     = prefixMapping.input(prefix).fold(identity, _.orNull)
-    if (prefixes == null) {
-      return Option(Strings.prependIfMissing(strOpt.orNull, prefixStr, null))
-    }
-    val prefixesMapping = TypeMapping.getMapping[VarArgsOfString, Ps]
-    val result = prefixesMapping
-      .input(prefixes)
-      .fold(
-        strs => Strings.prependIfMissing(strOpt.orNull, prefixStr, strs: _*),
-        ostrs => Strings.prependIfMissing(strOpt.orNull, prefixStr, ostrs.map(_.orNull): _*)
-      )
-    Option(result)
+  def prependIfMissing[P: TypeMapping[*, (String, Option[String])], Ps: VarArgsOfString](prefix: P, prefixes: Ps*): Option[String] = {
+    def prefixMapper = getMapper[P, Option[String]].func.orNull
+    def prefixStr    = prefixMapper(prefix)
+
+    def prefixesMapping                             = TypeMapping.getMapping[VarArgsOfString, Ps]
+    def getCharSeqOptionMapper                      = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
+    def dealWithCharSeqSeq(strs: Seq[CharSequence]) = Strings.prependIfMissing(strOrNull, prefixStr, strs: _*)
+
+    def result = prefixesMapping.input(prefixes).fold(dealWithCharSeqSeq, getCharSeqOptionMapper.andThen(dealWithCharSeqSeq))
+
+    if (prefixes == null)
+      Option(Strings.prependIfMissing(strOrNull, prefixStr, null))
+    else Option(result)
   }
 
-  def prependIfMissingIgnoreCase[P: StrToOpt, Ps: VarArgsOfString](prefix: P, prefixes: Ps*): Option[String] = {
-    val prefixMapping = TypeMapping.getMapping[StrToOpt, P]
-    val prefixStr     = prefixMapping.input(prefix).fold(identity, _.orNull)
-    if (prefixes == null) {
-      return Option(Strings.prependIfMissingIgnoreCase(strOpt.orNull, prefixStr, null))
-    }
-    val prefixesMapping = TypeMapping.getMapping[VarArgsOfString, Ps]
-    val result = prefixesMapping
-      .input(prefixes)
-      .fold(
-        strs => Strings.prependIfMissingIgnoreCase(strOpt.orNull, prefixStr, strs: _*),
-        ostrs => Strings.prependIfMissingIgnoreCase(strOpt.orNull, prefixStr, ostrs.map(_.orNull): _*)
-      )
-    Option(result)
+  def prependIfMissingIgnoreCase[P: TypeMapping[*, (String, Option[String])], Ps: VarArgsOfString](
+    prefix: P,
+    prefixes: Ps*
+  ): Option[String] = {
+    def prefixMapper    = getMapper[P, Option[String]].func.orNull
+    def prefixStr       = prefixMapper(prefix)
+    def prefixesMapping = TypeMapping.getMapping[VarArgsOfString, Ps]
+
+    def getCharSeqOptionMapper                      = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
+    def dealWithCharSeqSeq(strs: Seq[CharSequence]) = Strings.prependIfMissingIgnoreCase(strOrNull, prefixStr, strs: _*)
+    def result = prefixesMapping.input(prefixes).fold(dealWithCharSeqSeq, getCharSeqOptionMapper.andThen(dealWithCharSeqSeq))
+
+    if (prefixes == null)
+      Option(Strings.prependIfMissingIgnoreCase(strOrNull, prefixStr, null))
+    else
+      Option(result)
   }
 
-  def remove(rmv: Char): Option[String] = Option(Strings.remove(strOpt.orNull, rmv))
+  def remove(rmv: Char): Option[String] = Option(Strings.remove(strOrNull, rmv))
 
-  def remove[R: StrToOpt](rmv: R): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, R]
-    val rmvStr  = mapping.input(rmv).fold(identity, _.orNull)
-    Option(Strings.remove(strOpt.orNull, rmvStr))
+  def remove[R: TypeMapping[*, (String, Option[String])]](rmv: R): Option[String] = {
+    val mapper = getMapper[R, Option[String]].func.orNull
+    val rmvStr = mapper(rmv)
+    Option(Strings.remove(strOrNull, rmvStr))
   }
 
-  def removeEnd[R: StrToOpt](rmv: R): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, R]
-    val rmvStr  = mapping.input(rmv).fold(identity, _.orNull)
-    Option(Strings.removeEnd(strOpt.orNull, rmvStr))
+  def removeEnd[R: TypeMapping[*, (String, Option[String])]](rmv: R): Option[String] = {
+    val mapper = getMapper[R, Option[String]].func.orNull
+    val rmvStr = mapper(rmv)
+    Option(Strings.removeEnd(strOrNull, rmvStr))
   }
 
-  def removeEndIgnoreCase[R: StrToOpt](rmv: R): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, R]
-    val rmvStr  = mapping.input(rmv).fold(identity, _.orNull)
-    Option(Strings.removeEndIgnoreCase(strOpt.orNull, rmvStr))
+  def removeEndIgnoreCase[R: TypeMapping[*, (String, Option[String])]](rmv: R): Option[String] = {
+    val mapper = getMapper[R, Option[String]].func.orNull
+    val rmvStr = mapper(rmv)
+    Option(Strings.removeEndIgnoreCase(strOrNull, rmvStr))
   }
 
-  def removeIgnoreCase[R: StrToOpt](rmv: R): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, R]
-    val rmvStr  = mapping.input(rmv).fold(identity, _.orNull)
-    Option(Strings.removeIgnoreCase(strOpt.orNull, rmvStr))
+  def removeIgnoreCase[R: TypeMapping[*, (String, Option[String])]](rmv: R): Option[String] = {
+    val mapper = getMapper[R, Option[String]].func.orNull
+    val rmvStr = mapper(rmv)
+    Option(Strings.removeIgnoreCase(strOrNull, rmvStr))
   }
 
-  def removeStart[R: StrToOpt](rmv: R): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, R]
-    val rmvStr  = mapping.input(rmv).fold(identity, _.orNull)
-    Option(Strings.removeStart(strOpt.orNull, rmvStr))
+  def removeStart[R: TypeMapping[*, (String, Option[String])]](rmv: R): Option[String] = {
+    val mapper = getMapper[R, Option[String]].func.orNull
+    val rmvStr = mapper(rmv)
+    Option(Strings.removeStart(strOrNull, rmvStr))
   }
 
-  def removeStartIgnoreCase[R: StrToOpt](rmv: R): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, R]
-    val rmvStr  = mapping.input(rmv).fold(identity, _.orNull)
-    Option(Strings.removeStartIgnoreCase(strOpt.orNull, rmvStr))
+  def removeStartIgnoreCase[R: TypeMapping[*, (String, Option[String])]](rmv: R): Option[String] = {
+    val mapper = getMapper[R, Option[String]].func.orNull
+    val rmvStr = mapper(rmv)
+    Option(Strings.removeStartIgnoreCase(strOrNull, rmvStr))
   }
 
-  def repeat(rep: Int): Option[String] = Option(Strings.repeat(strOpt.orNull, rep))
+  def repeat(rep: Int): Option[String] = Option(Strings.repeat(strOrNull, rep))
 
-  def repeat[S: StrToOpt](separator: S, repeat: Int): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val sep     = mapping.input(separator).fold(identity, _.orNull)
-    Option(Strings.repeat(strOpt.orNull, sep, repeat))
+  def repeat[S: TypeMapping[*, (String, Option[String])]](separator: S, repeat: Int): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val sep    = mapper(separator)
+    Option(Strings.repeat(strOrNull, sep, repeat))
   }
 
-  def replace[S: StrToOpt, R: StrToOpt](searchString: S, replacement: R): Option[String] = {
-    val searchMapping      = TypeMapping.getMapping[StrToOpt, S]
-    val replacementMapping = TypeMapping.getMapping[StrToOpt, R]
+  def replace[S: TypeMapping[*, (String, Option[String])], R: TypeMapping[*, (String, Option[String])]](
+    searchString: S,
+    replacement: R
+  ): Option[String] = {
+    val searchMapper      = getMapper[S, Option[String]].func.orNull
+    val replacementMapper = getMapper[R, Option[String]].func.orNull
 
-    val sstr = searchMapping.input(searchString).fold(identity, _.orNull)
-    val rstr = replacementMapping.input(replacement).fold(identity, _.orNull)
+    val sstr = searchMapper(searchString)
+    val rstr = replacementMapper(replacement)
 
-    Option(Strings.replace(strOpt.orNull, sstr, rstr))
+    Option(Strings.replace(strOrNull, sstr, rstr))
   }
 
-  def replace[S: StrToOpt, R: StrToOpt](searchString: S, replacement: R, max: Int): Option[String] = {
-    val searchMapping      = TypeMapping.getMapping[StrToOpt, S]
-    val replacementMapping = TypeMapping.getMapping[StrToOpt, R]
+  def replace[S: TypeMapping[*, (String, Option[String])], R: TypeMapping[*, (String, Option[String])]](
+    searchString: S,
+    replacement: R,
+    max: Int
+  ): Option[String] = {
+    val searchMapper      = getMapper[S, Option[String]].func.orNull
+    val replacementMapper = getMapper[R, Option[String]].func.orNull
 
-    val sstr = searchMapping.input(searchString).fold(identity, _.orNull)
-    val rstr = replacementMapping.input(replacement).fold(identity, _.orNull)
+    val sstr = searchMapper(searchString)
+    val rstr = replacementMapper(replacement)
 
-    Option(Strings.replace(strOpt.orNull, sstr, rstr, max))
+    Option(Strings.replace(strOrNull, sstr, rstr, max))
   }
 
   def replaceChars(searchChar: Char, replaceChar: Char): Option[String] =
-    Option(Strings.replaceChars(strOpt.orNull, searchChar, replaceChar))
+    Option(Strings.replaceChars(strOrNull, searchChar, replaceChar))
 
-  def replaceChars[S: StrToOpt, R: StrToOpt](searchChars: S, replaceChars: R): Option[String] = {
-    val searchMapping      = TypeMapping.getMapping[StrToOpt, S]
-    val replacementMapping = TypeMapping.getMapping[StrToOpt, R]
+  def replaceChars[S: TypeMapping[*, (String, Option[String])], R: TypeMapping[*, (String, Option[String])]](
+    searchChars: S,
+    replaceChars: R
+  ): Option[String] = {
+    val searchMapper      = getMapper[S, Option[String]].func.orNull
+    val replacementMapper = getMapper[R, Option[String]].func.orNull
 
-    val sstr = searchMapping.input(searchChars).fold(identity, _.orNull)
-    val rstr = replacementMapping.input(replaceChars).fold(identity, _.orNull)
+    val sstr = searchMapper(searchChars)
+    val rstr = replacementMapper(replaceChars)
 
-    Option(Strings.replaceChars(strOpt.orNull, sstr, rstr))
+    Option(Strings.replaceChars(strOrNull, sstr, rstr))
   }
 
   def replaceEach(searchList: Array[String], replacementList: Array[String]): Option[String] =
-    Option(Strings.replaceEach(strOpt.orNull, searchList, replacementList))
+    Option(Strings.replaceEach(strOrNull, searchList, replacementList))
 
   def replaceEachRepeatedly(searchList: Array[String], replacementList: Array[String]): Option[String] =
-    Option(Strings.replaceEachRepeatedly(strOpt.orNull, searchList, replacementList))
+    Option(Strings.replaceEachRepeatedly(strOrNull, searchList, replacementList))
 
-  def replaceIgnoreCase[S: StrToOpt, R: StrToOpt](searchString: S, replacement: R, max: Int): Option[String] = {
-    val searchMapping      = TypeMapping.getMapping[StrToOpt, S]
-    val replacementMapping = TypeMapping.getMapping[StrToOpt, R]
+  def replaceIgnoreCase[S: TypeMapping[*, (String, Option[String])], R: TypeMapping[*, (String, Option[String])]](
+    searchString: S,
+    replacement: R,
+    max: Int
+  ): Option[String] = {
+    val searchMapping      = getMapper[S, Option[String]].func.orNull
+    val replacementMapping = getMapper[R, Option[String]].func.orNull
 
-    val sstr = searchMapping.input(searchString).fold(identity, _.orNull)
-    val rstr = replacementMapping.input(replacement).fold(identity, _.orNull)
+    val sstr = searchMapping(searchString)
+    val rstr = replacementMapping(replacement)
 
-    Option(Strings.replaceIgnoreCase(strOpt.orNull, sstr, rstr, max))
+    Option(Strings.replaceIgnoreCase(strOrNull, sstr, rstr, max))
   }
 
-  def replaceOnce[S: StrToOpt, R: StrToOpt](searchString: S, replacement: R): Option[String] = {
-    val searchMapping      = TypeMapping.getMapping[StrToOpt, S]
-    val replacementMapping = TypeMapping.getMapping[StrToOpt, R]
+  def replaceOnce[S: TypeMapping[*, (String, Option[String])], R: TypeMapping[*, (String, Option[String])]](
+    searchString: S,
+    replacement: R
+  ): Option[String] = {
+    val searchMapping      = getMapper[S, Option[String]].func.orNull
+    val replacementMapping = getMapper[R, Option[String]].func.orNull
 
-    val sstr = searchMapping.input(searchString).fold(identity, _.orNull)
-    val rstr = replacementMapping.input(replacement).fold(identity, _.orNull)
+    val sstr = searchMapping(searchString)
+    val rstr = replacementMapping(replacement)
 
-    Option(Strings.replaceOnce(strOpt.orNull, sstr, rstr))
+    Option(Strings.replaceOnce(strOrNull, sstr, rstr))
   }
 
-  def reverse: Option[String] = Option(Strings.reverse(strOpt.orNull))
+  def reverse: Option[String] = Option(Strings.reverse(strOrNull))
 
   def reverseDelimited(separatorChar: Char): Option[String] =
-    Option(Strings.reverseDelimited(strOpt.orNull, separatorChar))
+    Option(Strings.reverseDelimited(strOrNull, separatorChar))
 
-  def right(len: Int): Option[String] = Option(Strings.right(strOpt.orNull, len))
+  def right(len: Int): Option[String] = Option(Strings.right(strOrNull, len))
 
-  def rightPad(size: Int): Option[String] = Option(Strings.rightPad(strOpt.orNull, size))
+  def rightPad(size: Int): Option[String] = Option(Strings.rightPad(strOrNull, size))
 
-  def rightPad(size: Int, padChar: Char): Option[String] = Option(Strings.rightPad(strOpt.orNull, size, padChar))
+  def rightPad(size: Int, padChar: Char): Option[String] = Option(Strings.rightPad(strOrNull, size, padChar))
 
-  def rightPad[P: StrToOpt](size: Int, padStr: P): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, P]
-    val ps      = mapping.input(padStr).fold(identity, _.orNull)
-    Option(Strings.rightPad(strOpt.orNull, size, ps))
+  def rightPad[P: TypeMapping[*, (String, Option[String])]](size: Int, padStr: P): Option[String] = {
+    val mapper = getMapper[P, Option[String]].func.orNull
+    val ps     = mapper(padStr)
+    Option(Strings.rightPad(strOrNull, size, ps))
   }
 
-  def rotate(shift: Int): Option[String] = Option(Strings.rotate(strOpt.orNull, shift))
+  def rotate(shift: Int): Option[String] = Option(Strings.rotate(strOrNull, shift))
 
-  def split: Option[Array[String]] = Option(Strings.split(strOpt.orNull))
+  def split: Option[Array[String]] = Option(Strings.split(strOrNull))
 
-  def split(separatorChar: Char): Option[Array[String]] = Option(Strings.split(strOpt.orNull, separatorChar))
+  def split(separatorChar: Char): Option[Array[String]] = Option(Strings.split(strOrNull, separatorChar))
 
-  def split[S: StrToOpt](separatorChars: S): Option[Array[String]] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val sep     = mapping.input(separatorChars).fold(identity, _.orNull)
-    Option(Strings.split(strOpt.orNull, sep))
+  def split[S: TypeMapping[*, (String, Option[String])]](separatorChars: S): Option[Array[String]] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val sep    = mapper(separatorChars)
+    Option(Strings.split(strOrNull, sep))
   }
 
-  def split[S: StrToOpt](separatorChars: S, max: Int): Option[Array[String]] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val sep     = mapping.input(separatorChars).fold(identity, _.orNull)
-    Option(Strings.split(strOpt.orNull, sep, max))
+  def split[S: TypeMapping[*, (String, Option[String])]](separatorChars: S, max: Int): Option[Array[String]] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val sep    = mapper(separatorChars)
+    Option(Strings.split(strOrNull, sep, max))
   }
 
-  def splitByCharacterType: Option[Array[String]] = Option(Strings.splitByCharacterType(strOpt.orNull))
+  def splitByCharacterType: Option[Array[String]] = Option(Strings.splitByCharacterType(strOrNull))
 
   def splitByCharacterTypeCamelCase: Option[Array[String]] =
-    Option(Strings.splitByCharacterTypeCamelCase(strOpt.orNull))
+    Option(Strings.splitByCharacterTypeCamelCase(strOrNull))
 
-  def splitByWholeSeparator[S: StrToOpt](separatorChars: S): Option[Array[String]] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val sep     = mapping.input(separatorChars).fold(identity, _.orNull)
-    Option(Strings.splitByWholeSeparator(strOpt.orNull, sep))
+  def splitByWholeSeparator[S: TypeMapping[*, (String, Option[String])]](separatorChars: S): Option[Array[String]] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val sep    = mapper(separatorChars)
+    Option(Strings.splitByWholeSeparator(strOrNull, sep))
   }
 
-  def splitByWholeSeparator[S: StrToOpt](separatorChars: S, max: Int): Option[Array[String]] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val sep     = mapping.input(separatorChars).fold(identity, _.orNull)
-    Option(Strings.splitByWholeSeparator(strOpt.orNull, sep, max))
+  def splitByWholeSeparator[S: TypeMapping[*, (String, Option[String])]](separatorChars: S, max: Int): Option[Array[String]] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val sep    = mapper(separatorChars)
+    Option(Strings.splitByWholeSeparator(strOrNull, sep, max))
   }
 
-  def splitByWholeSeparatorPreserveAllTokens[S: StrToOpt](separatorChars: S): Option[Array[String]] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val sep     = mapping.input(separatorChars).fold(identity, _.orNull)
-    Option(Strings.splitByWholeSeparatorPreserveAllTokens(strOpt.orNull, sep))
+  def splitByWholeSeparatorPreserveAllTokens[S: TypeMapping[*, (String, Option[String])]](separatorChars: S): Option[Array[String]] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val sep    = mapper(separatorChars)
+    Option(Strings.splitByWholeSeparatorPreserveAllTokens(strOrNull, sep))
   }
 
-  def splitByWholeSeparatorPreserveAllTokens[S: StrToOpt](separatorChars: S, max: Int): Option[Array[String]] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val sep     = mapping.input(separatorChars).fold(identity, _.orNull)
-    Option(Strings.splitByWholeSeparatorPreserveAllTokens(strOpt.orNull, sep, max))
+  def splitByWholeSeparatorPreserveAllTokens[S: TypeMapping[*, (String, Option[String])]](
+    separatorChars: S,
+    max: Int
+  ): Option[Array[String]] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val sep    = mapper(separatorChars)
+    Option(Strings.splitByWholeSeparatorPreserveAllTokens(strOrNull, sep, max))
   }
 
-  def splitPreserveAllTokens: Option[Array[String]] = Option(Strings.splitPreserveAllTokens(strOpt.orNull))
+  def splitPreserveAllTokens: Option[Array[String]] = Option(Strings.splitPreserveAllTokens(strOrNull))
 
   def splitPreserveAllTokens(separatorChar: Char): Option[Array[String]] =
-    Option(Strings.splitPreserveAllTokens(strOpt.orNull, separatorChar))
+    Option(Strings.splitPreserveAllTokens(strOrNull, separatorChar))
 
-  def splitPreserveAllTokens[S: StrToOpt](separatorChars: S): Option[Array[String]] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val sep     = mapping.input(separatorChars).fold(identity, _.orNull)
-    Option(Strings.splitPreserveAllTokens(strOpt.orNull, sep))
+  def splitPreserveAllTokens[S: TypeMapping[*, (String, Option[String])]](separatorChars: S): Option[Array[String]] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val sep    = mapper(separatorChars)
+    Option(Strings.splitPreserveAllTokens(strOrNull, sep))
   }
 
-  def splitPreserveAllTokens[S: StrToOpt](separatorChars: S, max: Int): Option[Array[String]] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val sep     = mapping.input(separatorChars).fold(identity, _.orNull)
-    Option(Strings.splitPreserveAllTokens(strOpt.orNull, sep, max))
+  def splitPreserveAllTokens[S: TypeMapping[*, (String, Option[String])]](separatorChars: S, max: Int): Option[Array[String]] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val sep    = mapper(separatorChars)
+    Option(Strings.splitPreserveAllTokens(strOrNull, sep, max))
   }
 
-  def startsWith[S: StrToOpt](prefix: S): Boolean = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val pre     = mapping.input(prefix).fold(identity, _.orNull)
-    Strings.startsWith(strOpt.orNull, pre)
+  def startsWith[S: TypeMapping[*, (String, Option[String])]](prefix: S): Boolean = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val pre    = mapper(prefix)
+    Strings.startsWith(strOrNull, pre)
   }
 
   def startsWithAny[CS: VarArgsOfString](searchStrings: CS*): Boolean = {
     val mapping = TypeMapping.getMapping[VarArgsOfString, CS]
     val strs    = mapping.input(searchStrings).fold(identity, { css => css.map(_.orNull) })
-    Strings.startsWithAny(strOpt.orNull, strs: _*)
+    Strings.startsWithAny(strOrNull, strs: _*)
   }
 
-  def startsWithIgnoreCase[P: StrToOpt](prefix: P): Boolean = {
-    val mapping = TypeMapping.getMapping[StrToOpt, P]
-    val str     = mapping.input(prefix).fold(identity, _.orNull)
-    Strings.startsWithIgnoreCase(strOpt.orNull, str)
+  def startsWithIgnoreCase[P: TypeMapping[*, (String, Option[String])]](prefix: P): Boolean = {
+    val mapper = getMapper[P, Option[String]].func.orNull
+    val str    = mapper(prefix)
+    Strings.startsWithIgnoreCase(strOrNull, str)
   }
 
-  def strip: Option[String] = Option(Strings.strip(strOpt.orNull))
+  def strip: Option[String] = Option(Strings.strip(strOrNull))
 
-  def strip[S: StrToOpt](stripChars: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val chars   = mapping.input(stripChars).fold(identity, _.orNull)
-    Option(Strings.strip(strOpt.orNull, chars))
+  def strip[S: TypeMapping[*, (String, Option[String])]](stripChars: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val chars  = mapper(stripChars)
+    Option(Strings.strip(strOrNull, chars))
   }
 
-  def stripAccents: Option[String] = Option(Strings.stripAccents(strOpt.orNull))
+  def stripAccents: Option[String] = Option(Strings.stripAccents(strOrNull))
 
-  def stripEnd[S: StrToOpt](stripChars: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val chars   = mapping.input(stripChars).fold(identity, _.orNull)
-    Option(Strings.stripEnd(strOpt.orNull, chars))
+  def stripEnd[S: TypeMapping[*, (String, Option[String])]](stripChars: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val chars  = mapper(stripChars)
+    Option(Strings.stripEnd(strOrNull, chars))
   }
 
-  def stripStart[S: StrToOpt](stripChars: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val chars   = mapping.input(stripChars).fold(identity, _.orNull)
-    Option(Strings.stripStart(strOpt.orNull, chars))
+  def stripStart[S: TypeMapping[*, (String, Option[String])]](stripChars: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val chars  = mapper(stripChars)
+    Option(Strings.stripStart(strOrNull, chars))
   }
 
-  def stripToEmpty: String = Strings.stripToEmpty(strOpt.orNull)
+  def stripToEmpty: String = Strings.stripToEmpty(strOrNull)
 
-  def stripToNone: Option[String] = Option(Strings.stripToNull(strOpt.orNull))
+  def stripToNone: Option[String] = Option(Strings.stripToNull(strOrNull))
 
-  def substring(start: Int): Option[String] = Option(Strings.substring(strOpt.orNull, start))
+  def substring(start: Int): Option[String] = Option(Strings.substring(strOrNull, start))
 
-  def substring(start: Int, end: Int): Option[String] = Option(Strings.substring(strOpt.orNull, start, end))
+  def substring(start: Int, end: Int): Option[String] = Option(Strings.substring(strOrNull, start, end))
 
-  def substringAfter(separator: Char): Option[String] = Option(Strings.substringAfter(strOpt.orNull, separator))
+  def substringAfter(separator: Char): Option[String] = Option(Strings.substringAfter(strOrNull, separator))
 
-  def substringAfter[S: StrToOpt](separator: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val sep     = mapping.input(separator).fold(identity, _.orNull)
-    Option(Strings.substringAfter(strOpt.orNull, sep))
+  def substringAfter[S: TypeMapping[*, (String, Option[String])]](separator: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val sep    = mapper(separator)
+    Option(Strings.substringAfter(strOrNull, sep))
   }
 
-  def substringAfterLast(separator: Char): Option[String] =
-    Option(Strings.substringAfterLast(strOpt.orNull, separator))
+  def substringAfterLast(separator: Char): Option[String] = Option(Strings.substringAfterLast(strOrNull, separator))
 
-  def substringAfterLast[S: StrToOpt](separator: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val sep     = mapping.input(separator).fold(identity, _.orNull)
-    Option(Strings.substringAfterLast(strOpt.orNull, sep))
+  def substringAfterLast[S: TypeMapping[*, (String, Option[String])]](separator: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val sep    = mapper(separator)
+    Option(Strings.substringAfterLast(strOrNull, sep))
   }
 
-  def substringBefore(separator: Char): Option[String] = Option(Strings.substringBefore(strOpt.orNull, separator))
+  def substringBefore(separator: Char): Option[String] = Option(Strings.substringBefore(strOrNull, separator))
 
-  def substringBefore[S: StrToOpt](separator: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val sep     = mapping.input(separator).fold(identity, _.orNull)
-    Option(Strings.substringBefore(strOpt.orNull, sep))
+  def substringBefore[S: TypeMapping[*, (String, Option[String])]](separator: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val sep    = mapper(separator)
+    Option(Strings.substringBefore(strOrNull, sep))
   }
 
-  def substringBeforeLast[S: StrToOpt](separator: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val sep     = mapping.input(separator).fold(identity, _.orNull)
-    Option(Strings.substringBeforeLast(strOpt.orNull, sep))
+  def substringBeforeLast[S: TypeMapping[*, (String, Option[String])]](separator: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val sep    = mapper(separator)
+    Option(Strings.substringBeforeLast(strOrNull, sep))
   }
 
-  def substringBetween[S: StrToOpt](tag: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val t       = mapping.input(tag).fold(identity, _.orNull)
-    Option(Strings.substringBetween(strOpt.orNull, t))
+  def substringBetween[S: TypeMapping[*, (String, Option[String])]](tag: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val t      = mapper(tag)
+    Option(Strings.substringBetween(strOrNull, t))
   }
 
-  def substringBetween[S: StrToOpt](open: S, close: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val o       = mapping.input(open).fold(identity, _.orNull)
-    val c       = mapping.input(close).fold(identity, _.orNull)
-    Option(Strings.substringBetween(strOpt.orNull, o, c))
+  def substringBetween[S: TypeMapping[*, (String, Option[String])]](open: S, close: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val o      = mapper(open)
+    val c      = mapper(close)
+    Option(Strings.substringBetween(strOrNull, o, c))
   }
 
-  def substringsBetween[S: StrToOpt](open: S, close: S): Option[Array[String]] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val o       = mapping.input(open).fold(identity, _.orNull)
-    val c       = mapping.input(close).fold(identity, _.orNull)
-    Option(Strings.substringsBetween(strOpt.orNull, o, c))
+  def substringsBetween[S: TypeMapping[*, (String, Option[String])]](open: S, close: S): Option[Array[String]] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val o      = mapper(open)
+    val c      = mapper(close)
+    Option(Strings.substringsBetween(strOrNull, o, c))
   }
 
-  def swapCase: Option[String] = Option(Strings.swapCase(strOpt.orNull))
+  def swapCase: Option[String] = Option(Strings.swapCase(strOrNull))
 
-  def toCodePoints: Option[Array[Int]] = Option(Strings.toCodePoints(strOpt.orNull))
+  def toCodePoints: Option[Array[Int]] = Option(Strings.toCodePoints(strOrNull))
 
-  def toRootLowerCase: Option[String] = Option(Strings.toRootLowerCase(strOpt.orNull))
+  def toRootLowerCase: Option[String] = Option(Strings.toRootLowerCase(strOrNull))
 
-  def toRootUpperCase: Option[String] = Option(Strings.toRootUpperCase(strOpt.orNull))
+  def toRootUpperCase: Option[String] = Option(Strings.toRootUpperCase(strOrNull))
 
-  def trim: Option[String] = Option(Strings.trim(strOpt.orNull))
+  def trim: Option[String] = Option(Strings.trim(strOrNull))
 
-  def trimToEmpty: Option[String] = Option(Strings.trimToEmpty(strOpt.orNull))
+  def trimToEmpty: Option[String] = Option(Strings.trimToEmpty(strOrNull))
 
-  def trimToNull: Option[String] = Option(Strings.trimToNull(strOpt.orNull))
+  def trimToNull: Option[String] = Option(Strings.trimToNull(strOrNull))
 
-  def truncate(maxWidth: Int): Option[String] = Option(Strings.truncate(strOpt.orNull, maxWidth))
+  def truncate(maxWidth: Int): Option[String] = Option(Strings.truncate(strOrNull, maxWidth))
 
-  def truncate(offset: Int, maxWidth: Int): Option[String] = Option(Strings.truncate(strOpt.orNull, offset, maxWidth))
+  def truncate(offset: Int, maxWidth: Int): Option[String] = Option(Strings.truncate(strOrNull, offset, maxWidth))
 
-  def uncapitalize: Option[String] = Option(Strings.uncapitalize(strOpt.orNull))
+  def uncapitalize: Option[String] = Option(Strings.uncapitalize(strOrNull))
 
-  def unwrap(wrapChar: Char): Option[String] = Option(Strings.unwrap(strOpt.orNull, wrapChar))
+  def unwrap(wrapChar: Char): Option[String] = Option(Strings.unwrap(strOrNull, wrapChar))
 
-  def unwrap[S: StrToOpt](wrapToken: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val token   = mapping.input(wrapToken).fold(identity, _.orNull)
-    Option(Strings.unwrap(strOpt.orNull, token))
+  def unwrap[S: TypeMapping[*, (String, Option[String])]](wrapToken: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val token  = mapper(wrapToken)
+    Option(Strings.unwrap(strOrNull, token))
   }
 
-  def upperCase: Option[String] = Option(Strings.upperCase(strOpt.orNull))
+  def upperCase: Option[String] = Option(Strings.upperCase(strOrNull))
 
-  def upperCase(locale: Locale): Option[String] = Option(Strings.upperCase(strOpt.orNull, locale))
+  def upperCase(locale: Locale): Option[String] = Option(Strings.upperCase(strOrNull, locale))
 
-  def wrap(wrapChar: Char): Option[String] = Option(Strings.wrap(strOpt.orNull, wrapChar))
+  def wrap(wrapChar: Char): Option[String] = Option(Strings.wrap(strOrNull, wrapChar))
 
-  def wrap[S: StrToOpt](wrapToken: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val token   = mapping.input(wrapToken).fold(identity, _.orNull)
-    Option(Strings.wrap(strOpt.orNull, token))
+  def wrap[S: TypeMapping[*, (String, Option[String])]](wrapToken: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val token  = mapper(wrapToken)
+    Option(Strings.wrap(strOrNull, token))
   }
 
-  def wrapIfMissing(wrapChar: Char): Option[String] = Option(Strings.wrapIfMissing(strOpt.orNull, wrapChar))
+  def wrapIfMissing(wrapChar: Char): Option[String] = Option(Strings.wrapIfMissing(strOrNull, wrapChar))
 
-  def wrapIfMissing[S: StrToOpt](wrapToken: S): Option[String] = {
-    val mapping = TypeMapping.getMapping[StrToOpt, S]
-    val token   = mapping.input(wrapToken).fold(identity, _.orNull)
-    Option(Strings.wrapIfMissing(strOpt.orNull, token))
+  def wrapIfMissing[S: TypeMapping[*, (String, Option[String])]](wrapToken: S): Option[String] = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val token  = mapper(wrapToken)
+    Option(Strings.wrapIfMissing(strOrNull, token))
   }
 }
