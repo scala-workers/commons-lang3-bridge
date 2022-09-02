@@ -79,6 +79,9 @@ class StringUtilsSpec extends AnyFunSuite {
   val ARRAY_FALSE_TRUE: Array[Boolean]       = Array(false, true)
   val ARRAY_FALSE_TRUE_FALSE: Array[Boolean] = Array(false, true, false)
 
+  val noneString: Option[String] = None
+  val nullString: String         = null
+
   private def assertAbbreviateWithAbbrevMarkerAndOffset(expected: String, abbrevMarker: String, offset: Int, maxWidth: Int): Unit = {
     val abcdefghijklmno = "abcdefghijklmno"
     val message         = "abbreviate(String,String,int,int) failed"
@@ -165,5 +168,132 @@ class StringUtilsSpec extends AnyFunSuite {
     assert(2 == resStr6.length, msg)
     assert("a" == resStr6(0), msg)
     assert(str.substring(2) == resStr6(1), msg)
+  }
+
+  test("test abbreviate marker with empty string") {
+    val greaterThanMaxTest = "much too long text"
+    assert(greaterThanMaxTest.ops.abbreviate("", 13).contains("much too long"))
+  }
+
+  test("test abbreviate string int") {
+    assert(noneString.ops.abbreviate(10).isEmpty)
+    assert("".ops.abbreviate(10).contains(""))
+    assert(Some("short").ops.abbreviate(10).contains("short"))
+    assert("Now is the time for all good men to come to the aid of their party.".ops.abbreviate(10).contains("Now is ..."))
+
+    val raspberry = "raspberry peach"
+    assert(raspberry.ops.abbreviate(14).contains("raspberry p..."))
+    assert(Some("raspberry peach").ops.abbreviate(15).contains("raspberry peach"))
+    assert("raspberry peach".ops.abbreviate(16).contains("raspberry peach"))
+    assert("abcdefg".ops.abbreviate(6).contains("abc..."))
+    assert("abcdefg".ops.abbreviate(7).contains("abcdefg"))
+    assert("abcdefg".ops.abbreviate(8).contains("abcdefg"))
+    assert(Some("abcdefg").ops.abbreviate(4).contains("a..."))
+    assert("".ops.abbreviate(4).contains(""))
+
+    assertThrows[IllegalArgumentException] {
+      "abc".ops.abbreviate(3)
+    }
+  }
+
+  test("test string abbreviate with offset and max width") {
+    assert(nullString.ops.abbreviate(10, 12).isEmpty)
+    assert("".ops.abbreviate(0, 10).contains(""))
+    assert(Some("").ops.abbreviate(2, 10).contains(""))
+
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.abbreviate(0, 3)
+    }
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.abbreviate(5, 6)
+    }
+
+    val raspberry = "raspberry peach"
+    assert(raspberry.ops.abbreviate(11, 15).contains("raspberry peach"))
+
+    assert(nullString.ops.abbreviate(7, 14).isEmpty)
+    assertAbbreviateWithOffset("abcdefg...", -1, 10)
+    assertAbbreviateWithOffset("abcdefg...", 0, 10)
+    assertAbbreviateWithOffset("abcdefg...", 1, 10)
+    assertAbbreviateWithOffset("abcdefg...", 2, 10)
+    assertAbbreviateWithOffset("abcdefg...", 3, 10)
+    assertAbbreviateWithOffset("abcdefg...", 4, 10)
+    assertAbbreviateWithOffset("...fghi...", 5, 10)
+    assertAbbreviateWithOffset("...ghij...", 6, 10)
+    assertAbbreviateWithOffset("...hijk...", 7, 10)
+    assertAbbreviateWithOffset("...ijklmno", 8, 10)
+    assertAbbreviateWithOffset("...ijklmno", 9, 10)
+    assertAbbreviateWithOffset("...ijklmno", 10, 10)
+    assertAbbreviateWithOffset("...ijklmno", 10, 10)
+    assertAbbreviateWithOffset("...ijklmno", 11, 10)
+    assertAbbreviateWithOffset("...ijklmno", 12, 10)
+    assertAbbreviateWithOffset("...ijklmno", 13, 10)
+    assertAbbreviateWithOffset("...ijklmno", 14, 10)
+    assertAbbreviateWithOffset("...ijklmno", 15, 10)
+    assertAbbreviateWithOffset("...ijklmno", 16, 10)
+    assertAbbreviateWithOffset("...ijklmno", Integer.MAX_VALUE, 10)
+  }
+
+  test("test string abbreviate with abbrev maker and max width") {
+    assert(nullString.ops.abbreviate(null, 10).isEmpty)
+    assert(None.ops.abbreviate("...", 10).isEmpty)
+    assert(Some("paranaguacu").ops.abbreviate(None, 10).contains("paranaguacu"))
+    assert("".ops.abbreviate("...", 2).contains(""))
+    assert("waiheke".ops.abbreviate("**", 5).contains("wai**"))
+    assert("And after a long time, he finally met his son.".ops.abbreviate(",,,,", 10).contains("And af,,,,"))
+
+    val raspberry = "raspberry peach"
+    assert(raspberry.ops.abbreviate("..", 14).contains("raspberry pe.."))
+    assert(Some("raspberry peach").ops.abbreviate("---*---", 15).contains("raspberry peach"))
+    assert("raspberry peach".ops.abbreviate(".", 16).contains("raspberry peach"))
+    assert("abcdefg".ops.abbreviate(Some("()("), 6).contains("abc()("))
+    assert("abcdefg".ops.abbreviate(";", 7).contains("abcdefg"))
+    assert(Some("abcdefg").ops.abbreviate("_-", 8).contains("abcdefg"))
+    assert("abcdefg".ops.abbreviate(".", 4).contains("abc."))
+    assert("".ops.abbreviate("", 4).contains(""))
+
+    assertThrows[IllegalArgumentException] {
+      Some("abcdefghij").ops.abbreviate(Some("..."), 3)
+    }
+
+  }
+
+  test("test strings abbreviate with abbrev maker, offset and max width") {
+    assert(nullString.ops.abbreviate(None, 10, 12).isEmpty)
+    assert(noneString.ops.abbreviate("...", 10, 12).isEmpty)
+    assert("".ops.abbreviate(null, 0, 10).contains(""))
+    assert(Some("").ops.abbreviate("...", 2, 10).contains(""))
+
+    assertThrows[IllegalArgumentException] {
+      Some("abcdefghij").ops.abbreviate(Some("::"), 0, 2)
+    }
+    assertThrows[IllegalArgumentException] {
+      Some("abcdefghij").ops.abbreviate("!!!", 5, 6)
+    }
+
+    val raspberry = "raspberry peach"
+    assert(raspberry.ops.abbreviate("--", 12, 15).contains("raspberry peach"))
+
+    assert(noneString.ops.abbreviate(";", 7, 14).isEmpty)
+    assertAbbreviateWithAbbrevMarkerAndOffset("abcdefgh;;", ";;", -1, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("abcdefghi.", ".", 0, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("abcdefgh++", "++", 1, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("abcdefghi*", "*", 2, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("abcdef{{{{", "{{{{", 4, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("abcdef____", "____", 5, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("==fghijk==", "==", 5, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("___ghij___", "___", 6, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("/ghijklmno", "/", 7, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("/ghijklmno", "/", 8, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("/ghijklmno", "/", 9, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("///ijklmno", "///", 10, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("//hijklmno", "//", 10, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("//hijklmno", "//", 11, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("...ijklmno", "...", 12, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("/ghijklmno", "/", 13, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("/ghijklmno", "/", 14, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("999ijklmno", "999", 15, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("_ghijklmno", "_", 16, 10)
+    assertAbbreviateWithAbbrevMarkerAndOffset("+ghijklmno", "+", Integer.MAX_VALUE, 10)
   }
 }
