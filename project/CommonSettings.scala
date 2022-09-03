@@ -3,10 +3,11 @@ import sbt.Keys._
 import ProjectKeys._
 
 object scalaVersions {
-  val v213    = "2.13.8"
-  val v212    = "2.12.15"
   val v211    = "2.11.12"
-  val v312    = "3.1.2"
+  val v212    = "2.12.15"
+  val v213    = "2.13.8"
+  val v312    = "3.1.3"
+  val v320    = "3.2.0"
   val current = v213
 }
 
