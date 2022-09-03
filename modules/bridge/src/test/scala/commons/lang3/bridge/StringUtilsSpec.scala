@@ -403,4 +403,18 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("cAt".ops.capitalize.contains("CAt"))
     assert(Some("'cat'").ops.capitalize.contains("'cat'"))
   }
+
+  test("test string utils center with size") {
+    assert(nullString.ops.center(-1).isEmpty)
+    assert(noneString.ops.center(4).isEmpty)
+    assert(Some("").ops.center(4).contains("    "))
+    assert("ab".ops.center(0).contains("ab"))
+    assert("ab".ops.center(-1).contains("ab"))
+    assert("ab".ops.center(1).contains("ab"))
+    assert("".ops.center(4).contains("    "))
+    assert("ab".ops.center(4).contains(" ab "))
+    assert("abcd".ops.center(2).contains("abcd"))
+    assert("a".ops.center(4).contains(" a  "))
+    assert(Some("a").ops.center(5).contains("  a  "))
+  }
 }
