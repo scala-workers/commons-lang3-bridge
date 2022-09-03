@@ -468,4 +468,10 @@ class StringUtilsSpec extends AnyFunSuite {
     assert(Some("").ops.defaultString == "")
     assert("abc".ops.defaultString == "abc")
   }
+
+  test("test string utils default with default value") {
+    assert(nullString.ops.defaultString("NULL").contains("NULL"))
+    assert("".ops.defaultString("NULL").contains(""))
+    assert("abc".ops.defaultString("NULL").contains("abc"))
+  }
 }
