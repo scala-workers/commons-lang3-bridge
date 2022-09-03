@@ -434,12 +434,38 @@ class StringUtilsSpec extends AnyFunSuite {
   }
 
   test("test string utils chomp") {
-    val chompCases = Array(Array(FOO_UNCAP + "\r\n", FOO_UNCAP), Array(FOO_UNCAP + "\n", FOO_UNCAP), Array(FOO_UNCAP + "\r", FOO_UNCAP), Array(FOO_UNCAP + " \r", FOO_UNCAP + " "), Array(FOO_UNCAP, FOO_UNCAP), Array(FOO_UNCAP + "\n\n", FOO_UNCAP + "\n"), Array(FOO_UNCAP + "\r\n\r\n", FOO_UNCAP + "\r\n"), Array("foo\nfoo", "foo\nfoo"), Array("foo\n\rfoo", "foo\n\rfoo"), Array("\n", ""), Array("\r", ""), Array("a", "a"), Array("\r\n", ""), Array("", ""), Array(null, null), Array(FOO_UNCAP + "\n\r", FOO_UNCAP + "\n"))
+    val chompCases = Array(
+      Array(FOO_UNCAP + "\r\n", FOO_UNCAP),
+      Array(FOO_UNCAP + "\n", FOO_UNCAP),
+      Array(FOO_UNCAP + "\r", FOO_UNCAP),
+      Array(FOO_UNCAP + " \r", FOO_UNCAP + " "),
+      Array(FOO_UNCAP, FOO_UNCAP),
+      Array(FOO_UNCAP + "\n\n", FOO_UNCAP + "\n"),
+      Array(FOO_UNCAP + "\r\n\r\n", FOO_UNCAP + "\r\n"),
+      Array("foo\nfoo", "foo\nfoo"),
+      Array("foo\n\rfoo", "foo\n\rfoo"),
+      Array("\n", ""),
+      Array("\r", ""),
+      Array("a", "a"),
+      Array("\r\n", ""),
+      Array("", ""),
+      Array(nullString, nullString),
+      Array(FOO_UNCAP + "\n\r", FOO_UNCAP + "\n")
+    )
     for (chompCase <- chompCases) {
-      val original = chompCase(0)
+      val original       = chompCase(0)
       val expectedResult = chompCase(1)
-      assert(original.ops.chomp.contains(expectedResult), "chomp(String) failed")
+      original.ops.chomp match {
+        case None        => assert(expectedResult == null)
+        case Some(value) => assert(value == expectedResult)
+      }
     }
     // StringUtils.chomp(String, String) is deprecated
+  }
+
+  test("test default string") {
+    assert(noneString.ops.defaultString == "")
+    assert(Some("").ops.defaultString == "")
+    assert("abc".ops.defaultString == "abc")
   }
 }
