@@ -19,8 +19,11 @@ private object privateUtils {
   }
 
   object SingleTypeMap {
-    implicit def toStrOptImplicit[U: TypeMapping[*, (String, Option[String])]]: SingleTypeMap[U, Option[String]] = strToOpt
-    implicit def seqOptionCharToSeqCharImplicit: SingleTypeMap[Seq[Option[Char]], Seq[Char]]                     = tranCharSeqOptFunc
+    implicit def toStrOptImplicit[U: TypeMapping[*, (String, Option[String])]]: SingleTypeMap[U, Option[String]] =
+      strToOpt
+    implicit def toCharSequenceOptImplicit[U: TypeMapping[*, (CharSequence, Option[CharSequence])]]
+      : SingleTypeMap[U, Option[CharSequence]] = csToOpt
+    implicit def seqOptionCharToSeqCharImplicit: SingleTypeMap[Seq[Option[Char]], Seq[Char]] = tranCharSeqOptFunc
     implicit def seqOptionCharSequenceToSeqCharSequenceImplicit: SingleTypeMap[Seq[Option[CharSequence]], Seq[CharSequence]] =
       tranCharSeqSeqOptFunc
   }
@@ -29,8 +32,17 @@ private object privateUtils {
     def orNull: T => String = func.andThen(_.orNull)
   }
 
+  implicit class funcToCharSequenceOptOrNull[T](val func: T => Option[CharSequence]) {
+    def orNull: T => CharSequence = func.andThen(_.orNull)
+  }
+
   private def strToOpt[U: TypeMapping[*, (String, Option[String])]](t: U): Option[String] = {
     val mapping = TypeMapping.getMapping[TypeMapping[*, (String, Option[String])], U]
+    mapping.input(t).fold(Option(_), identity)
+  }
+
+  private def csToOpt[U: TypeMapping[*, (CharSequence, Option[CharSequence])]](t: U): Option[CharSequence] = {
+    val mapping = TypeMapping.getMapping[TypeMapping[*, (CharSequence, Option[CharSequence])], U]
     mapping.input(t).fold(Option(_), identity)
   }
 
@@ -1213,15 +1225,15 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     Strings.countMatches(strOrNull, str1)
   }
 
-  def defaultIfBlank[S: TypeMapping[*, (String, Option[String])]](defaultStr: S): Option[String] = {
-    val mapper = getMapper[S, Option[String]].func.orNull
+  def defaultIfBlank[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultStr: S): Option[CharSequence] = {
+    val mapper = getMapper[S, Option[CharSequence]].func.orNull
     val str1   = mapper(defaultStr)
     val result = Strings.defaultIfBlank(strOrNull, str1)
     Option(result)
   }
 
-  def defaultIfEmpty[S: TypeMapping[*, (String, Option[String])]](defaultStr: S): Option[String] = {
-    val mapper = getMapper[S, Option[String]].func.orNull
+  def defaultIfEmpty[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultStr: S): Option[CharSequence] = {
+    val mapper = getMapper[S, Option[CharSequence]].func.orNull
     val str1   = mapper(defaultStr)
     val result = Strings.defaultIfEmpty(strOrNull, str1)
     Option(result)

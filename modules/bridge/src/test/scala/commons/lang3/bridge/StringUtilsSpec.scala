@@ -474,4 +474,5 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("".ops.defaultString("NULL").contains(""))
     assert("abc".ops.defaultString("NULL").contains("abc"))
   }
+
 }
