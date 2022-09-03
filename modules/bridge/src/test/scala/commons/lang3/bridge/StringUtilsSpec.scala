@@ -432,4 +432,14 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("a".ops.center(5, ' ').contains("  a  "))
     assert("a".ops.center(5, 'x').contains("xxaxx"))
   }
+
+  test("test string utils chomp") {
+    val chompCases = Array(Array(FOO_UNCAP + "\r\n", FOO_UNCAP), Array(FOO_UNCAP + "\n", FOO_UNCAP), Array(FOO_UNCAP + "\r", FOO_UNCAP), Array(FOO_UNCAP + " \r", FOO_UNCAP + " "), Array(FOO_UNCAP, FOO_UNCAP), Array(FOO_UNCAP + "\n\n", FOO_UNCAP + "\n"), Array(FOO_UNCAP + "\r\n\r\n", FOO_UNCAP + "\r\n"), Array("foo\nfoo", "foo\nfoo"), Array("foo\n\rfoo", "foo\n\rfoo"), Array("\n", ""), Array("\r", ""), Array("a", "a"), Array("\r\n", ""), Array("", ""), Array(null, null), Array(FOO_UNCAP + "\n\r", FOO_UNCAP + "\n"))
+    for (chompCase <- chompCases) {
+      val original = chompCase(0)
+      val expectedResult = chompCase(1)
+      assert(original.ops.chomp.contains(expectedResult), "chomp(String) failed")
+    }
+    // StringUtils.chomp(String, String) is deprecated
+  }
 }
