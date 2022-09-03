@@ -384,6 +384,23 @@ class StringUtilsSpec extends AnyFunSuite {
       "appendIfMissingIgnoreCase(abcXYZ,xyz,mno)"
     )
     assert("abcMNO".ops.appendIfMissingIgnoreCase("abcMNO", "xyz", "mno").contains("abcMNO"), "appendIfMissingIgnoreCase(abcMNO,xyz,mno)")
+  }
 
+  test("test string capitalize") {
+    assert(nullString.ops.capitalize.isEmpty)
+
+    assert(Some("").ops.capitalize.contains(""), "capitalize(empty-string) failed")
+    assert("x".ops.capitalize.contains("X"), "capitalize(single-char-string) failed")
+    assert(FOO_CAP.ops.capitalize.contains(FOO_CAP), "capitalize(String) failed")
+    assert(FOO_UNCAP.ops.capitalize.contains(FOO_CAP), "capitalize(string) failed")
+
+    assert(Some("\u01C9").ops.capitalize.contains("\u01C8"), "capitalize(String) is not using TitleCase")
+
+    // Javadoc examples
+    assert(noneString.ops.capitalize.isEmpty)
+    assert("".ops.capitalize.contains(""))
+    assert("cat".ops.capitalize.contains("Cat"))
+    assert("cAt".ops.capitalize.contains("CAt"))
+    assert(Some("'cat'").ops.capitalize.contains("'cat'"))
   }
 }
