@@ -79,8 +79,9 @@ class StringUtilsSpec extends AnyFunSuite {
   val ARRAY_FALSE_TRUE: Array[Boolean]       = Array(false, true)
   val ARRAY_FALSE_TRUE_FALSE: Array[Boolean] = Array(false, true, false)
 
-  val noneString: Option[String] = None
-  val nullString: String         = null
+  val noneString: Option[String]         = None
+  val nullString: String                 = null
+  val noneStrings: Option[Array[String]] = None
 
   private def assertAbbreviateWithAbbrevMarkerAndOffset(expected: String, abbrevMarker: String, offset: Int, maxWidth: Int): Unit = {
     val abcdefghijklmno = "abcdefghijklmno"
@@ -333,5 +334,32 @@ class StringUtilsSpec extends AnyFunSuite {
     // More from LANG-405
     assert("abcdef".ops.abbreviateMiddle("..", 4).contains("a..f"))
     assert("abcdef".ops.abbreviateMiddle(".", 5).contains("ab.ef"))
+  }
+
+  test("test string append if missing") {
+    assert(nullString.ops.appendIfMissing(noneString).isEmpty, "appendIfMissing(null,null)")
+    assert(Some("abc").ops.appendIfMissing(nullString).contains("abc"), "appendIfMissing(abc,null)")
+    assert("".ops.appendIfMissing(Some("xyz")).contains("xyz"), "appendIfMissing(\"\",xyz)")
+    assert("abc".ops.appendIfMissing("xyz").contains("abcxyz"), "appendIfMissing(abc,xyz)")
+    assert(Some("abcxyz").ops.appendIfMissing(Some("xyz")).contains("abcxyz"), "appendIfMissing(abcxyz,xyz)")
+    assert("aXYZ".ops.appendIfMissing("xyz").contains("aXYZxyz"), "appendIfMissing(aXYZ,xyz)")
+
+    assert(
+      nullString.ops.appendIfMissing(nullString, null.asInstanceOf[Array[CharSequence]]: _*).isEmpty,
+      "appendIfMissing(null,null,null)"
+    )
+    assert(
+      "abc".ops.appendIfMissing(noneString, null.asInstanceOf[Array[CharSequence]]: _*).contains("abc"),
+      "appendIfMissing(abc,null,null)"
+    )
+    assert("".ops.appendIfMissing("xyz", null.asInstanceOf[Array[CharSequence]]: _*).contains("xyz"), "appendIfMissing(\"\",xyz,null))")
+    assert("abc".ops.appendIfMissing("xyz", nullString).contains("abcxyz"), "appendIfMissing(abc,xyz,{null})")
+    assert("abc".ops.appendIfMissing("xyz", "").contains("abc"), "appendIfMissing(abc,xyz,\"\")")
+    assert(Some("abc").ops.appendIfMissing("xyz", "mno").contains("abcxyz"), "appendIfMissing(abc,xyz,mno)")
+    assert("abcxyz".ops.appendIfMissing("xyz", Some("mno")).contains("abcxyz"), "appendIfMissing(abcxyz,xyz,mno)")
+    assert("abcmno".ops.appendIfMissing("xyz", "mno").contains("abcmno"), "appendIfMissing(abcmno,xyz,mno)")
+    assert("abcXYZ".ops.appendIfMissing(Some("xyz"), Some("mno")).contains("abcXYZxyz"), "appendIfMissing(abcXYZ,xyz,mno)")
+    assert("abcMNO".ops.appendIfMissing("xyz", "mno").contains("abcMNOxyz"), "appendIfMissing(abcMNO,xyz,mno)")
+
   }
 }

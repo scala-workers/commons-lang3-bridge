@@ -297,10 +297,27 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     * @return
     *   A new Option[String] if suffix was appended, the same string otherwise.
     */
-  def appendIfMissing[S: TypeMapping[*, (String, Option[String])]](suffix: S, suffixes: CharSequence*): Option[String] = {
+  def appendIfMissing[S: TypeMapping[*, (String, Option[String])], SS: VarArgsOfString](suffix: S, suffixes: SS*): Option[String] = {
     val toStrOpt = getMapper[S, Option[String]].func.orNull
-    Option(Strings.appendIfMissing(strOrNull, toStrOpt(suffix), suffixes: _*))
+
+    if (suffixes == null) {
+      return Option(Strings.appendIfMissing(strOrNull, toStrOpt(suffix)))
+    }
+
+    def mapping: VarArgsOfString[SS] = TypeMapping.getMapping[VarArgsOfString, SS]
+
+    val sfs = mapping
+      .input(suffixes)
+      .fold(
+        identity,
+        oss => oss.map(_.orNull)
+      )
+
+    Option(Strings.appendIfMissing(strOrNull, toStrOpt(suffix), sfs: _*))
   }
+  // helpers for method call without suffixes
+  def appendIfMissing(suffix: String): Option[String]         = Option(Strings.appendIfMissing(strOrNull, suffix))
+  def appendIfMissing(suffix: Option[String]): Option[String] = Option(Strings.appendIfMissing(strOrNull, suffix.orNull))
 
   /** Appends the suffix to the end of the string if the string does not already end with any of the suffixes.
     *
