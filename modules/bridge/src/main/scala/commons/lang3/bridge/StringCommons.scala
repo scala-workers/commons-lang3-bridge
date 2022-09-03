@@ -372,10 +372,34 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     * @return
     *   A new String if suffix was appended, the same string otherwise.
     */
-  def appendIfMissingIgnoreCase[S: TypeMapping[*, (String, Option[String])]](suffix: S, suffixes: CharSequence*): Option[String] = {
+  def appendIfMissingIgnoreCase[S: TypeMapping[*, (String, Option[String])], SS: VarArgsOfString](
+    suffix: S,
+    suffixes: SS*
+  ): Option[String] = {
     val toStrOpt = getMapper[S, Option[String]].func.orNull
-    Option(Strings.appendIfMissingIgnoreCase(strOrNull, toStrOpt(suffix), suffixes: _*))
+
+    if (suffixes == null) {
+      return Option(Strings.appendIfMissingIgnoreCase(strOrNull, toStrOpt(suffix)))
+    }
+
+    def mapping: VarArgsOfString[SS] = TypeMapping.getMapping[VarArgsOfString, SS]
+
+    val sfs = mapping
+      .input(suffixes)
+      .fold(
+        identity,
+        oss => oss.map(_.orNull)
+      )
+
+    Option(Strings.appendIfMissingIgnoreCase(strOrNull, toStrOpt(suffix), sfs: _*))
   }
+
+  // helpers for method call without suffixes
+  def appendIfMissingIgnoreCase(suffix: String): Option[String] =
+    Option(Strings.appendIfMissingIgnoreCase(strOrNull, suffix))
+
+  def appendIfMissingIgnoreCase(suffix: Option[String]): Option[String] =
+    Option(Strings.appendIfMissingIgnoreCase(strOrNull, suffix.orNull))
 
   /** <p>Capitalizes a String changing the first character to title case as per {@link Character# toTitleCase ( int )}. No other characters
     * are changed.</p>
