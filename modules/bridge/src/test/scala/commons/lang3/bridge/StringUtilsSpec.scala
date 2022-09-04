@@ -1,11 +1,13 @@
 package commons.lang3.bridge
 
 import commons.lang3.bridge.StringUtils.ops._
+import org.apache.commons.lang3.mutable.MutableInt
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.nio.CharBuffer
 import java.util
 import java.util.Collections
+import java.util.function.Supplier
 import scala.collection.mutable
 
 /** TODO
@@ -508,4 +510,35 @@ class StringUtilsSpec extends AnyFunSuite {
     val s = "abc".ops.defaultIfBlank("NULL")
     assert(s.contains("abc"))
   }
+
+  test("test string get if blank with string supplier") {
+    assert(nullString.ops.getIfBlank(() => "NULL") == "NULL")
+    assert(Some("").ops.getIfBlank(() => "NULL") == "NULL")
+    assert(" ".ops.getIfBlank(() => "NULL") == "NULL")
+    assert("abc".ops.getIfBlank(() => "NULL") == "abc")
+    assert("".ops.getIfBlank(() => None) == null)
+    assert("".ops.getIfBlank(() => null.asInstanceOf[String]) == null)
+    // Tests compatibility for the API return type
+    val s = "abc".ops.getIfBlank(() => "NULL")
+    assert(s.contains("abc"))
+    // Checking that default value supplied only on demand
+    val numberOfCalls = new MutableInt(0)
+    val countingDefaultSupplier: Supplier[String] = () => {
+      def foo(): String = {
+        numberOfCalls.increment()
+        "NULL"
+      }
+
+      foo()
+    }
+    "abc".ops.getIfBlank(countingDefaultSupplier)
+    assert(0 == numberOfCalls.getValue)
+    "".ops.getIfBlank(countingDefaultSupplier)
+    assert(1 == numberOfCalls.getValue)
+    " ".ops.getIfBlank(countingDefaultSupplier)
+    assert(2 == numberOfCalls.getValue)
+    noneString.ops.getIfBlank(countingDefaultSupplier)
+    assert(3 == numberOfCalls.getValue)
+  }
+
 }

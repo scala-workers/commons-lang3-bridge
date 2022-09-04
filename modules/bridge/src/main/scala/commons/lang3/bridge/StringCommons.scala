@@ -1322,9 +1322,27 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def getDigits: String = Strings.getDigits(strOrNull)
 
-  def getIfBlank(defaultSupplier: Supplier[String]): String = Strings.getIfBlank(strOrNull, defaultSupplier)
+  def getIfBlank[S: TypeMapping[*, (String, Option[String])]](defaultSupplier: Supplier[S]): String = {
+    if (defaultSupplier == null) {
+      return Strings.getIfBlank(strOrNull, null)
+    }
+    val supplier: Supplier[String] = { () =>
+      val mapper = getMapper[S, Option[String]].func.orNull
+      mapper(defaultSupplier.get())
+    }
+    Strings.getIfBlank(strOrNull, supplier)
+  }
 
-  def getIfEmpty(defaultSupplier: Supplier[String]): String = Strings.getIfEmpty(strOrNull, defaultSupplier)
+  def getIfEmpty[S: TypeMapping[*, (String, Option[String])]](defaultSupplier: Supplier[S]): String = {
+    if (defaultSupplier == null) {
+      return Strings.getIfBlank(strOrNull, null)
+    }
+    val supplier: Supplier[String] = { () =>
+      val mapper = getMapper[S, Option[String]].func.orNull
+      mapper(defaultSupplier.get())
+    }
+    Strings.getIfEmpty(strOrNull, supplier)
+  }
 
   def indexOf[S: TypeMapping[*, (String, Option[String])]](searchSeq: S): Int = {
     val mapper = getMapper[S, Option[String]].func.orNull
