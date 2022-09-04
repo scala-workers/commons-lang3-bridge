@@ -19,8 +19,11 @@ private object privateUtils {
   }
 
   object SingleTypeMap {
-    implicit def toStrOptImplicit[U: TypeMapping[*, (String, Option[String])]]: SingleTypeMap[U, Option[String]] = strToOpt
-    implicit def seqOptionCharToSeqCharImplicit: SingleTypeMap[Seq[Option[Char]], Seq[Char]]                     = tranCharSeqOptFunc
+    implicit def toStrOptImplicit[U: TypeMapping[*, (String, Option[String])]]: SingleTypeMap[U, Option[String]] =
+      strToOpt
+    implicit def toCharSequenceOptImplicit[U: TypeMapping[*, (CharSequence, Option[CharSequence])]]
+      : SingleTypeMap[U, Option[CharSequence]] = csToOpt
+    implicit def seqOptionCharToSeqCharImplicit: SingleTypeMap[Seq[Option[Char]], Seq[Char]] = tranCharSeqOptFunc
     implicit def seqOptionCharSequenceToSeqCharSequenceImplicit: SingleTypeMap[Seq[Option[CharSequence]], Seq[CharSequence]] =
       tranCharSeqSeqOptFunc
   }
@@ -29,8 +32,17 @@ private object privateUtils {
     def orNull: T => String = func.andThen(_.orNull)
   }
 
+  implicit class funcToCharSequenceOptOrNull[T](val func: T => Option[CharSequence]) {
+    def orNull: T => CharSequence = func.andThen(_.orNull)
+  }
+
   private def strToOpt[U: TypeMapping[*, (String, Option[String])]](t: U): Option[String] = {
     val mapping = TypeMapping.getMapping[TypeMapping[*, (String, Option[String])], U]
+    mapping.input(t).fold(Option(_), identity)
+  }
+
+  private def csToOpt[U: TypeMapping[*, (CharSequence, Option[CharSequence])]](t: U): Option[CharSequence] = {
+    val mapping = TypeMapping.getMapping[TypeMapping[*, (CharSequence, Option[CharSequence])], U]
     mapping.input(t).fold(Option(_), identity)
   }
 
@@ -297,10 +309,27 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     * @return
     *   A new Option[String] if suffix was appended, the same string otherwise.
     */
-  def appendIfMissing[S: TypeMapping[*, (String, Option[String])]](suffix: S, suffixes: CharSequence*): Option[String] = {
+  def appendIfMissing[S: TypeMapping[*, (String, Option[String])], SS: VarArgsOfString](suffix: S, suffixes: SS*): Option[String] = {
     val toStrOpt = getMapper[S, Option[String]].func.orNull
-    Option(Strings.appendIfMissing(strOrNull, toStrOpt(suffix), suffixes: _*))
+
+    if (suffixes == null) {
+      return Option(Strings.appendIfMissing(strOrNull, toStrOpt(suffix)))
+    }
+
+    def mapping: VarArgsOfString[SS] = TypeMapping.getMapping[VarArgsOfString, SS]
+
+    val sfs = mapping
+      .input(suffixes)
+      .fold(
+        identity,
+        oss => oss.map(_.orNull)
+      )
+
+    Option(Strings.appendIfMissing(strOrNull, toStrOpt(suffix), sfs: _*))
   }
+  // helpers for method call without suffixes
+  def appendIfMissing(suffix: String): Option[String]         = Option(Strings.appendIfMissing(strOrNull, suffix))
+  def appendIfMissing(suffix: Option[String]): Option[String] = Option(Strings.appendIfMissing(strOrNull, suffix.orNull))
 
   /** Appends the suffix to the end of the string if the string does not already end with any of the suffixes.
     *
@@ -355,10 +384,34 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     * @return
     *   A new String if suffix was appended, the same string otherwise.
     */
-  def appendIfMissingIgnoreCase[S: TypeMapping[*, (String, Option[String])]](suffix: S, suffixes: CharSequence*): Option[String] = {
+  def appendIfMissingIgnoreCase[S: TypeMapping[*, (String, Option[String])], SS: VarArgsOfString](
+    suffix: S,
+    suffixes: SS*
+  ): Option[String] = {
     val toStrOpt = getMapper[S, Option[String]].func.orNull
-    Option(Strings.appendIfMissingIgnoreCase(strOrNull, toStrOpt(suffix), suffixes: _*))
+
+    if (suffixes == null) {
+      return Option(Strings.appendIfMissingIgnoreCase(strOrNull, toStrOpt(suffix)))
+    }
+
+    def mapping: VarArgsOfString[SS] = TypeMapping.getMapping[VarArgsOfString, SS]
+
+    val sfs = mapping
+      .input(suffixes)
+      .fold(
+        identity,
+        oss => oss.map(_.orNull)
+      )
+
+    Option(Strings.appendIfMissingIgnoreCase(strOrNull, toStrOpt(suffix), sfs: _*))
   }
+
+  // helpers for method call without suffixes
+  def appendIfMissingIgnoreCase(suffix: String): Option[String] =
+    Option(Strings.appendIfMissingIgnoreCase(strOrNull, suffix))
+
+  def appendIfMissingIgnoreCase(suffix: Option[String]): Option[String] =
+    Option(Strings.appendIfMissingIgnoreCase(strOrNull, suffix.orNull))
 
   /** <p>Capitalizes a String changing the first character to title case as per {@link Character# toTitleCase ( int )}. No other characters
     * are changed.</p>
@@ -1172,15 +1225,15 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     Strings.countMatches(strOrNull, str1)
   }
 
-  def defaultIfBlank[S: TypeMapping[*, (String, Option[String])]](defaultStr: S): Option[String] = {
-    val mapper = getMapper[S, Option[String]].func.orNull
-    val str1   = mapper(defaultStr)
-    val result = Strings.defaultIfBlank(strOrNull, str1)
+  def defaultIfBlank[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultStr: S): Option[CharSequence] = {
+    val mapper = getMapper[S, Option[CharSequence]].func.orNull
+    val defStr = mapper(defaultStr)
+    val result = Strings.defaultIfBlank(strOrNull, defStr)
     Option(result)
   }
 
-  def defaultIfEmpty[S: TypeMapping[*, (String, Option[String])]](defaultStr: S): Option[String] = {
-    val mapper = getMapper[S, Option[String]].func.orNull
+  def defaultIfEmpty[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultStr: S): Option[CharSequence] = {
+    val mapper = getMapper[S, Option[CharSequence]].func.orNull
     val str1   = mapper(defaultStr)
     val result = Strings.defaultIfEmpty(strOrNull, str1)
     Option(result)
