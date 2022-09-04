@@ -487,7 +487,7 @@ class StringUtilsSpec extends AnyFunSuite {
     assert(s.contains("abc"))
   }
 
-  test("test default if blank string builder") {
+  test("test string utils default string if blank string builder") {
     assert((new mutable.StringBuilder("")).toString().ops.defaultIfBlank(new mutable.StringBuilder("NULL")).get.toString == "NULL")
     assert(Some(new mutable.StringBuilder(" ").toString()).ops.defaultIfBlank(new mutable.StringBuilder("NULL")).get.toString == "NULL")
     assert((new mutable.StringBuilder("abc")).toString().ops.defaultIfBlank(new mutable.StringBuilder("NULL")).get.toString == "abc")
@@ -496,5 +496,16 @@ class StringUtilsSpec extends AnyFunSuite {
     // Tests compatibility for the API return type
     val s = Some(new mutable.StringBuilder("abc").toString()).ops.defaultIfBlank(new mutable.StringBuilder("NULL"))
     assert("abc" == s.get.toString)
+  }
+
+  test("test string utils default string if blank with string") {
+    assert(nullString.ops.defaultIfBlank("NULL").contains("NULL"))
+    assert("".ops.defaultIfBlank("NULL").contains("NULL"))
+    assert(Some(" ").ops.defaultIfBlank("NULL").contains("NULL"))
+    assert("abc".ops.defaultIfBlank("NULL").contains("abc"))
+    assert("".ops.defaultIfBlank(null.asInstanceOf[String]).isEmpty)
+    // Tests compatibility for the API return type
+    val s = "abc".ops.defaultIfBlank("NULL")
+    assert(s.contains("abc"))
   }
 }

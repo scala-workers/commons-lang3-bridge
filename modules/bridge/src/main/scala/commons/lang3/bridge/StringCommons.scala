@@ -1227,8 +1227,8 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def defaultIfBlank[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultStr: S): Option[CharSequence] = {
     val mapper = getMapper[S, Option[CharSequence]].func.orNull
-    val str1   = mapper(defaultStr)
-    val result = Strings.defaultIfBlank(strOrNull, str1)
+    val defStr = mapper(defaultStr)
+    val result = Strings.defaultIfBlank(strOrNull, defStr)
     Option(result)
   }
 
