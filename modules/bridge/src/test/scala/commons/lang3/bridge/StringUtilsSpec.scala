@@ -3,6 +3,7 @@ package commons.lang3.bridge
 import commons.lang3.bridge.StringUtils.ops._
 import org.scalatest.funsuite.AnyFunSuite
 
+import java.nio.CharBuffer
 import java.util
 import java.util.Collections
 import scala.collection.mutable
@@ -473,6 +474,17 @@ class StringUtilsSpec extends AnyFunSuite {
     assert(nullString.ops.defaultString("NULL").contains("NULL"))
     assert("".ops.defaultString("NULL").contains(""))
     assert("abc".ops.defaultString("NULL").contains("abc"))
+  }
+
+  test("test string utils default if blank with char buffers") {
+    assert(CharBuffer.wrap("").toString.ops.defaultIfBlank(CharBuffer.wrap("NULL")).get.toString == "NULL")
+    assert(CharBuffer.wrap(" ").toString.ops.defaultIfBlank(CharBuffer.wrap("NULL")).get.toString == "NULL")
+    assert(CharBuffer.wrap("abc").toString.ops.defaultIfBlank(CharBuffer.wrap("NULL")).get.toString == "abc")
+
+    assert(CharBuffer.wrap("").toString.ops.defaultIfBlank(null.asInstanceOf[CharBuffer]).isEmpty)
+    // Tests compatibility for the API return type
+    val s = CharBuffer.wrap("abc").toString.ops.defaultIfBlank(CharBuffer.wrap("NULL"))
+    assert(s.contains("abc"))
   }
 
 }
