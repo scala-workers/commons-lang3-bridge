@@ -487,4 +487,14 @@ class StringUtilsSpec extends AnyFunSuite {
     assert(s.contains("abc"))
   }
 
+  test("test default if blank string builder") {
+    assert((new mutable.StringBuilder("")).toString().ops.defaultIfBlank(new mutable.StringBuilder("NULL")).get.toString == "NULL")
+    assert(Some(new mutable.StringBuilder(" ").toString()).ops.defaultIfBlank(new mutable.StringBuilder("NULL")).get.toString == "NULL")
+    assert((new mutable.StringBuilder("abc")).toString().ops.defaultIfBlank(new mutable.StringBuilder("NULL")).get.toString == "abc")
+
+    assert((new mutable.StringBuilder("")).toString().ops.defaultIfBlank(null.asInstanceOf[mutable.StringBuilder]).isEmpty)
+    // Tests compatibility for the API return type
+    val s = Some(new mutable.StringBuilder("abc").toString()).ops.defaultIfBlank(new mutable.StringBuilder("NULL"))
+    assert("abc" == s.get.toString)
+  }
 }
