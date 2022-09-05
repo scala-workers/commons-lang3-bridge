@@ -11,6 +11,7 @@ import java.util
 import java.util.Collections
 import java.util.function.Supplier
 import scala.collection.mutable
+import org.apache.commons.lang3.{StringUtils => Strings}
 
 /** TODO
   *
@@ -639,7 +640,6 @@ class StringUtilsSpec extends AnyFunSuite {
   }
 
   test("test string get bytes") {
-    import org.apache.commons.lang3.{StringUtils => Strings}
     assert(ArrayUtils.EMPTY_BYTE_ARRAY sameElements nullString.ops.getBytes(nullString))
     assert(Strings.EMPTY.getBytes sameElements Strings.EMPTY.ops.getBytes(nullString))
     assert(
@@ -656,5 +656,32 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("123password45".ops.getDigits == "12345")
     assert(Some("(541) 754-3010").ops.getDigits == "5417543010")
     assert("\u0967\u0968\u0969".ops.getDigits == "\u0967\u0968\u0969")
+  }
+
+  test("test string is all lower case") {
+
+    assert(!nullString.ops.isAllLowerCase)
+    assert(!Strings.EMPTY.ops.isAllLowerCase)
+    assert(!"  ".ops.isAllLowerCase)
+    assert(Some("abc").ops.isAllLowerCase)
+    assert(!"abc ".ops.isAllLowerCase)
+    assert(!"abc\n".ops.isAllLowerCase)
+    assert(!"abC".ops.isAllLowerCase)
+    assert(!"ab c".ops.isAllLowerCase)
+    assert(!"ab1c".ops.isAllLowerCase)
+    assert(!"ab/c".ops.isAllLowerCase)
+  }
+
+  test("test string is all upper case") {
+    assert(!noneString.ops.isAllUpperCase)
+    assert(!Strings.EMPTY.ops.isAllUpperCase)
+    assert(!Some("  ").ops.isAllUpperCase)
+    assert(Some("ABC").ops.isAllUpperCase)
+    assert(!"ABC ".ops.isAllUpperCase)
+    assert(!"ABC\n".ops.isAllUpperCase)
+    assert(!"aBC".ops.isAllUpperCase)
+    assert(!"A C".ops.isAllUpperCase)
+    assert(!"A1C".ops.isAllUpperCase)
+    assert(!"A/C".ops.isAllUpperCase)
   }
 }

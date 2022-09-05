@@ -1425,6 +1425,10 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     Strings.indexOfIgnoreCase(strOrNull, str1, startPos)
   }
 
+  def isAllLowerCase: Boolean = Strings.isAllLowerCase(strOrNull)
+
+  def isAllUpperCase: Boolean = Strings.isAllUpperCase(strOrNull)
+
   def isAlpha: Boolean = Strings.isAlpha(strOrNull)
 
   def isAlphanumeric: Boolean = Strings.isAlphanumeric(strOrNull)
