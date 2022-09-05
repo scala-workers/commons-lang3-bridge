@@ -12,6 +12,7 @@ import java.util.Collections
 import java.util.function.Supplier
 import scala.collection.mutable
 import org.apache.commons.lang3.{StringUtils => Strings}
+import java.util.Locale
 
 /** TODO
   *
@@ -737,5 +738,15 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("abc".ops.leftPad(-1, Some(" ")).contains("abc"))
     assert(Some("abc").ops.leftPad(5, noneString).contains("  abc"))
     assert("abc".ops.leftPad(5, Some("")).contains("  abc"))
+  }
+
+  test("test string lower case") {
+    assert(nullString.ops.lowerCase.isEmpty)
+    assert(noneString.ops.lowerCase(Locale.ENGLISH).isEmpty)
+    assert("fOo test THING".ops.lowerCase.contains("foo test thing"), "lowerCase(String) failed")
+    assert("".ops.lowerCase.contains(""), "lowerCase(empty-string) failed")
+    assert("fOo test THING".ops.lowerCase(Locale.ENGLISH).contains("foo test thing"), "lowerCase(String, Locale) failed")
+    assert("".ops.lowerCase(Locale.ENGLISH).contains(""), "lowerCase(empty-string, Locale) failed")
+
   }
 }
