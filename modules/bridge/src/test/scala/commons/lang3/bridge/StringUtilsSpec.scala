@@ -647,4 +647,14 @@ class StringUtilsSpec extends AnyFunSuite {
         Strings.EMPTY.ops.getBytes(StandardCharsets.US_ASCII.name)
     )
   }
+
+  test("test string get digits") {
+    assert(nullString.ops.getDigits == null)
+    assert(Some("").ops.getDigits == "")
+    assert("abc".ops.getDigits == "")
+    assert("1000$".ops.getDigits == "1000")
+    assert("123password45".ops.getDigits == "12345")
+    assert(Some("(541) 754-3010").ops.getDigits == "5417543010")
+    assert("\u0967\u0968\u0969".ops.getDigits == "\u0967\u0968\u0969")
+  }
 }
