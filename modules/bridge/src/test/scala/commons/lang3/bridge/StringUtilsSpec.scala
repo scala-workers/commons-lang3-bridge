@@ -1,10 +1,12 @@
 package commons.lang3.bridge
 
 import commons.lang3.bridge.StringUtils.ops._
+import org.apache.commons.lang3.ArrayUtils
 import org.apache.commons.lang3.mutable.MutableInt
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.nio.CharBuffer
+import java.nio.charset.StandardCharsets
 import java.util
 import java.util.Collections
 import java.util.function.Supplier
@@ -636,5 +638,13 @@ class StringUtilsSpec extends AnyFunSuite {
     assert(0 == "i am a robot".ops.indexOfDifference("you are a robot"))
   }
 
-
+  test("test string get bytes") {
+    import org.apache.commons.lang3.{StringUtils => Strings}
+    assert(ArrayUtils.EMPTY_BYTE_ARRAY sameElements nullString.ops.getBytes(nullString))
+    assert(Strings.EMPTY.getBytes sameElements Strings.EMPTY.ops.getBytes(nullString))
+    assert(
+      Strings.EMPTY.getBytes(StandardCharsets.US_ASCII.name) sameElements
+        Strings.EMPTY.ops.getBytes(StandardCharsets.US_ASCII.name)
+    )
+  }
 }
