@@ -624,4 +624,17 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("i am a robot".ops.difference("you are a robot").contains("you are a robot"))
   }
 
+  test("test string index of difference between string") {
+    assert(-1 == nullString.ops.indexOfDifference(noneString))
+    assert(0 == nullString.ops.indexOfDifference("i am a robot"))
+    assert(-1 == Some("").ops.indexOfDifference(""))
+    assert(0 == Some("").ops.indexOfDifference("abc"))
+    assert(0 == "abc".ops.indexOfDifference(""))
+    assert(0 == "i am a machine".ops.indexOfDifference(nullString))
+    assert(7 == "i am a machine".ops.indexOfDifference("i am a robot"))
+    assert(-1 == "foo".ops.indexOfDifference("foo"))
+    assert(0 == "i am a robot".ops.indexOfDifference("you are a robot"))
+  }
+
+
 }
