@@ -1455,16 +1455,6 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def isWhitespace: Boolean = Strings.isWhitespace(strOrNull)
 
-  def join(arr: Array[Object]): String = Strings.join(arr, strOrNull)
-
-  def joinWith(objs: Object*): String = {
-    if (objs == null) {
-      Strings.joinWith(strOrNull, null)
-    } else {
-      Strings.joinWith(strOrNull, objs: _*)
-    }
-  }
-
   def lastIndexOf[S: TypeMapping[*, (Char, String, Option[String])]](searchArg: S): Int = {
     val mapping = TypeMapping.getMapping[TypeMapping[*, (Char, String, Option[String])], S]
     mapping

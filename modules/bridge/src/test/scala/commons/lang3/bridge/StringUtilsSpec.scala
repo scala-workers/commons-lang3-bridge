@@ -703,4 +703,16 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("A1c".ops.isMixedCase)
     assert("a/C".ops.isMixedCase)
   }
+
+  test("test lang 623") {
+    assert("\u00DE".ops.replaceChars('\u00DE', 't').contains("t"))
+    assert(Some("\u00FE").ops.replaceChars('\u00FE', 't').contains("t"))
+  }
+
+  test("test lang 666") {
+    assert("120.00".ops.stripEnd(".0").contains("12"))
+    assert("121.00".ops.stripEnd(Some(".0")).contains("121"))
+  }
+
+
 }
