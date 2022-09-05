@@ -1225,18 +1225,18 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     Strings.countMatches(strOrNull, str1)
   }
 
-  def defaultIfBlank[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultStr: S): Option[CharSequence] = {
+  def defaultIfBlank[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultStr: S): CharSequence = {
     val mapper = getMapper[S, Option[CharSequence]].func.orNull
     val defStr = mapper(defaultStr)
     val result = Strings.defaultIfBlank(strOrNull, defStr)
-    Option(result)
+    result
   }
 
-  def defaultIfEmpty[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultStr: S): Option[CharSequence] = {
+  def defaultIfEmpty[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultStr: S): CharSequence = {
     val mapper = getMapper[S, Option[CharSequence]].func.orNull
     val str1   = mapper(defaultStr)
     val result = Strings.defaultIfEmpty(strOrNull, str1)
-    Option(result)
+    result
   }
 
   def defaultString: String = Strings.defaultString(strOrNull)
@@ -1322,23 +1322,23 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def getDigits: String = Strings.getDigits(strOrNull)
 
-  def getIfBlank[S: TypeMapping[*, (String, Option[String])]](defaultSupplier: Supplier[S]): String = {
+  def getIfBlank[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultSupplier: Supplier[S]): CharSequence = {
     if (defaultSupplier == null) {
       return Strings.getIfBlank(strOrNull, null)
     }
-    val supplier: Supplier[String] = { () =>
-      val mapper = getMapper[S, Option[String]].func.orNull
+    val supplier: Supplier[CharSequence] = { () =>
+      val mapper = getMapper[S, Option[CharSequence]].func.orNull
       mapper(defaultSupplier.get())
     }
     Strings.getIfBlank(strOrNull, supplier)
   }
 
-  def getIfEmpty[S: TypeMapping[*, (String, Option[String])]](defaultSupplier: Supplier[S]): String = {
+  def getIfEmpty[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultSupplier: Supplier[S]): CharSequence = {
     if (defaultSupplier == null) {
-      return Strings.getIfBlank(strOrNull, null)
+      return Strings.getIfEmpty(strOrNull, null)
     }
-    val supplier: Supplier[String] = { () =>
-      val mapper = getMapper[S, Option[String]].func.orNull
+    val supplier: Supplier[CharSequence] = { () =>
+      val mapper = getMapper[S, Option[CharSequence]].func.orNull
       mapper(defaultSupplier.get())
     }
     Strings.getIfEmpty(strOrNull, supplier)

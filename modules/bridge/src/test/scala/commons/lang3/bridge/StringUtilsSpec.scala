@@ -479,36 +479,36 @@ class StringUtilsSpec extends AnyFunSuite {
   }
 
   test("test string utils default if blank with char buffers") {
-    assert(CharBuffer.wrap("").toString.ops.defaultIfBlank(CharBuffer.wrap("NULL")).get.toString == "NULL")
-    assert(CharBuffer.wrap(" ").toString.ops.defaultIfBlank(CharBuffer.wrap("NULL")).get.toString == "NULL")
-    assert(CharBuffer.wrap("abc").toString.ops.defaultIfBlank(CharBuffer.wrap("NULL")).get.toString == "abc")
+    assert(CharBuffer.wrap("").toString.ops.defaultIfBlank(CharBuffer.wrap("NULL")).toString == "NULL")
+    assert(CharBuffer.wrap(" ").toString.ops.defaultIfBlank(CharBuffer.wrap("NULL")).toString == "NULL")
+    assert(CharBuffer.wrap("abc").toString.ops.defaultIfBlank(CharBuffer.wrap("NULL")).toString == "abc")
 
-    assert(CharBuffer.wrap("").toString.ops.defaultIfBlank(null.asInstanceOf[CharBuffer]).isEmpty)
+    assert(CharBuffer.wrap("").toString.ops.defaultIfBlank(null.asInstanceOf[CharBuffer]) == null)
     // Tests compatibility for the API return type
-    val s = CharBuffer.wrap("abc").toString.ops.defaultIfBlank(CharBuffer.wrap("NULL"))
-    assert(s.contains("abc"))
+    val s = CharBuffer.wrap("abc").toString.ops.defaultIfBlank(CharBuffer.wrap("NULL")).toString
+    assert(s == "abc")
   }
 
   test("test string utils default string if blank string builder") {
-    assert((new mutable.StringBuilder("")).toString().ops.defaultIfBlank(new mutable.StringBuilder("NULL")).get.toString == "NULL")
-    assert(Some(new mutable.StringBuilder(" ").toString()).ops.defaultIfBlank(new mutable.StringBuilder("NULL")).get.toString == "NULL")
-    assert((new mutable.StringBuilder("abc")).toString().ops.defaultIfBlank(new mutable.StringBuilder("NULL")).get.toString == "abc")
+    assert((new mutable.StringBuilder("")).toString().ops.defaultIfBlank(new mutable.StringBuilder("NULL")).toString == "NULL")
+    assert(Some(new mutable.StringBuilder(" ").toString()).ops.defaultIfBlank(new mutable.StringBuilder("NULL")).toString == "NULL")
+    assert((new mutable.StringBuilder("abc")).toString().ops.defaultIfBlank(new mutable.StringBuilder("NULL")).toString == "abc")
 
-    assert((new mutable.StringBuilder("")).toString().ops.defaultIfBlank(null.asInstanceOf[mutable.StringBuilder]).isEmpty)
+    assert((new mutable.StringBuilder("")).toString().ops.defaultIfBlank(null.asInstanceOf[mutable.StringBuilder]) == null)
     // Tests compatibility for the API return type
-    val s = Some(new mutable.StringBuilder("abc").toString()).ops.defaultIfBlank(new mutable.StringBuilder("NULL"))
-    assert("abc" == s.get.toString)
+    val s = Some(new mutable.StringBuilder("abc").toString()).ops.defaultIfBlank(new mutable.StringBuilder("NULL")).toString
+    assert("abc" == s)
   }
 
   test("test string utils default string if blank with string") {
-    assert(nullString.ops.defaultIfBlank("NULL").contains("NULL"))
-    assert("".ops.defaultIfBlank("NULL").contains("NULL"))
-    assert(Some(" ").ops.defaultIfBlank("NULL").contains("NULL"))
-    assert("abc".ops.defaultIfBlank("NULL").contains("abc"))
-    assert("".ops.defaultIfBlank(null.asInstanceOf[String]).isEmpty)
+    assert(nullString.ops.defaultIfBlank("NULL") == "NULL")
+    assert("".ops.defaultIfBlank("NULL") == "NULL")
+    assert(Some(" ").ops.defaultIfBlank("NULL") == "NULL")
+    assert("abc".ops.defaultIfBlank("NULL") == "abc")
+    assert("".ops.defaultIfBlank(null.asInstanceOf[String]) == null)
     // Tests compatibility for the API return type
     val s = "abc".ops.defaultIfBlank("NULL")
-    assert(s.contains("abc"))
+    assert(s == "abc")
   }
 
   test("test string get if blank with string supplier") {
@@ -520,7 +520,7 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("".ops.getIfBlank(() => null.asInstanceOf[String]) == null)
     // Tests compatibility for the API return type
     val s = "abc".ops.getIfBlank(() => "NULL")
-    assert(s.contains("abc"))
+    assert(s.toString == "abc")
     // Checking that default value supplied only on demand
     val numberOfCalls = new MutableInt(0)
     val countingDefaultSupplier: Supplier[String] = () => {
@@ -542,34 +542,34 @@ class StringUtilsSpec extends AnyFunSuite {
   }
 
   test("test string default if empty with char buffers") {
-    assert(Some(CharBuffer.wrap("").toString).ops.defaultIfEmpty(CharBuffer.wrap("NULL")).forall(_.toString == "NULL"))
-    assert(nullString.ops.defaultIfEmpty("NULL").contains("NULL"))
-    assert(CharBuffer.wrap("abc").toString.ops.defaultIfEmpty(CharBuffer.wrap("NULL")).contains("abc"))
-    assert(CharBuffer.wrap("").toString.ops.defaultIfEmpty(null.asInstanceOf[CharBuffer]).isEmpty)
+    assert(Some(CharBuffer.wrap("").toString).ops.defaultIfEmpty(CharBuffer.wrap("NULL")).toString == "NULL")
+    assert(nullString.ops.defaultIfEmpty("NULL").toString == "NULL")
+    assert(CharBuffer.wrap("abc").toString.ops.defaultIfEmpty(CharBuffer.wrap("NULL")).toString == "abc")
+    assert(CharBuffer.wrap("").toString.ops.defaultIfEmpty(null.asInstanceOf[CharBuffer]) == null)
     // Tests compatibility for the API return type
     val s = CharBuffer.wrap("abc").toString.ops.defaultIfEmpty(CharBuffer.wrap("NULL"))
-    assert(s.contains("abc"))
+    assert(s == "abc")
   }
 
   test("test string default if empty with string builder") {
     assert(
-      Some(new mutable.StringBuilder("").toString()).ops.defaultIfEmpty(new mutable.StringBuilder("NULL")).forall(_.toString == "NULL")
+      Some(new mutable.StringBuilder("").toString()).ops.defaultIfEmpty(new mutable.StringBuilder("NULL")).toString == "NULL"
     )
-    assert((new mutable.StringBuilder("abc").toString()).ops.defaultIfEmpty(new mutable.StringBuilder("NULL")).get.toString == "abc")
-    assert((new mutable.StringBuilder("")).toString().ops.defaultIfEmpty(noneString).isEmpty)
+    assert((new mutable.StringBuilder("abc").toString()).ops.defaultIfEmpty(new mutable.StringBuilder("NULL")).toString == "abc")
+    assert((new mutable.StringBuilder("")).toString().ops.defaultIfEmpty(noneString) == null)
     // Tests compatibility for the API return type
     val s = (new mutable.StringBuilder("abc")).toString().ops.defaultIfEmpty(new mutable.StringBuilder("NULL"))
-    assert(s.get.toString == "abc")
+    assert(s.toString == "abc")
   }
 
   test("test string default if empty with string") {
-    assert(nullString.ops.defaultIfEmpty("NULL").contains("NULL"))
-    assert(Some("").ops.defaultIfEmpty("NULL").contains("NULL"))
-    assert("abc".ops.defaultIfEmpty("NULL").contains("abc"))
-    assert("".ops.defaultIfEmpty(null).isEmpty)
+    assert(nullString.ops.defaultIfEmpty("NULL") == "NULL")
+    assert(Some("").ops.defaultIfEmpty("NULL") == "NULL")
+    assert("abc".ops.defaultIfEmpty("NULL") == "abc")
+    assert("".ops.defaultIfEmpty(null) == null)
     // Tests compatibility for the API return type
     val s = "abc".ops.defaultIfEmpty("NULL")
-    assert(s.contains("abc"))
+    assert(s == "abc")
   }
 
   test("get string get if emtpy with supplier") {
@@ -580,7 +580,7 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("".ops.getIfEmpty(null.asInstanceOf[Supplier[String]]) == null)
     // Tests compatibility for the API return type
     val s = "abc".ops.getIfEmpty(() => "NULL")
-    assert(s.contains("abc"))
+    assert(s.toString == "abc")
     // Checking that default value supplied only on demand
     val numberOfCalls = new MutableInt(0)
     val countingDefaultSupplier: Supplier[String] = () => {
