@@ -684,4 +684,23 @@ class StringUtilsSpec extends AnyFunSuite {
     assert(!"A1C".ops.isAllUpperCase)
     assert(!"A/C".ops.isAllUpperCase)
   }
+
+  test("test string is mixed case") {
+    assert(!nullString.ops.isMixedCase)
+    assert(!Strings.EMPTY.ops.isMixedCase)
+    assert(!" ".ops.isMixedCase)
+    assert(!Some("A").ops.isMixedCase)
+    assert(!"a".ops.isMixedCase)
+    assert(!"/".ops.isMixedCase)
+    assert(!"A/".ops.isMixedCase)
+    assert(!"/b".ops.isMixedCase)
+    assert(!"abc".ops.isMixedCase)
+    assert(!"ABC".ops.isMixedCase)
+    assert("aBc".ops.isMixedCase)
+    assert("aBc ".ops.isMixedCase)
+    assert("A c".ops.isMixedCase)
+    assert("aBc\n".ops.isMixedCase)
+    assert("A1c".ops.isMixedCase)
+    assert("a/C".ops.isMixedCase)
+  }
 }
