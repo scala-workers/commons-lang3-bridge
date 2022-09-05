@@ -541,4 +541,62 @@ class StringUtilsSpec extends AnyFunSuite {
     assert(3 == numberOfCalls.getValue)
   }
 
+  test("test string default if empty with char buffers") {
+    assert(Some(CharBuffer.wrap("").toString).ops.defaultIfEmpty(CharBuffer.wrap("NULL")).forall(_.toString == "NULL"))
+    assert(nullString.ops.defaultIfEmpty("NULL").contains("NULL"))
+    assert(CharBuffer.wrap("abc").toString.ops.defaultIfEmpty(CharBuffer.wrap("NULL")).contains("abc"))
+    assert(CharBuffer.wrap("").toString.ops.defaultIfEmpty(null.asInstanceOf[CharBuffer]).isEmpty)
+    // Tests compatibility for the API return type
+    val s = CharBuffer.wrap("abc").toString.ops.defaultIfEmpty(CharBuffer.wrap("NULL"))
+    assert(s.contains("abc"))
+  }
+
+  test("test string default if empty with string builder") {
+    assert(
+      Some(new mutable.StringBuilder("").toString()).ops.defaultIfEmpty(new mutable.StringBuilder("NULL")).forall(_.toString == "NULL")
+    )
+    assert((new mutable.StringBuilder("abc").toString()).ops.defaultIfEmpty(new mutable.StringBuilder("NULL")).get.toString == "abc")
+    assert((new mutable.StringBuilder("")).toString().ops.defaultIfEmpty(noneString).isEmpty)
+    // Tests compatibility for the API return type
+    val s = (new mutable.StringBuilder("abc")).toString().ops.defaultIfEmpty(new mutable.StringBuilder("NULL"))
+    assert(s.get.toString == "abc")
+  }
+
+  test("test string default if empty with string") {
+    assert(nullString.ops.defaultIfEmpty("NULL").contains("NULL"))
+    assert(Some("").ops.defaultIfEmpty("NULL").contains("NULL"))
+    assert("abc".ops.defaultIfEmpty("NULL").contains("abc"))
+    assert("".ops.defaultIfEmpty(null).isEmpty)
+    // Tests compatibility for the API return type
+    val s = "abc".ops.defaultIfEmpty("NULL")
+    assert(s.contains("abc"))
+  }
+
+  test("get string get if emtpy with supplier") {
+    assert(nullString.ops.getIfEmpty(() => "NULL") == "NULL")
+    assert(Some("").ops.getIfEmpty(() => "NULL") == "NULL")
+    assert("abc".ops.getIfEmpty(() => "NULL") == "abc")
+    assert(Some("").ops.getIfEmpty(() => null) == null)
+    assert("".ops.getIfEmpty(null.asInstanceOf[Supplier[String]]) == null)
+    // Tests compatibility for the API return type
+    val s = "abc".ops.getIfEmpty(() => "NULL")
+    assert(s.contains("abc"))
+    // Checking that default value supplied only on demand
+    val numberOfCalls = new MutableInt(0)
+    val countingDefaultSupplier: Supplier[String] = () => {
+      def foo(): String = {
+        numberOfCalls.increment()
+        "NULL"
+      }
+
+      foo()
+    }
+    Some("abc").ops.getIfEmpty(countingDefaultSupplier)
+    assert(0 == numberOfCalls.getValue)
+    "".ops.getIfEmpty(countingDefaultSupplier)
+    assert(1 == numberOfCalls.getValue)
+    noneString.ops.getIfEmpty(countingDefaultSupplier)
+    assert(2 == numberOfCalls.getValue)
+  }
+
 }
