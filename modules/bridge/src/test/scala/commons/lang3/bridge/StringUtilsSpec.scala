@@ -599,4 +599,29 @@ class StringUtilsSpec extends AnyFunSuite {
     assert(2 == numberOfCalls.getValue)
   }
 
+  test("test string delete white space") {
+    assert(nullString.ops.deleteWhitespace().isEmpty)
+    assert("".ops.deleteWhitespace().contains(""))
+    assert(Some("  \u000C  \t\t\u001F\n\n \u000B  ").ops.deleteWhitespace().contains(""))
+    assert(WHITESPACE.ops.deleteWhitespace().contains(""))
+    assert(NON_WHITESPACE.ops.deleteWhitespace().contains(NON_WHITESPACE))
+    // Note: u-2007 and u-000A both cause problems in the source code
+    // it should ignore 2007 but delete 000A
+    assert(Some("  \u00A0  \t\t\n\n \u202F  ").ops.deleteWhitespace().contains("\u00A0\u202F"))
+    assert("\u00A0\u202F".ops.deleteWhitespace().contains("\u00A0\u202F"))
+    assert("\u000Bt  \t\n\u0009e\rs\n\n   \tt".ops.deleteWhitespace().contains("test"))
+  }
+
+  test("test string difference to string") {
+    assert(noneString.ops.difference(nullString).ops.isEmpty)
+    assert(Some("").ops.difference(Some("")).contains(""))
+    assert("".ops.difference("abc").contains("abc"))
+    assert("abc".ops.difference("").contains(""))
+    assert(nullString.ops.difference("i am a robot").contains("i am a robot"))
+    assert("i am a machine".ops.difference(noneString).contains("i am a machine"))
+    assert("i am a machine".ops.difference("i am a robot").contains("robot"))
+    assert("abc".ops.difference("abc").contains(""))
+    assert("i am a robot".ops.difference("you are a robot").contains("you are a robot"))
+  }
+
 }
