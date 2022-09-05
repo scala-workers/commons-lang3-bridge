@@ -714,5 +714,15 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("121.00".ops.stripEnd(Some(".0")).contains("121"))
   }
 
-
+  test("test string left pad with size and pad char") {
+    assert(noneString.ops.leftPad(5, ' ').isEmpty)
+    assert("".ops.leftPad(5, ' ').contains("     "))
+    assert("abc".ops.leftPad(5, ' ').contains("  abc"))
+    assert("abc".ops.leftPad(5, 'x').contains("xxabc"))
+    assert("abc".ops.leftPad(5, '\uffff').contains("\uffff\uffffabc"))
+    assert("abc".ops.leftPad(2, ' ').contains("abc"))
+    val str = "aaa".ops.leftPad(10000, 'a').get // bigger than pad length
+    assert(10000 == str.length)
+    assert(str.ops.containsOnly('a'))
+  }
 }
