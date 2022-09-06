@@ -857,4 +857,14 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("XYZabc".ops.prependIfMissingIgnoreCase("xyz", "mno").contains("XYZabc"), "prependIfMissingIgnoreCase(XYZabc,xyz,mno)")
     assert("MNOabc".ops.prependIfMissingIgnoreCase("xyz", "mno").contains("MNOabc"), "prependIfMissingIgnoreCase(MNOabc,xyz,mno)")
   }
+
+  test("test string recapitalize") {
+    // reflection type of tests: Sentences.
+    assert(SENTENCE_UNCAP.ops.capitalize.ops.uncapitalize.contains(SENTENCE_UNCAP), "uncapitalize(capitalize(String)) failed")
+    assert(SENTENCE_CAP.ops.uncapitalize.ops.capitalize.contains(SENTENCE_CAP), "capitalize(uncapitalize(String)) failed")
+
+    // reflection type of tests: One word.
+    assert(FOO_UNCAP.ops.capitalize.ops.uncapitalize.contains(FOO_UNCAP), "uncapitalize(capitalize(String)) failed")
+    assert(FOO_CAP.ops.uncapitalize.ops.capitalize.contains(FOO_CAP), "capitalize(uncapitalize(String)) failed")
+  }
 }
