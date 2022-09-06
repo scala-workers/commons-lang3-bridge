@@ -867,4 +867,32 @@ class StringUtilsSpec extends AnyFunSuite {
     assert(FOO_UNCAP.ops.capitalize.ops.uncapitalize.contains(FOO_UNCAP), "uncapitalize(capitalize(String)) failed")
     assert(FOO_CAP.ops.uncapitalize.ops.capitalize.contains(FOO_CAP), "capitalize(uncapitalize(String)) failed")
   }
+
+  test("test string remove") {
+    // StringUtils.remove(null, *)        = null
+    assert(nullString.ops.remove(nullString).isEmpty)
+    assert(noneString.ops.remove("").isEmpty)
+    assert(noneString.ops.remove("a").isEmpty)
+
+    // StringUtils.remove("", *)          = ""
+    assert("".ops.remove(nullString).contains(""))
+    assert("".ops.remove("").contains(""))
+    assert(Some("").ops.remove("a").contains(""))
+
+    // StringUtils.remove(*, null)        = *
+    assert(nullString.ops.remove(noneString).isEmpty)
+    assert("".ops.remove(nullString).contains(""))
+    assert("a".ops.remove(nullString).contains("a"))
+
+    // StringUtils.remove(*, "")          = *
+    assert(noneString.ops.remove("").isEmpty)
+    assert("".ops.remove("").contains(""))
+    assert("a".ops.remove("").contains("a"))
+
+    // StringUtils.remove("queued", "ue") = "qd"
+    assert("queued".ops.remove("ue").contains("qd"))
+
+    // StringUtils.remove("queued", "zz") = "queued"
+    assert("queued".ops.remove("zz").contains("queued"))
+  }
 }
