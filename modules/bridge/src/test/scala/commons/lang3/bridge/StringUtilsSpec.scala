@@ -1045,4 +1045,162 @@ class StringUtilsSpec extends AnyFunSuite {
 
     assert("?".ops.repeat(", ", 3).contains("?, ?, ?"))
   }
+
+  test("test string replace string array to string array") {
+    // JAVADOC TESTS START
+    assert(nullString.ops.replaceEach(Array[String]("a"), Array[String]("b")).isEmpty)
+    assert("".ops.replaceEach(Array[String]("a"), Array[String]("b")) contains "")
+    assert("aba".ops.replaceEach(null, null) contains "aba")
+    assert("aba".ops.replaceEach(new Array[String](0), null) contains "aba")
+    assert(Some("aba").ops.replaceEach(null, new Array[String](0)) contains "aba")
+    assert("aba".ops.replaceEach(Array[String]("a"), null) contains "aba")
+
+    assert("aba".ops.replaceEach(Array[String]("a"), Array[String]("")) contains "b")
+    assert("aba".ops.replaceEach(Array[String](null), Array[String]("a")) contains "aba")
+    assert("abcde".ops.replaceEach(Array[String]("ab", "d"), Array[String]("w", "t")) contains "wcte")
+    assert("abcde".ops.replaceEach(Array[String]("ab", "d"), Array[String]("d", "t")) contains "dcte")
+    // JAVADOC TESTS END
+
+    assert("abc".ops.replaceEach(Array[String]("a", "b"), Array[String]("b", "c")) contains "bcc")
+    assert(
+      "d216.102oren".ops
+        .replaceEach(
+          Array[String](
+            "a",
+            "b",
+            "c",
+            "d",
+            "e",
+            "f",
+            "g",
+            "h",
+            "i",
+            "j",
+            "k",
+            "l",
+            "m",
+            "n",
+            "o",
+            "p",
+            "q",
+            "r",
+            "s",
+            "t",
+            "u",
+            "v",
+            "w",
+            "x",
+            "y",
+            "z",
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "H",
+            "I",
+            "J",
+            "K",
+            "L",
+            "M",
+            "N",
+            "O",
+            "P",
+            "Q",
+            "R",
+            "S",
+            "T",
+            "U",
+            "V",
+            "W",
+            "X",
+            "Y",
+            "Z",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+          ),
+          Array[String](
+            "n",
+            "o",
+            "p",
+            "q",
+            "r",
+            "s",
+            "t",
+            "u",
+            "v",
+            "w",
+            "x",
+            "y",
+            "z",
+            "a",
+            "b",
+            "c",
+            "d",
+            "e",
+            "f",
+            "g",
+            "h",
+            "i",
+            "j",
+            "k",
+            "l",
+            "m",
+            "N",
+            "O",
+            "P",
+            "Q",
+            "R",
+            "S",
+            "T",
+            "U",
+            "V",
+            "W",
+            "X",
+            "Y",
+            "Z",
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "H",
+            "I",
+            "J",
+            "K",
+            "L",
+            "M",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "1",
+            "2",
+            "3",
+            "4"
+          )
+        )
+        .contains("q651.506bera")
+    )
+
+    // Test null safety inside arrays - LANG-552
+    assert("aba".ops.replaceEach(Array[String]("a"), Array[String](null)) contains "aba")
+    assert("aba".ops.replaceEach(Array[String]("a", "b"), Array[String]("c", null)) contains "cbc")
+
+    assertThrows[IllegalArgumentException] {
+      "abba".ops.replaceEach(Array[String]("a"), Array[String]("b", "a"))
+    }
+  }
 }
