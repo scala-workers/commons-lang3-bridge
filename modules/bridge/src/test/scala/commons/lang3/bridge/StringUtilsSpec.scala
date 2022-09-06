@@ -1019,4 +1019,17 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("www.domain.com".ops.removeStartIgnoreCase("WWW.").contains("domain.com"), "removeStartIgnoreCase(\"www.domain.com\", \"WWW.\")")
 
   }
+
+  test("test string repeat with repeat times") {
+    assert(noneString.ops.repeat(2).isEmpty)
+    assert(Some("ab").ops.repeat(0).contains(""))
+    assert("".ops.repeat(3).contains(""))
+    assert("a".ops.repeat(3).contains("aaa"))
+    assert("a".ops.repeat(-2).contains(""))
+    assert("ab".ops.repeat(3).contains("ababab"))
+    assert("abc".ops.repeat(3).contains("abcabcabc"))
+    val str = "a".ops.repeat(10000) // bigger than pad limit
+    assert(10000 == str.get.length)
+    assert(str.ops.containsOnly('a'))
+  }
 }
