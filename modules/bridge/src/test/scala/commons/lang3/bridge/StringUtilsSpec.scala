@@ -938,4 +938,45 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("www.domain.com".ops.removeEndIgnoreCase(".COM") contains "www.domain", "removeEndIgnoreCase(\"www.domain.com\", \".COM\")")
     assert("www.domain.COM".ops.removeEndIgnoreCase(".com") contains "www.domain", "removeEndIgnoreCase(\"www.domain.COM\", \".com\")")
   }
+
+  test("string test remove ignore case") {
+    // StringUtils.removeIgnoreCase(null, *) = null
+    assert(noneString.ops.removeIgnoreCase(nullString).isEmpty)
+    assert(nullString.ops.removeIgnoreCase("").isEmpty)
+    assert(noneString.ops.removeIgnoreCase("a").isEmpty)
+
+    // StringUtils.removeIgnoreCase("", *) = ""
+    assert("".ops.removeIgnoreCase(nullString).contains(""))
+    assert("".ops.removeIgnoreCase(noneString).contains(""))
+    assert("".ops.removeIgnoreCase("a").contains(""))
+
+    // StringUtils.removeIgnoreCase(*, null) = *
+    assert(nullString.ops.removeIgnoreCase(nullString).isEmpty)
+    assert("".ops.removeIgnoreCase(noneString).contains(""))
+    assert("a".ops.removeIgnoreCase(nullString).contains("a"))
+
+    // StringUtils.removeIgnoreCase(*, "") = *
+    assert(nullString.ops.removeIgnoreCase("").isEmpty)
+    assert("".ops.removeIgnoreCase(Some("")).contains(""))
+    assert("a".ops.removeIgnoreCase(Some("")).contains("a"))
+
+    // StringUtils.removeIgnoreCase("queued", "ue") = "qd"
+    assert("queued".ops.removeIgnoreCase("ue").contains("qd"))
+
+    // StringUtils.removeIgnoreCase("queued", "zz") = "queued"
+    assert("queued".ops.removeIgnoreCase("zz").contains("queued"))
+
+    // IgnoreCase
+    // StringUtils.removeIgnoreCase("quEUed", "UE") = "qd"
+    assert("quEUed".ops.removeIgnoreCase("UE").contains("qd"))
+
+    // StringUtils.removeIgnoreCase("queued", "zZ") = "queued"
+    assert(Some("queued").ops.removeIgnoreCase("zZ").contains("queued"))
+
+    // StringUtils.removeIgnoreCase("\u0130x", "x") = "\u0130"
+    assert("\u0130x".ops.removeIgnoreCase("x").contains("\u0130"))
+
+    // LANG-1453
+    "İa".ops.removeIgnoreCase("a")
+  }
 }
