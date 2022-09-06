@@ -868,7 +868,7 @@ class StringUtilsSpec extends AnyFunSuite {
     assert(FOO_CAP.ops.uncapitalize.ops.capitalize.contains(FOO_CAP), "capitalize(uncapitalize(String)) failed")
   }
 
-  test("test string remove") {
+  test("test string remove string") {
     // StringUtils.remove(null, *)        = null
     assert(nullString.ops.remove(nullString).isEmpty)
     assert(noneString.ops.remove("").isEmpty)
@@ -895,4 +895,24 @@ class StringUtilsSpec extends AnyFunSuite {
     // StringUtils.remove("queued", "zz") = "queued"
     assert("queued".ops.remove("zz").contains("queued"))
   }
+
+  test("test string remove end") {
+    assert(noneString.ops.removeEnd(nullString).isEmpty)
+    assert(nullString.ops.removeEnd("").isEmpty)
+    assert(nullString.ops.removeEnd(Some("a")).isEmpty)
+
+    // StringUtils.removeEnd(*, null)      = *
+    assert("".ops.removeEnd(nullString).contains(""))
+    assert(Some("").ops.removeEnd("").contains(""))
+    assert("".ops.removeEnd("a").contains(""))
+
+    // All others:
+    assert("www.domain.com.".ops.removeEnd(Some(".com")).contains("www.domain.com."))
+    assert("www.domain.com".ops.removeEnd(".com").contains("www.domain"))
+    assert("www.domain".ops.removeEnd(".com").contains("www.domain"))
+    assert("domain.com".ops.removeEnd("").contains("domain.com"))
+    assert("domain.com".ops.removeEnd(noneString).contains("domain.com"))
+  }
+
+
 }
