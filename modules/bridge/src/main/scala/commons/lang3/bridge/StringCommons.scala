@@ -1693,6 +1693,19 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def replaceIgnoreCase[S: TypeMapping[*, (String, Option[String])], R: TypeMapping[*, (String, Option[String])]](
     searchString: S,
+    replacement: R
+  ): Option[String] = {
+    val searchMapping      = getMapper[S, Option[String]].func.orNull
+    val replacementMapping = getMapper[R, Option[String]].func.orNull
+
+    val sstr = searchMapping(searchString)
+    val rstr = replacementMapping(replacement)
+
+    Option(Strings.replaceIgnoreCase(strOrNull, sstr, rstr))
+  }
+
+  def replaceIgnoreCase[S: TypeMapping[*, (String, Option[String])], R: TypeMapping[*, (String, Option[String])]](
+    searchString: S,
     replacement: R,
     max: Int
   ): Option[String] = {

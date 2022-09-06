@@ -1304,4 +1304,30 @@ class StringUtilsSpec extends AnyFunSuite {
         .contains("q651.506bera")
     )
   }
+
+  test("test string replace ignore case from string to string") {
+    assert(nullString.ops.replaceIgnoreCase(noneString, noneString).isEmpty)
+    assert(noneString.ops.replaceIgnoreCase(nullString, Some("any")).isEmpty)
+    assert(nullString.ops.replaceIgnoreCase("any", nullString).isEmpty)
+    assert(nullString.ops.replaceIgnoreCase("any", "any").isEmpty)
+
+    assert("".ops.replaceIgnoreCase(nullString, nullString).contains(""))
+    assert(Some("").ops.replaceIgnoreCase(noneString, "any").contains(""))
+    assert("".ops.replaceIgnoreCase("any", nullString).contains(""))
+    assert("".ops.replaceIgnoreCase("any", "any").contains(""))
+
+    assert("FOO".ops.replaceIgnoreCase("", "any").contains("FOO"))
+    assert("FOO".ops.replaceIgnoreCase(noneString, "any").contains("FOO"))
+    assert("FOO".ops.replaceIgnoreCase("F", nullString).contains("FOO"))
+    assert("FOO".ops.replaceIgnoreCase(nullString, nullString).contains("FOO"))
+
+    assert("foofoofoo".ops.replaceIgnoreCase("foo", "").contains(""))
+    assert("foofoofoo".ops.replaceIgnoreCase("foo", "bar").contains("barbarbar"))
+    assert("foofoofoo".ops.replaceIgnoreCase("oo", "ar").contains("farfarfar"))
+
+    // IgnoreCase
+    assert(Some("foofoofoo").ops.replaceIgnoreCase("FOO", "").contains(""))
+    assert("fooFOOfoo".ops.replaceIgnoreCase("foo", "bar").contains("barbarbar"))
+    assert("foofOOfoo".ops.replaceIgnoreCase("OO", Some("ar")).contains("farfarfar"))
+  }
 }
