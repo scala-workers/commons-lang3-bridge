@@ -979,4 +979,44 @@ class StringUtilsSpec extends AnyFunSuite {
     // LANG-1453
     "İa".ops.removeIgnoreCase("a")
   }
+
+  test("test string remove start") {
+    // StringUtils.removeStart("", *)        = ""
+    assert(nullString.ops.removeStart(noneString).isEmpty)
+    assert(nullString.ops.removeStart("").isEmpty)
+    assert(noneString.ops.removeStart("a").isEmpty)
+
+    // StringUtils.removeStart(*, null)      = *
+    assert("".ops.removeStart(nullString) contains "")
+    assert("".ops.removeStart("") contains "")
+    assert("".ops.removeStart("a") contains "")
+
+    // All others:
+    assert(Some("www.domain.com").ops.removeStart(Some("www.")) contains "domain.com")
+    assert("domain.com".ops.removeStart("www.") contains "domain.com")
+    assert("domain.com".ops.removeStart("").contains("domain.com"))
+    assert("domain.com".ops.removeStart(noneString).contains("domain.com"))
+  }
+
+  test("test string remove start ignore case") {
+    // StringUtils.removeStart("", *)        = ""
+    assert(nullString.ops.removeStartIgnoreCase(nullString).isEmpty, "removeStartIgnoreCase(null, null)")
+    assert(noneString.ops.removeStartIgnoreCase(Some("")).isEmpty, "removeStartIgnoreCase(null, \"\")")
+    assert(nullString.ops.removeStartIgnoreCase("a").isEmpty, "removeStartIgnoreCase(null, \"a\")")
+
+    // StringUtils.removeStart(*, null)      = *
+    assert("".ops.removeStartIgnoreCase(nullString).contains(""), "removeStartIgnoreCase(\"\", null)")
+    assert("".ops.removeStartIgnoreCase("").contains(""), "removeStartIgnoreCase(\"\", \"\")")
+    assert("".ops.removeStartIgnoreCase("a").contains(""), "removeStartIgnoreCase(\"\", \"a\")")
+
+    // All others:
+    assert("www.domain.com".ops.removeStartIgnoreCase("www.") contains "domain.com", "removeStartIgnoreCase(\"www.domain.com\", \"www.\")")
+    assert("domain.com".ops.removeStartIgnoreCase("www.") contains "domain.com", "removeStartIgnoreCase(\"domain.com\", \"www.\")")
+    assert(Some("domain.com").ops.removeStartIgnoreCase("") contains "domain.com", "removeStartIgnoreCase(\"domain.com\", \"\")")
+    assert("domain.com".ops.removeStartIgnoreCase(nullString) contains "domain.com", "removeStartIgnoreCase(\"domain.com\", null)")
+
+    // Case insensitive:
+    assert("www.domain.com".ops.removeStartIgnoreCase("WWW.").contains("domain.com"), "removeStartIgnoreCase(\"www.domain.com\", \"WWW.\")")
+
+  }
 }
