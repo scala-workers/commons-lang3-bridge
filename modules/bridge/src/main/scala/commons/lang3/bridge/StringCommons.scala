@@ -1530,7 +1530,7 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def mid(pos: Int, len: Int): String = Strings.mid(strOrNull, pos, len)
 
-  def normalizeSpace: String = Strings.normalizeSpace(strOrNull)
+  def normalizeSpace: Option[String] = Option(Strings.normalizeSpace(strOrNull))
 
   def ordinalIndexOf[S: TypeMapping[*, (String, Option[String])]](searchStr: S, ordinal: Int): Int = {
     val mapper = getMapper[S, Option[String]].func.orNull

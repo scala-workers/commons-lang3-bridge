@@ -41,10 +41,11 @@ class StringUtilsSpec extends AnyFunSuite {
     }
     (ws.toString, nws.toString, hs, tr.toString, ntr.toString)
   }
-  val WHITESPACE     = whitespace
-  val NON_WHITESPACE = non_whitespace
-  val TRIMMABLE      = trimmable
-  val NON_TRIMMABLE  = non_trimmable
+  val WHITESPACE: String     = whitespace
+  val NON_WHITESPACE: String = non_whitespace
+  val HARD_SPACE: String     = hard_space
+  val TRIMMABLE: String      = trimmable
+  val NON_TRIMMABLE: String  = non_trimmable
 
   val ARRAY_LIST: Array[String]       = Array("foo", "bar", "baz")
   val EMPTY_ARRAY_LIST: Array[String] = Array()
@@ -747,6 +748,31 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("".ops.lowerCase.contains(""), "lowerCase(empty-string) failed")
     assert("fOo test THING".ops.lowerCase(Locale.ENGLISH).contains("foo test thing"), "lowerCase(String, Locale) failed")
     assert("".ops.lowerCase(Locale.ENGLISH).contains(""), "lowerCase(empty-string, Locale) failed")
+  }
 
+  test("test string normalize space") {
+    // Java says a non-breaking whitespace is not a whitespace.
+    assert(!Character.isWhitespace('\u00A0'))
+    //
+    assert(nullString.ops.normalizeSpace.isEmpty)
+    assert(Some("").ops.normalizeSpace.contains(""))
+    assert(" ".ops.normalizeSpace.contains(""))
+    assert("\t".ops.normalizeSpace.contains(""))
+    assert("\n".ops.normalizeSpace.contains(""))
+    assert("\u0009".ops.normalizeSpace.contains(""))
+    assert("\u000B".ops.normalizeSpace.contains(""))
+    assert("\u000C".ops.normalizeSpace.contains(""))
+    assert("\u001C".ops.normalizeSpace.contains(""))
+    assert("\u001D".ops.normalizeSpace.contains(""))
+    assert("\u001E".ops.normalizeSpace.contains(""))
+    assert("\u001F".ops.normalizeSpace.contains(""))
+    assert("\f".ops.normalizeSpace.contains(""))
+    assert("\r".ops.normalizeSpace.contains(""))
+    assert("  a  ".ops.normalizeSpace.contains("a"))
+    assert("  a  b   c  ".ops.normalizeSpace.contains("a b c"))
+    assert("a\t\f\r  b\u000B   c\n".ops.normalizeSpace.contains("a b c"))
+    assert(("a\t\f\r  " + HARD_SPACE + HARD_SPACE + "b\u000B   c\n").ops.normalizeSpace.contains("a   b c"))
+    assert("\u0000b".ops.normalizeSpace.contains("b"))
+    assert("b\u0000".ops.normalizeSpace.contains("b"))
   }
 }
