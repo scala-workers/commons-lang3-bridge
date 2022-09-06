@@ -1254,4 +1254,54 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("abcba".ops.replaceChars('b', 'z').contains("azcza"))
     assert("abcba".ops.replaceChars('x', 'z').contains("abcba"))
   }
+
+  test("test string replace chars string to chars string") {
+    assert(nullString.ops.replaceChars(nullString, nullString).isEmpty)
+    assert(noneString.ops.replaceChars("", null).isEmpty)
+    assert(nullString.ops.replaceChars("a", noneString).isEmpty)
+    assert(nullString.ops.replaceChars(nullString, "").isEmpty)
+    assert(nullString.ops.replaceChars(noneString, Some("x")).isEmpty)
+
+    assert("".ops.replaceChars(noneString, noneString).contains(""))
+    assert("".ops.replaceChars("", noneString).contains(""))
+    assert("".ops.replaceChars("a", nullString).contains(""))
+    assert("".ops.replaceChars(nullString, "").contains(""))
+    assert("".ops.replaceChars(nullString, "x").contains(""))
+
+    assert(Some("abc").ops.replaceChars(noneString, nullString).contains("abc"))
+    assert("abc".ops.replaceChars(nullString, "").contains("abc"))
+    assert("abc".ops.replaceChars(nullString, "x").contains("abc"))
+
+    assert("abc".ops.replaceChars("", nullString).contains("abc"))
+    assert("abc".ops.replaceChars("", "").contains("abc"))
+    assert("abc".ops.replaceChars(Some(""), Some("x")).contains("abc"))
+
+    assert("abc".ops.replaceChars("b", null).contains("ac"))
+    assert("abc".ops.replaceChars("b", "").contains("ac"))
+    assert("abc".ops.replaceChars("b", "x").contains("axc"))
+
+    assert("abcba".ops.replaceChars("bc", "yz").contains("ayzya"))
+    assert("abcba".ops.replaceChars("bc", "y").contains("ayya"))
+    assert("abcba".ops.replaceChars("bc", "yzx").contains("ayzya"))
+
+    assert("abcba".ops.replaceChars("z", "w").contains("abcba"))
+    assert("abcba".ops.replaceChars("z", "w").contains("abcba"))
+
+    // Javadoc examples:
+    assert(Some("hello").ops.replaceChars("ho", "jy").contains("jelly"))
+    assert("abcba".ops.replaceChars("bc", "yz").contains("ayzya"))
+    assert("abcba".ops.replaceChars("bc", "y").contains("ayya"))
+    assert("abcba".ops.replaceChars("bc", "yzx").contains("ayzya"))
+
+    // From https://issues.apache.org/bugzilla/show_bug.cgi?id=25454
+    assert("abc".ops.replaceChars("ab", "bc").contains("bcc"))
+    assert(
+      "d216.102oren".ops
+        .replaceChars(
+          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789",
+          "nopqrstuvwxyzabcdefghijklmNOPQRSTUVWXYZABCDEFGHIJKLM567891234"
+        )
+        .contains("q651.506bera")
+    )
+  }
 }
