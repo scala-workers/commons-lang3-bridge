@@ -1032,4 +1032,17 @@ class StringUtilsSpec extends AnyFunSuite {
     assert(10000 == str.get.length)
     assert(str.ops.containsOnly('a'))
   }
+
+  test("test string repeat separator and times") {
+    assert(noneString.ops.repeat(noneString, 2).isEmpty)
+    assert(nullString.ops.repeat("x", 2).isEmpty)
+    assert("".ops.repeat(nullString, 2).contains(""))
+
+    assert("ab".ops.repeat("", 0).contains(""))
+    assert("".ops.repeat("", 2).contains(""))
+
+    assert("".ops.repeat("x", 3).contains("xx"))
+
+    assert("?".ops.repeat(", ", 3).contains("?, ?, ?"))
+  }
 }
