@@ -914,5 +914,28 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("domain.com".ops.removeEnd(noneString).contains("domain.com"))
   }
 
+  test("test string remove end ignore case") {
+    assert(noneString.ops.removeEndIgnoreCase(nullString).isEmpty, "removeEndIgnoreCase(null, null)")
+    assert(nullString.ops.removeEndIgnoreCase("").isEmpty, "removeEndIgnoreCase(null, \"\")")
+    assert(nullString.ops.removeEndIgnoreCase("a").isEmpty, "removeEndIgnoreCase(null, \"a\")")
 
+    // StringUtils.removeEnd(*, null)      = *
+    assert("".ops.removeEndIgnoreCase(nullString).contains(""), "removeEndIgnoreCase(\"\", null)")
+    assert("".ops.removeEndIgnoreCase("").contains(""), "removeEndIgnoreCase(\"\", \"\")")
+    assert("".ops.removeEndIgnoreCase("a").contains(""), "removeEndIgnoreCase(\"\", \"a\")")
+
+    // All others:
+    assert(
+      "www.domain.com.".ops.removeEndIgnoreCase(".com") contains "www.domain.com.",
+      "removeEndIgnoreCase(\"www.domain.com.\", \".com\")"
+    )
+    assert("www.domain.com".ops.removeEndIgnoreCase(".com").contains("www.domain"), "removeEndIgnoreCase(\"www.domain.com\", \".com\")")
+    assert("www.domain".ops.removeEndIgnoreCase(".com") contains "www.domain", "removeEndIgnoreCase(\"www.domain\", \".com\")")
+    assert("domain.com".ops.removeEndIgnoreCase("") contains "domain.com", "removeEndIgnoreCase(\"domain.com\", \"\")")
+    assert("domain.com".ops.removeEndIgnoreCase(nullString) contains "domain.com", "removeEndIgnoreCase(\"domain.com\", null)")
+
+    // Case insensitive:
+    assert("www.domain.com".ops.removeEndIgnoreCase(".COM") contains "www.domain", "removeEndIgnoreCase(\"www.domain.com\", \".COM\")")
+    assert("www.domain.COM".ops.removeEndIgnoreCase(".com") contains "www.domain", "removeEndIgnoreCase(\"www.domain.COM\", \".com\")")
+  }
 }
