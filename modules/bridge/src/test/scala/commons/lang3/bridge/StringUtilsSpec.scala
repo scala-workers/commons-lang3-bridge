@@ -1247,4 +1247,11 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("oofoo".ops.replace("o", "", -5).contains("f"))
     assert("oofoo".ops.replace("o", "", 1000).contains("f"))
   }
+
+  test("test string replace string char to char") {
+    assert(nullString.ops.replaceChars('b', 'z').isEmpty)
+    assert("".ops.replaceChars('b', 'z').contains(""))
+    assert("abcba".ops.replaceChars('b', 'z').contains("azcza"))
+    assert("abcba".ops.replaceChars('x', 'z').contains("abcba"))
+  }
 }
