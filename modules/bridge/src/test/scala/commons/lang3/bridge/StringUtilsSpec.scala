@@ -1203,4 +1203,25 @@ class StringUtilsSpec extends AnyFunSuite {
       "abba".ops.replaceEach(Array[String]("a"), Array[String]("b", "a"))
     }
   }
+
+  test("test string replace string to string") {
+    assert(nullString.ops.replace(nullString, noneString).isEmpty)
+    assert(noneString.ops.replace(nullString, "any").isEmpty)
+    assert(nullString.ops.replace("any", null).isEmpty)
+    assert(nullString.ops.replace("any", "any").isEmpty)
+
+    assert(Some("").ops.replace(nullString, nullString).contains(""))
+    assert("".ops.replace(noneString, "any").contains(""))
+    assert("".ops.replace("any", nullString).contains(""))
+    assert("".ops.replace(Some("any"), Some("any")).contains(""))
+
+    assert("FOO".ops.replace("", "any").contains("FOO"))
+    assert("FOO".ops.replace(nullString, "any").contains("FOO"))
+    assert("FOO".ops.replace("F", nullString).contains("FOO"))
+    assert("FOO".ops.replace(noneString, null).contains("FOO"))
+
+    assert("foofoofoo".ops.replace("foo", "").contains(""))
+    assert(Some("foofoofoo").ops.replace("foo", "bar").contains("barbarbar"))
+    assert("foofoofoo".ops.replace("oo", "ar").contains("farfarfar"))
+  }
 }
