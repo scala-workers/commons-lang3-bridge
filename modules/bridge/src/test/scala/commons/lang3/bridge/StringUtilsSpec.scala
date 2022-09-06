@@ -1,18 +1,16 @@
 package commons.lang3.bridge
 
 import commons.lang3.bridge.StringUtils.ops._
-import org.apache.commons.lang3.ArrayUtils
 import org.apache.commons.lang3.mutable.MutableInt
+import org.apache.commons.lang3.{ArrayUtils, ObjectUtils, StringUtils => Strings}
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.nio.CharBuffer
 import java.nio.charset.StandardCharsets
 import java.util
-import java.util.Collections
 import java.util.function.Supplier
+import java.util.{Collections, Locale}
 import scala.collection.mutable
-import org.apache.commons.lang3.{StringUtils => Strings}
-import java.util.Locale
 
 /** TODO
   *
@@ -1223,5 +1221,30 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("foofoofoo".ops.replace("foo", "").contains(""))
     assert(Some("foofoofoo").ops.replace("foo", "bar").contains("barbarbar"))
     assert("foofoofoo".ops.replace("oo", "ar").contains("farfarfar"))
+  }
+
+  test("test string replace string to string with max times") {
+    assert(nullString.ops.replace(noneString, noneString, 2).isEmpty)
+    assert(noneString.ops.replace(nullString, Some("any"), 2).isEmpty)
+    assert(nullString.ops.replace(Some("any"), noneString, 2).isEmpty)
+    assert(nullString.ops.replace("any", "any", 2).isEmpty)
+
+    assert("".ops.replace(noneString, noneString, 2).contains(""))
+    assert("".ops.replace(noneString, "any", 2).contains(""))
+    assert(Some("").ops.replace("any", noneString, 2).contains(""))
+    assert("".ops.replace("any", "any", 2).contains(""))
+
+    val str = new String(Array[Char]('o', 'o', 'f', 'o', 'o'))
+    assert(str.ops.replace("x", "", -1).contains(str))
+
+    assert("oofoo".ops.replace("o", "", -1).contains("f"))
+    assert("oofoo".ops.replace("o", "", 0).contains("oofoo"))
+    assert(Some("oofoo").ops.replace("o", "", 1).contains("ofoo"))
+    assert("oofoo".ops.replace("o", "", 2).contains("foo"))
+    assert("oofoo".ops.replace("o", "", 3).contains("fo"))
+    assert("oofoo".ops.replace("o", "", 4).contains("f"))
+
+    assert("oofoo".ops.replace("o", "", -5).contains("f"))
+    assert("oofoo".ops.replace("o", "", 1000).contains("f"))
   }
 }
