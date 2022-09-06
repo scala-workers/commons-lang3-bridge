@@ -802,4 +802,33 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("abcdef".ops.overlay("zzzz", 8, 10).contains("abcdefzzzz"))
     assert("abcdef".ops.overlay("zzzz", 10, 8).contains("abcdefzzzz"))
   }
+
+  test("test string prepend if missing") {
+    assert(nullString.ops.prependIfMissing(noneString).isEmpty, "prependIfMissing(null,null)")
+    assert("abc".ops.prependIfMissing(nullString).contains("abc"), "prependIfMissing(abc,null)")
+    assert(Some("").ops.prependIfMissing("xyz").contains("xyz"), "prependIfMissing(\"\",xyz)")
+    assert("abc".ops.prependIfMissing(Some("xyz")).contains("xyzabc"), "prependIfMissing(abc,xyz)")
+    assert("xyzabc".ops.prependIfMissing("xyz").contains("xyzabc"), "prependIfMissing(xyzabc,xyz)")
+    assert("XYZabc".ops.prependIfMissing("xyz").contains("xyzXYZabc"), "prependIfMissing(XYZabc,xyz)")
+
+    assert(
+      nullString.ops.prependIfMissing(noneString, null.asInstanceOf[Array[CharSequence]]: _*).isEmpty,
+      "prependIfMissing(null,null null)"
+    )
+    assert(
+      "abc".ops.prependIfMissing(nullString, null.asInstanceOf[Array[CharSequence]]: _*).contains("abc"),
+      "prependIfMissing(abc,null,null)"
+    )
+    assert("".ops.prependIfMissing("xyz", null.asInstanceOf[Array[CharSequence]]: _*).contains("xyz"), "prependIfMissing(\"\",xyz,null)")
+    assert("abc".ops.prependIfMissing("xyz", nullString).contains("xyzabc"), "prependIfMissing(abc,xyz,{null})")
+    assert("abc".ops.prependIfMissing("xyz", "").contains("abc"), "prependIfMissing(abc,xyz,\"\")")
+    assert("abc".ops.prependIfMissing("xyz", "mno").contains("xyzabc"), "prependIfMissing(abc,xyz,mno)")
+    assert("xyzabc".ops.prependIfMissing("xyz", "mno").contains("xyzabc"), "prependIfMissing(xyzabc,xyz,mno)")
+    assert("mnoabc".ops.prependIfMissing("xyz", "mno").contains("mnoabc"), "prependIfMissing(mnoabc,xyz,mno)")
+    assert("XYZabc".ops.prependIfMissing("xyz", "mno").contains("xyzXYZabc"), "prependIfMissing(XYZabc,xyz,mno)")
+    assert("MNOabc".ops.prependIfMissing("xyz", "mno").contains("xyzMNOabc"), "prependIfMissing(MNOabc,xyz,mno)")
+
+  }
+
+
 }

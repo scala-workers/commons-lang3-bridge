@@ -8,6 +8,8 @@ package object bridge {
 
   type StringOrVarArgsOfChar[U] = TypeMapping[Seq[U], (String, Option[String], Seq[Char], Seq[Option[Char]])]
 
-  type VarArgsOfString[U] = TypeMapping[Seq[U], (Seq[CharSequence], Seq[Option[CharSequence]])]
+  type VarArgsOfString[U] = TypeMapping[Seq[U], (Seq[String], Seq[Option[String]])]
+
+  type VarArgsOfCharSequence[U] = TypeMapping[Seq[U], (Seq[CharSequence], Seq[Option[CharSequence]])]
 
 }
