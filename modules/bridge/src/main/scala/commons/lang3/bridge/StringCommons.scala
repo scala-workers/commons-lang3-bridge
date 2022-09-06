@@ -1590,6 +1590,12 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     }
   }
 
+  def prependIfMissingIgnoreCase(prefix: CharSequence): Option[String] =
+    Option(Strings.prependIfMissingIgnoreCase(strOrNull, prefix))
+
+  def prependIfMissingIgnoreCase(prefix: Option[CharSequence]): Option[String] =
+    Option(Strings.prependIfMissingIgnoreCase(strOrNull, prefix.orNull))
+
   def remove(rmv: Char): Option[String] = Option(Strings.remove(strOrNull, rmv))
 
   def remove[R: TypeMapping[*, (String, Option[String])]](rmv: R): Option[String] = {

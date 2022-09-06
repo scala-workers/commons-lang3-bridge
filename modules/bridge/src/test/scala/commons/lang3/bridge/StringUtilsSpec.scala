@@ -827,8 +827,34 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("mnoabc".ops.prependIfMissing("xyz", "mno").contains("mnoabc"), "prependIfMissing(mnoabc,xyz,mno)")
     assert("XYZabc".ops.prependIfMissing("xyz", "mno").contains("xyzXYZabc"), "prependIfMissing(XYZabc,xyz,mno)")
     assert("MNOabc".ops.prependIfMissing("xyz", "mno").contains("xyzMNOabc"), "prependIfMissing(MNOabc,xyz,mno)")
-
   }
 
+  test("test string prepend if missing ignore case") {
+    assert(nullString.ops.prependIfMissingIgnoreCase(noneString).isEmpty, "prependIfMissingIgnoreCase(null,null)")
+    assert("abc".ops.prependIfMissingIgnoreCase(nullString).contains("abc"), "prependIfMissingIgnoreCase(abc,null)")
+    assert("".ops.prependIfMissingIgnoreCase("xyz").contains("xyz"), "prependIfMissingIgnoreCase(\"\",xyz)")
+    assert("abc".ops.prependIfMissingIgnoreCase("xyz").contains("xyzabc"), "prependIfMissingIgnoreCase(abc,xyz)")
+    assert("xyzabc".ops.prependIfMissingIgnoreCase("xyz").contains("xyzabc"), "prependIfMissingIgnoreCase(xyzabc,xyz)")
+    assert("XYZabc".ops.prependIfMissingIgnoreCase("xyz").contains("XYZabc"), "prependIfMissingIgnoreCase(XYZabc,xyz)")
 
+    assert(
+      noneString.ops.prependIfMissingIgnoreCase(nullString, null.asInstanceOf[Array[CharSequence]]: _*).isEmpty,
+      "prependIfMissingIgnoreCase(null,null null)"
+    )
+    assert(
+      "abc".ops.prependIfMissingIgnoreCase(noneString, null.asInstanceOf[Array[CharSequence]]: _*).contains("abc"),
+      "prependIfMissingIgnoreCase(abc,null,null)"
+    )
+    assert(
+      "".ops.prependIfMissingIgnoreCase("xyz", null.asInstanceOf[Array[CharSequence]]: _*).contains("xyz"),
+      "prependIfMissingIgnoreCase(\"\",xyz,null)"
+    )
+    assert("abc".ops.prependIfMissingIgnoreCase("xyz", noneString).contains("xyzabc"), "prependIfMissingIgnoreCase(abc,xyz,{null})")
+    assert("abc".ops.prependIfMissingIgnoreCase("xyz", "").contains("abc"), "prependIfMissingIgnoreCase(abc,xyz,\"\")")
+    assert("abc".ops.prependIfMissingIgnoreCase("xyz", "mno").contains("xyzabc"), "prependIfMissingIgnoreCase(abc,xyz,mno)")
+    assert(Some("xyzabc").ops.prependIfMissingIgnoreCase("xyz", "mno").contains("xyzabc"), "prependIfMissingIgnoreCase(xyzabc,xyz,mno)")
+    assert("mnoabc".ops.prependIfMissingIgnoreCase("xyz", "mno").contains("mnoabc"), "prependIfMissingIgnoreCase(mnoabc,xyz,mno)")
+    assert("XYZabc".ops.prependIfMissingIgnoreCase("xyz", "mno").contains("XYZabc"), "prependIfMissingIgnoreCase(XYZabc,xyz,mno)")
+    assert("MNOabc".ops.prependIfMissingIgnoreCase("xyz", "mno").contains("MNOabc"), "prependIfMissingIgnoreCase(MNOabc,xyz,mno)")
+  }
 }
