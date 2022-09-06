@@ -775,4 +775,31 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("\u0000b".ops.normalizeSpace.contains("b"))
     assert("b\u0000".ops.normalizeSpace.contains("b"))
   }
+
+  test("test string overlay with start end") {
+    assert(nullString.ops.overlay(noneString, 2, 4).isEmpty)
+    assert(noneString.ops.overlay(nullString, -2, -4).isEmpty)
+
+    assert("".ops.overlay(noneString, 0, 0).contains(""))
+    assert("".ops.overlay("", 0, 0).contains(""))
+    assert("".ops.overlay("zzzz", 0, 0).contains("zzzz"))
+    assert("".ops.overlay("zzzz", 2, 4).contains("zzzz"))
+    assert("".ops.overlay("zzzz", -2, -4).contains("zzzz"))
+
+    assert("abcdef".ops.overlay(nullString, 2, 4).contains("abef"))
+    assert("abcdef".ops.overlay(noneString, 4, 2).contains("abef"))
+    assert(Some("abcdef").ops.overlay("", 2, 4).contains("abef"))
+    assert("abcdef".ops.overlay(Some(""), 4, 2).contains("abef"))
+    assert("abcdef".ops.overlay("zzzz", 2, 4).contains("abzzzzef"))
+    assert("abcdef".ops.overlay("zzzz", 4, 2).contains("abzzzzef"))
+
+    assert("abcdef".ops.overlay("zzzz", -1, 4).contains("zzzzef"))
+    assert("abcdef".ops.overlay("zzzz", 4, -1).contains("zzzzef"))
+    assert("abcdef".ops.overlay("zzzz", -2, -1).contains("zzzzabcdef"))
+    assert("abcdef".ops.overlay("zzzz", -1, -2).contains("zzzzabcdef"))
+    assert("abcdef".ops.overlay("zzzz", 4, 10).contains("abcdzzzz"))
+    assert("abcdef".ops.overlay("zzzz", 10, 4).contains("abcdzzzz"))
+    assert("abcdef".ops.overlay("zzzz", 8, 10).contains("abcdefzzzz"))
+    assert("abcdef".ops.overlay("zzzz", 10, 8).contains("abcdefzzzz"))
+  }
 }
