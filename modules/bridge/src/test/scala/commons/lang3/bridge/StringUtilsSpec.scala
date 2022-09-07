@@ -1492,4 +1492,28 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("a" == res3.head)
     assert("b" + NON_WHITESPACE + "c" == res3(1))
   }
+
+  test("test string split with separator char") {
+    assert(noneString.ops.split('.').isEmpty)
+    assert(Some("").ops.split('.').exists(_.length == 0))
+
+    val str1 = "a.b.. c"
+    val res1 = str1.ops.split('.').get
+    assert(3 == res1.length)
+    assert("a" == res1.head)
+    assert("b" == res1(1))
+    assert(" c" == res1.last)
+
+    val str2 = ".a."
+    val res2 = str2.ops.split('.').get
+    assert(res2.length == 1)
+    assert("a" == res2.head)
+
+    val str3 = "a b c"
+    val res3 = str3.ops.split(' ').get
+    assert(3 == res3.length)
+    assert("a" == res3.head)
+    assert("b" == res3(1))
+    assert("c" == res3.last)
+  }
 }
