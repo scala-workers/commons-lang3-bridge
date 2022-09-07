@@ -1442,4 +1442,17 @@ class StringUtilsSpec extends AnyFunSuite {
     assert(str.get.length == 10000)
     assert(str.ops.containsOnly('a'))
   }
+
+  test("test string right pad with size and pad string") {
+    assert(nullString.ops.rightPad(5, "-+").isEmpty)
+    assert("".ops.rightPad(5, " ").contains("     "))
+    assert(noneString.ops.rightPad(8, null).isEmpty)
+    assert("abc".ops.rightPad(7, Some("-+")).contains("abc-+-+"))
+    assert("abc".ops.rightPad(6, "-+~").contains("abc-+~"))
+    assert("abc".ops.rightPad(5, "-+~").contains("abc-+"))
+    assert("abc".ops.rightPad(2, " ").contains("abc"))
+    assert(Some("abc").ops.rightPad(-1, " ").contains("abc"))
+    assert("abc".ops.rightPad(5, null).contains("abc  "))
+    assert("abc".ops.rightPad(5, "").contains("abc  "))
+  }
 }
