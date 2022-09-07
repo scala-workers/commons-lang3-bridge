@@ -1469,4 +1469,27 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("abcdefg".ops.rotate(17).contains("efgabcd"))
     assert("abcdefg".ops.rotate(-17).contains("defgabc"))
   }
+
+  test("test string split") {
+    assert(nullString.ops.split.isEmpty)
+    assert("".ops.split.exists(_.length == 0))
+
+    val str1 = "a b  .c"
+    val res1 = str1.ops.split
+    assert(res1.exists(_.length == 3))
+    assert(res1.exists(elements => elements.head == "a"))
+    assert(res1.exists(elements => elements(1) == "b"))
+    assert(res1.exists(elements => elements(2) == ".c"))
+
+    val str2 = " a "
+    val res2 = str2.ops.split.get
+    assert(1 == res2.length)
+    assert("a" == res2.head)
+
+    val str3 = "a" + WHITESPACE + "b" + NON_WHITESPACE + "c"
+    val res3 = str3.ops.split.get
+    assert(2 == res3.length)
+    assert("a" == res3.head)
+    assert("b" + NON_WHITESPACE + "c" == res3(1))
+  }
 }
