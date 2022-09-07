@@ -1422,4 +1422,12 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("a b c".ops.reverseDelimited('.').contains("a b c"))
     assert("".ops.reverseDelimited('.').contains(""))
   }
+
+  test("test string right pad with size") {
+    assert(nullString.ops.rightPad(5).isEmpty)
+    assert(Some("").ops.rightPad(5).contains("     "))
+    assert("abc".ops.rightPad(5).contains("abc  "))
+    assert("abc".ops.rightPad(2).contains("abc"))
+    assert(Some("abc").ops.rightPad(-1).contains("abc"))
+  }
 }
