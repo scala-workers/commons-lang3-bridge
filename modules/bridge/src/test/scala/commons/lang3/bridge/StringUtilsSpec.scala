@@ -117,6 +117,41 @@ class StringUtilsSpec extends AnyFunSuite {
     }
   }
 
+  private def innerTestSplit(separator: Char, sepStr: String, noMatch: Char): Unit = {
+    val msg = "Failed on separator hex(" + Integer.toHexString(separator) + "), noMatch hex(" + Integer.toHexString(
+      noMatch
+    ) + "), sepStr(" + sepStr + ")"
+    val str = "a" + separator + "b" + separator + separator + noMatch + "c"
+
+    // (str, sepStr)
+    val res1 = str.ops.split(sepStr).get
+    assert(3 == res1.length, msg)
+    assert("a" == res1(0))
+    assert("b" == res1(1))
+    assert((noMatch + "c") == res1(2))
+    val str2 = separator + "a" + separator
+    val res2 = str2.ops.split(sepStr).get
+    assert(1 == res2.length, msg)
+    assert("a" == res2(0), msg)
+    val res3 = str.ops.split(sepStr, -1).get
+    assert(3 == res3.length, msg)
+    assert("a" == res3(0), msg)
+    assert("b" == res3(1), msg)
+    assert((noMatch + "c") == res3(2), msg)
+    val res4 = str.ops.split(sepStr, 0).get
+    assert(3 == res4.length, msg)
+    assert("a" == res4(0), msg)
+    assert("b" == res4(1), msg)
+    assert((noMatch + "c") == res4(2), msg)
+    val res5 = str.ops.split(sepStr, 1).get
+    assert(1 == res5.length, msg)
+    assert(str == res5(0), msg)
+    val res6 = str.ops.split(sepStr, 2).get
+    assert(2 == res6.length, msg)
+    assert("a" == res6(0), msg)
+    assert(str.substring(2) == res6(1), msg)
+  }
+
   private def innerTestSplitPreserveAllTokens(separator: Char, sepStr: String, noMatch: Char): Unit = {
     val msg = "Failed on separator hex(" + Integer.toHexString(separator) + "), noMatch hex(" + Integer.toHexString(
       noMatch
@@ -1515,5 +1550,37 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("a" == res3.head)
     assert("b" == res3(1))
     assert("c" == res3.last)
+  }
+
+  test("test string split with separator chars string and max times") {
+    assert(nullString.ops.split(".").isEmpty)
+    assert(noneString.ops.split(".", 3).isEmpty)
+
+    assert("".ops.split(".").exists(_.length == 0))
+    assert("".ops.split(".", 3).exists(_.length == 0))
+
+    innerTestSplit('.', ".", ' ')
+    innerTestSplit('.', ".", ',')
+    innerTestSplit('.', ".,", 'x')
+    for (i <- 0 until WHITESPACE.length) {
+      for (j <- 0 until NON_WHITESPACE.length) {
+        innerTestSplit(WHITESPACE.charAt(i), null, NON_WHITESPACE.charAt(j))
+        innerTestSplit(WHITESPACE.charAt(i), String.valueOf(WHITESPACE.charAt(i)), NON_WHITESPACE.charAt(j))
+      }
+    }
+
+    val expectedResults = Array("ab", "de fg")
+    val results1        = "ab   de fg".ops.split(null, 2).get
+    assert(expectedResults.length == results1.length)
+    for (i <- expectedResults.indices) {
+      assert(expectedResults(i) == results1(i))
+    }
+
+    val expectedResults2 = Array("ab", "cd:ef")
+    val results2         = "ab:cd:ef".ops.split(":", 2).get
+    assert(expectedResults2.length == results2.length)
+    for (i <- expectedResults2.indices) {
+      assert(expectedResults2(i) == results2(i))
+    }
   }
 }
