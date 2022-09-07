@@ -1367,4 +1367,23 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("oofoo".ops.replaceIgnoreCase("O", "", 1000).contains("f"))
 
   }
+
+  test("test string replace once from string to string") {
+    assert(noneString.ops.replaceOnce(nullString, nullString).isEmpty)
+    assert(nullString.ops.replaceOnce(nullString, "any").isEmpty)
+    assert(nullString.ops.replaceOnce("any", null).isEmpty)
+    assert(nullString.ops.replaceOnce("any", "any").isEmpty)
+
+    assert("".ops.replaceOnce(nullString, nullString).contains(""))
+    assert(Some("").ops.replaceOnce(noneString, "any").contains(""))
+    assert("".ops.replaceOnce(Some("any"), noneString).contains(""))
+    assert("".ops.replaceOnce("any", "any").contains(""))
+
+    assert("FOO".ops.replaceOnce("", "any").contains("FOO"))
+    assert("FOO".ops.replaceOnce(nullString, "any").contains("FOO"))
+    assert("FOO".ops.replaceOnce("F", nullString).contains("FOO"))
+    assert("FOO".ops.replaceOnce(nullString, nullString).contains("FOO"))
+
+    assert("foofoofoo".ops.replaceOnce("foo", "").contains("foofoo"))
+  }
 }
