@@ -1455,4 +1455,18 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("abc".ops.rightPad(5, null).contains("abc  "))
     assert("abc".ops.rightPad(5, "").contains("abc  "))
   }
+
+  test("test string rotate with shift") {
+    assert(nullString.ops.rotate(1).isEmpty)
+    assert("".ops.rotate(1).contains(""))
+    assert(Some("abcdefg").ops.rotate(0).contains("abcdefg"))
+    assert("abcdefg".ops.rotate(2).contains("fgabcde"))
+    assert("abcdefg".ops.rotate(-2).contains("cdefgab"))
+    assert("abcdefg".ops.rotate(7).contains("abcdefg"))
+    assert("abcdefg".ops.rotate(-7).contains("abcdefg"))
+    assert("abcdefg".ops.rotate(9).contains("fgabcde"))
+    assert("abcdefg".ops.rotate(-9).contains("cdefgab"))
+    assert("abcdefg".ops.rotate(17).contains("efgabcd"))
+    assert("abcdefg".ops.rotate(-17).contains("defgabc"))
+  }
 }
