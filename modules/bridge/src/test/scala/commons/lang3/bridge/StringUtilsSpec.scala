@@ -1330,4 +1330,41 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("fooFOOfoo".ops.replaceIgnoreCase("foo", "bar").contains("barbarbar"))
     assert("foofOOfoo".ops.replaceIgnoreCase("OO", Some("ar")).contains("farfarfar"))
   }
+
+  test("test string replace ignore case from string to string max times") {
+    assert(noneString.ops.replaceIgnoreCase(nullString, nullString, 2).isEmpty)
+    assert(nullString.ops.replaceIgnoreCase(nullString, Some("any"), 2).isEmpty)
+    assert(nullString.ops.replaceIgnoreCase("any", noneString, 2).isEmpty)
+    assert(noneString.ops.replaceIgnoreCase(Some("any"), "any", 2).isEmpty)
+
+    assert(Some("").ops.replaceIgnoreCase(nullString, nullString, 2).contains(""))
+    assert("".ops.replaceIgnoreCase(nullString, "any", 2).contains(""))
+    assert("".ops.replaceIgnoreCase("any", nullString, 2).contains(""))
+    assert("".ops.replaceIgnoreCase("any", "any", 2).contains(""))
+
+    val str = new String(Array[Char]('o', 'o', 'f', 'o', 'o'))
+    assert(Some(str).ops.replaceIgnoreCase("x", "", -1).contains(str))
+
+    assert("oofoo".ops.replaceIgnoreCase("o", "", -1).contains("f"))
+    assert(Some("oofoo").ops.replaceIgnoreCase("o", "", 0).contains("oofoo"))
+    assert("oofoo".ops.replaceIgnoreCase("o", "", 1).contains("ofoo"))
+    assert("oofoo".ops.replaceIgnoreCase("o", "", 2).contains("foo"))
+    assert("oofoo".ops.replaceIgnoreCase("o", "", 3).contains("fo"))
+    assert("oofoo".ops.replaceIgnoreCase("o", "", 4).contains("f"))
+
+    assert("oofoo".ops.replaceIgnoreCase("o", "", -5).contains("f"))
+    assert("oofoo".ops.replaceIgnoreCase("o", "", 1000).contains("f"))
+
+    // IgnoreCase
+    assert("oofoo".ops.replaceIgnoreCase("O", "", -1).contains("f"))
+    assert("oofoo".ops.replaceIgnoreCase("O", "", 0).contains("oofoo"))
+    assert("oofoo".ops.replaceIgnoreCase("O", "", 1).contains("ofoo"))
+    assert("oofoo".ops.replaceIgnoreCase("O", "", 2).contains("foo"))
+    assert("oofoo".ops.replaceIgnoreCase("O", "", 3).contains("fo"))
+    assert("oofoo".ops.replaceIgnoreCase("O", "", 4).contains("f"))
+
+    assert("oofoo".ops.replaceIgnoreCase("O", "", -5).contains("f"))
+    assert("oofoo".ops.replaceIgnoreCase("O", "", 1000).contains("f"))
+
+  }
 }
