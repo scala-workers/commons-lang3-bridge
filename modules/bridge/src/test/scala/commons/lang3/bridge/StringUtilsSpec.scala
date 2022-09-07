@@ -1408,4 +1408,10 @@ class StringUtilsSpec extends AnyFunSuite {
     // Ignore Case
     assert("FoOFoofoo".ops.replaceOnceIgnoreCase("foo", "").contains("Foofoo"))
   }
+
+  test("test string reverse") {
+    assert(noneString.ops.reverse.isEmpty)
+    assert("".ops.reverse.contains(""))
+    assert(Some("backwards").ops.reverse.contains("sdrawkcab"))
+  }
 }
