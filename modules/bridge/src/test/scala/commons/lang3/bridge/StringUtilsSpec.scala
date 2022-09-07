@@ -1386,4 +1386,26 @@ class StringUtilsSpec extends AnyFunSuite {
 
     assert("foofoofoo".ops.replaceOnce("foo", "").contains("foofoo"))
   }
+
+  test("test string replace once ignore case from string to string") {
+    assert(nullString.ops.replaceOnceIgnoreCase(nullString, nullString).isEmpty)
+    assert(noneString.ops.replaceOnceIgnoreCase(nullString, "any").isEmpty)
+    assert(nullString.ops.replaceOnceIgnoreCase(noneString, "any").isEmpty)
+    assert(noneString.ops.replaceOnceIgnoreCase("any", "any").isEmpty)
+
+    assert("".ops.replaceOnceIgnoreCase(noneString, noneString).contains(""))
+    assert("".ops.replaceOnceIgnoreCase(noneString, "any").contains(""))
+    assert("".ops.replaceOnceIgnoreCase("any", nullString).contains(""))
+    assert(Some("").ops.replaceOnceIgnoreCase(Some("any"), Some("any")).contains(""))
+
+    assert("FOO".ops.replaceOnceIgnoreCase("", "any").contains("FOO"))
+    assert("FOO".ops.replaceOnceIgnoreCase(nullString, "any").contains("FOO"))
+    assert("FOO".ops.replaceOnceIgnoreCase("F", null).contains("FOO"))
+    assert("FOO".ops.replaceOnceIgnoreCase(nullString, nullString).contains("FOO"))
+
+    assert("foofoofoo".ops.replaceOnceIgnoreCase("foo", "").contains("foofoo"))
+
+    // Ignore Case
+    assert("FoOFoofoo".ops.replaceOnceIgnoreCase("foo", "").contains("Foofoo"))
+  }
 }

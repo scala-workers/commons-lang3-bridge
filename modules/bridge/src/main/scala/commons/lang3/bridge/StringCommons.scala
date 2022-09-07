@@ -1731,6 +1731,19 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     Option(Strings.replaceOnce(strOrNull, sstr, rstr))
   }
 
+  def replaceOnceIgnoreCase[S: TypeMapping[*, (String, Option[String])], R: TypeMapping[*, (String, Option[String])]](
+    searchString: S,
+    replacement: R
+  ): Option[String] = {
+    val searchMapping      = getMapper[S, Option[String]].func.orNull
+    val replacementMapping = getMapper[R, Option[String]].func.orNull
+
+    val sstr = searchMapping(searchString)
+    val rstr = replacementMapping(replacement)
+
+    Option(Strings.replaceOnceIgnoreCase(strOrNull, sstr, rstr))
+  }
+
   def reverse: Option[String] = Option(Strings.reverse(strOrNull))
 
   def reverseDelimited(separatorChar: Char): Option[String] =
