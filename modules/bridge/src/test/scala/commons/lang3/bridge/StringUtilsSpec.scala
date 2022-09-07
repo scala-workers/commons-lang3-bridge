@@ -1414,4 +1414,12 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("".ops.reverse.contains(""))
     assert(Some("backwards").ops.reverse.contains("sdrawkcab"))
   }
+
+  test("test string reverse delimited") {
+    assert(nullString.ops.reverseDelimited('.').isEmpty)
+    assert("".ops.reverseDelimited('.').contains(""))
+    assert("a.b.c".ops.reverseDelimited('.').contains("c.b.a"))
+    assert("a b c".ops.reverseDelimited('.').contains("a b c"))
+    assert("".ops.reverseDelimited('.').contains(""))
+  }
 }
