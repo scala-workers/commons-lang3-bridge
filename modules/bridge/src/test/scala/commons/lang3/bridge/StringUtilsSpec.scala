@@ -1664,7 +1664,7 @@ class StringUtilsSpec extends AnyFunSuite {
     assert(Some("").ops.splitByWholeSeparatorPreserveAllTokens(".", -1).exists(_.length == 0))
 
     // test whitespace
-    var input = "ab   de fg"
+    var input    = "ab   de fg"
     var expected = Array[String]("ab", "", "", "de", "fg")
 
     var actual = input.ops.splitByWholeSeparatorPreserveAllTokens(noneString, -1).get
@@ -1688,7 +1688,7 @@ class StringUtilsSpec extends AnyFunSuite {
     expected = Array[String]("1", "2", ":3", "", "4")
 
     actual = input.ops.splitByWholeSeparatorPreserveAllTokens("::", -1).get
-    assert(expected.length, actual.length)
+    assert(expected.length == actual.length)
     for (i <- actual.indices) {
       assert(expected(i) == actual(i))
     }
