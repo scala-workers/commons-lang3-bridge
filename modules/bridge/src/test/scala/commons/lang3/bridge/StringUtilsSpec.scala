@@ -9,7 +9,7 @@ import java.nio.CharBuffer
 import java.nio.charset.StandardCharsets
 import java.util
 import java.util.function.Supplier
-import java.util.{Collections, Locale}
+import java.util.{Collections, Locale, Objects}
 import scala.collection.mutable
 
 /** TODO
@@ -1582,5 +1582,24 @@ class StringUtilsSpec extends AnyFunSuite {
     for (i <- expectedResults2.indices) {
       assert(expectedResults2(i) == results2(i))
     }
+  }
+
+  test("test string split by character type") {
+    assert(nullString.ops.splitByCharacterType.isEmpty)
+    assert("".ops.splitByCharacterType.exists(_.length == 0))
+
+    assert("ab de fg".ops.splitByCharacterType.exists(Objects.deepEquals(Array[String]("ab", " ", "de", " ", "fg"), _)))
+
+    assert(Some("ab   de fg").ops.splitByCharacterType.exists(Objects.deepEquals(Array[String]("ab", "   ", "de", " ", "fg"), _)))
+
+    assert("ab:cd:ef".ops.splitByCharacterType.exists(Objects.deepEquals(Array[String]("ab", ":", "cd", ":", "ef"), _)))
+
+    assert("number5".ops.splitByCharacterType.exists(Objects.deepEquals(Array[String]("number", "5"), _)))
+
+    assert("fooBar".ops.splitByCharacterType.exists(Objects.deepEquals(Array[String]("foo", "B", "ar"), _)))
+
+    assert("foo200Bar".ops.splitByCharacterType.exists(Objects.deepEquals(Array[String]("foo", "200", "B", "ar"), _)))
+
+    assert("ASFRules".ops.splitByCharacterType.exists(Objects.deepEquals(Array[String]("ASFR", "ules"), _)))
   }
 }
