@@ -1602,4 +1602,23 @@ class StringUtilsSpec extends AnyFunSuite {
 
     assert("ASFRules".ops.splitByCharacterType.exists(Objects.deepEquals(Array[String]("ASFR", "ules"), _)))
   }
+
+  test("test string split by character type camel case") {
+    assert(noneString.ops.splitByCharacterTypeCamelCase.isEmpty)
+    assert("".ops.splitByCharacterTypeCamelCase.exists(_.length == 0))
+
+    assert("ab de fg".ops.splitByCharacterTypeCamelCase.exists(Objects.deepEquals(Array[String]("ab", " ", "de", " ", "fg"), _)))
+
+    assert("ab   de fg".ops.splitByCharacterTypeCamelCase.exists(Objects.deepEquals(Array[String]("ab", "   ", "de", " ", "fg"), _)))
+
+    assert(Some("ab:cd:ef").ops.splitByCharacterTypeCamelCase.exists(Objects.deepEquals(Array[String]("ab", ":", "cd", ":", "ef"), _)))
+
+    assert("number5".ops.splitByCharacterTypeCamelCase.exists(Objects.deepEquals(Array[String]("number", "5"), _)))
+
+    assert("fooBar".ops.splitByCharacterTypeCamelCase.exists(Objects.deepEquals(Array[String]("foo", "Bar"), _)))
+
+    assert("foo200Bar".ops.splitByCharacterTypeCamelCase.exists(Objects.deepEquals(Array[String]("foo", "200", "Bar"), _)))
+
+    assert("ASFRules".ops.splitByCharacterTypeCamelCase.exists(Objects.deepEquals(Array[String]("ASF", "Rules"), _)))
+  }
 }
