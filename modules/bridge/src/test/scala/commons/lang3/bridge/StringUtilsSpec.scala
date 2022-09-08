@@ -1621,4 +1621,40 @@ class StringUtilsSpec extends AnyFunSuite {
 
     assert("ASFRules".ops.splitByCharacterTypeCamelCase.exists(Objects.deepEquals(Array[String]("ASF", "Rules"), _)))
   }
+
+  test("test string split by whole separator preserve all tokens string") {
+    assert(nullString.ops.splitByWholeSeparatorPreserveAllTokens(".").isEmpty)
+
+    assert("".ops.splitByWholeSeparatorPreserveAllTokens(".").exists(_.length == 0))
+
+    // test whitespace
+    var input    = "ab   de fg"
+    var expected = Array[String]("ab", "", "", "de", "fg")
+
+    var actual = input.ops.splitByWholeSeparatorPreserveAllTokens(null).get
+    assert(expected.length == actual.length)
+    for (i <- actual.indices) {
+      assert(expected(i) == actual(i))
+    }
+
+    // test delimiter singlechar
+    input = "1::2:::3::::4"
+    expected = Array[String]("1", "", "2", "", "", "3", "", "", "", "4")
+
+    actual = input.ops.splitByWholeSeparatorPreserveAllTokens(":").get
+    assert(expected.length == actual.length)
+    for (i <- actual.indices) {
+      assert(expected(i) == actual(i))
+    }
+
+    // test delimiter multichar
+    input = "1::2:::3::::4"
+    expected = Array[String]("1", "2", ":3", "", "4")
+
+    actual = input.ops.splitByWholeSeparatorPreserveAllTokens("::").get
+    assert(expected.length == actual.length)
+    for (i <- actual.indices) {
+      assert(expected(i) == actual(i))
+    }
+  }
 }
