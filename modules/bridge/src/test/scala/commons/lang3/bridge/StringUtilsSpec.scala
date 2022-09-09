@@ -2353,4 +2353,33 @@ class StringUtilsSpec extends AnyFunSuite {
     }
   }
 
+  test("test string georgian") {
+    val arrayI = Array[Char]( // Latin Small Letter dotless I
+      0x0131.toChar, // Greek Capital Letter Theta
+      0x03f4.toChar
+    )
+    val arrayJ = Array[Char]( // Latin Capital Letter I with dot above
+      0x0130.toChar, // Greek Theta Symbol
+      0x03d1.toChar
+    )
+    for (i <- arrayI) {
+      for (j <- arrayJ) {
+        val si   = String.valueOf(i)
+        val sj   = String.valueOf(j)
+        val res1 = si.equalsIgnoreCase(sj)
+        val ci   = new mutable.StringBuilder(si)
+        val cj   = new mutable.StringBuilder(sj)
+        var res2 = ci.toString().ops.startsWithIgnoreCase(cj.toString())
+        assert(res1 == res2, "si : " + si + " sj : " + sj)
+        res2 = ci.toString().ops.endsWithIgnoreCase(cj.toString())
+        assert(res1 == res2, "si : " + si + " sj : " + sj)
+        res2 = ci.toString.ops.compareIgnoreCase(cj.toString) == 0
+        assert(res1 == res2, "si : " + si + " sj : " + sj)
+        res2 = ci.toString.ops.indexOfIgnoreCase(cj.toString) == 0
+        assert(res1 == res2, "si : " + si + " sj : " + sj)
+        res2 = ci.toString.ops.indexOfIgnoreCase(cj.toString) == 0
+        assert(res1 == res2, "si : " + si + " sj : " + sj)
+      }
+    }
+  }
 }

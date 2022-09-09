@@ -1284,6 +1284,12 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     }
   }
 
+  def endsWithIgnoreCase[S: TypeMapping[*, (String, Option[String])]](suffix: S): Boolean = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(suffix)
+    Strings.endsWithIgnoreCase(strOrNull, str1)
+  }
+
   def equalsAnyIgnoreCase[S: VarArgsOfCharSequence](searchStrings: S*): Boolean = {
     def mapping                                    = TypeMapping.getMapping[VarArgsOfCharSequence, S]
     def mapperSeqString                            = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
