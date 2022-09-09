@@ -1834,4 +1834,113 @@ class StringUtilsSpec extends AnyFunSuite {
     }
     assert("b" + NON_WHITESPACE + "c" == res(WHITESPACE.length))
   }
+
+  test("test string split preserve all tokens by separator char") {
+    assert(noneString.ops.splitPreserveAllTokens('.').isEmpty)
+    assert("".ops.splitPreserveAllTokens('.').exists(_.length == 0))
+
+    var str = "a.b. c"
+    var res = Some(str).ops.splitPreserveAllTokens('.').get
+    assert(3 == res.length)
+    assert("a" == res(0))
+    assert("b" == res(1))
+    assert(" c" == res(2))
+
+    str = "a.b.. c"
+    res = str.ops.splitPreserveAllTokens('.').get
+    assert(4 == res.length)
+    assert("a" == res(0))
+    assert("b" == res(1))
+    assert("" == res(2))
+    assert(" c" == res(3))
+
+    str = ".a."
+    res = str.ops.splitPreserveAllTokens('.').get
+    assert(3 == res.length)
+    assert("" == res(0))
+    assert("a" == res(1))
+    assert("" == res(2))
+
+    str = ".a.."
+    res = str.ops.splitPreserveAllTokens('.').get
+    assert(4 == res.length)
+    assert("" == res(0))
+    assert("a" == res(1))
+    assert("" == res(2))
+    assert("" == res(3))
+
+    str = "..a."
+    res = str.ops.splitPreserveAllTokens('.').get
+    assert(4 == res.length)
+    assert("" == res(0))
+    assert("" == res(1))
+    assert("a" == res(2))
+    assert("" == res(3))
+
+    str = "..a"
+    res = str.ops.splitPreserveAllTokens('.').get
+    assert(3 == res.length)
+    assert("" == res(0))
+    assert("" == res(1))
+    assert("a" == res(2))
+
+    str = "a b c"
+    res = Some(str).ops.splitPreserveAllTokens(' ').get
+    assert(3 == res.length)
+    assert("a" == res(0))
+    assert("b" == res(1))
+    assert("c" == res(2))
+
+    str = "a  b  c"
+    res = str.ops.splitPreserveAllTokens(' ').get
+    assert(5 == res.length)
+    assert("a" == res(0))
+    assert("" == res(1))
+    assert("b" == res(2))
+    assert("" == res(3))
+    assert("c" == res(4))
+
+    str = " a b c"
+    res = str.ops.splitPreserveAllTokens(' ').get
+    assert(4 == res.length)
+    assert("" == res(0))
+    assert("a" == res(1))
+    assert("b" == res(2))
+    assert("c" == res(3))
+
+    str = "  a b c"
+    res = str.ops.splitPreserveAllTokens(' ').get
+    assert(5 == res.length)
+    assert("" == res(0))
+    assert("" == res(1))
+    assert("a" == res(2))
+    assert("b" == res(3))
+    assert("c" == res(4))
+
+    str = "a b c "
+    res = Some(str).ops.splitPreserveAllTokens(' ').get
+    assert(4 == res.length)
+    assert("a" == res(0))
+    assert("b" == res(1))
+    assert("c" == res(2))
+    assert("" == res(3))
+
+    str = "a b c  "
+    res = str.ops.splitPreserveAllTokens(' ').get
+    assert(5 == res.length)
+    assert("a" == res(0))
+    assert("b" == res(1))
+    assert("c" == res(2))
+    assert("" == res(3))
+    assert("" == res(3))
+
+    // Match example in javadoc
+    val expectedResults = Array("a", "", "b", "c")
+    val results         = "a..b.c".ops.splitPreserveAllTokens('.').get
+    assert(expectedResults.length == results.length)
+    for (i <- expectedResults.indices) {
+      assert(expectedResults(i) == results(i))
+    }
+
+  }
 }
