@@ -2056,4 +2056,17 @@ class StringUtilsSpec extends AnyFunSuite {
     val expect = "tHIS sTRING CONTAINS A tITLEcASE CHARACTER: \u01C9"
     assert(test.ops.swapCase.contains(expect))
   }
+
+  test("test string to code points") {
+    val orphanedHighSurrogate = 0xd801
+    val orphanedLowSurrogate  = 0xdc00
+    val supplementary         = 0x2070e
+
+    val codePoints: Array[Int] = Array('a', orphanedHighSurrogate, 'b', 'c', supplementary, 'd', orphanedLowSurrogate, 'e')
+    val s                      = new String(codePoints, 0, codePoints.length)
+    assert(Some(s).ops.toCodePoints.exists(e => Objects.deepEquals(e, codePoints)))
+
+    assert(noneString.ops.toCodePoints.isEmpty)
+    assert("".ops.toCodePoints.exists(e => Objects.deepEquals(e, ArrayUtils.EMPTY_INT_ARRAY)))
+  }
 }
