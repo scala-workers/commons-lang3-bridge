@@ -2039,4 +2039,21 @@ class StringUtilsSpec extends AnyFunSuite {
     }
 
   }
+
+  test("test string swap case") {
+    assert(nullString.ops.swapCase.isEmpty)
+    assert(Some("").ops.swapCase.contains(""))
+    assert("  ".ops.swapCase.contains("  "))
+
+    assert(Some("I").ops.swapCase.contains("i"))
+    assert("i".ops.swapCase.contains("I"))
+    assert("i am here 123".ops.swapCase.contains("I AM HERE 123"))
+    assert("I Am Here 123".ops.swapCase.contains("i aM hERE 123"))
+    assert("i am HERE 123".ops.swapCase.contains("I AM here 123"))
+    assert(Some("I AM HERE 123").ops.swapCase.contains("i am here 123"))
+
+    val test   = "This String contains a TitleCase character: \u01C8"
+    val expect = "tHIS sTRING CONTAINS A tITLEcASE CHARACTER: \u01C9"
+    assert(test.ops.swapCase.contains(expect))
+  }
 }
