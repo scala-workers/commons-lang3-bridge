@@ -6,7 +6,7 @@ import org.apache.commons.lang3.{ArrayUtils, ObjectUtils, StringUtils => Strings
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.nio.CharBuffer
-import java.nio.charset.{Charset, StandardCharsets}
+import java.nio.charset.StandardCharsets
 import java.util
 import java.util.function.Supplier
 import java.util.{Collections, Locale, Objects}
@@ -2100,5 +2100,83 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("abcdefghijklmno".ops.truncate(Integer.MAX_VALUE).contains("abcdefghijklmno"))
     assert("abcdefghijklmno".ops.truncate(5).contains("abcde"))
     assert("abcdefghijklmno".ops.truncate(3).contains("abc"))
+  }
+
+  test("test string truncate with offset and max width") {
+    assert(nullString.ops.truncate(0, 12).isEmpty)
+    assertThrows[IllegalArgumentException] {
+      nullString.ops.truncate(-1, 0)
+    }
+    assertThrows[IllegalArgumentException] {
+      noneString.ops.truncate(-10, -4)
+    }
+    assertThrows[IllegalArgumentException] {
+      noneString.ops.truncate(Integer.MIN_VALUE, Integer.MIN_VALUE)
+    }
+    assert(nullString.ops.truncate(10, 12).isEmpty)
+    assert("".ops.truncate(0, 10).contains(""))
+    assert("".ops.truncate(2, 10).contains(""))
+    assert(Some("abcdefghij").ops.truncate(0, 3).contains("abc"))
+    assert("abcdefghij".ops.truncate(5, 6).contains("fghij"))
+    assert("abcdefghij".ops.truncate(0, 0).contains(""))
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.truncate(0, -1)
+    }
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.truncate(0, -10)
+    }
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.truncate(0, -100)
+    }
+    assertThrows[IllegalArgumentException] {
+      Some("abcdefghij").ops.truncate(1, -100)
+    }
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.truncate(0, Integer.MIN_VALUE)
+    }
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.truncate(-1, 0)
+    }
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.truncate(-10, 0)
+    }
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.truncate(-100, 1)
+    }
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.truncate(Integer.MIN_VALUE, 0)
+    }
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.truncate(-1, -1)
+    }
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.truncate(-10, -10)
+    }
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.truncate(-100, -100)
+    }
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.truncate(Integer.MIN_VALUE, Integer.MIN_VALUE)
+    }
+    val raspberry = "raspberry peach"
+    assert(raspberry.ops.truncate(10, 15).contains("peach"))
+    assert(Some("abcdefghijklmno").ops.truncate(0, 10).contains("abcdefghij"))
+    assert("abcdefghijklmno".ops.truncate(0, Integer.MAX_VALUE).contains("abcdefghijklmno"))
+    assert("abcdefghijklmno".ops.truncate(1, 10).contains("bcdefghijk"))
+    assert(Some("abcdefghijklmno").ops.truncate(2, 10).contains("cdefghijkl"))
+    assert("abcdefghijklmno".ops.truncate(3, 10).contains("defghijklm"))
+    assert("abcdefghijklmno".ops.truncate(4, 10).contains("efghijklmn"))
+    assert("abcdefghijklmno".ops.truncate(5, 10).contains("fghijklmno"))
+    assert("abcdefghijklmno".ops.truncate(5, 5).contains("fghij"))
+    assert("abcdefghijklmno".ops.truncate(5, 3).contains("fgh"))
+    assert("abcdefghijklmno".ops.truncate(10, 3).contains("klm"))
+    assert("abcdefghijklmno".ops.truncate(10, Integer.MAX_VALUE).contains("klmno"))
+    assert("abcdefghijklmno".ops.truncate(13, 1).contains("n"))
+    assert("abcdefghijklmno".ops.truncate(13, Integer.MAX_VALUE).contains("no"))
+    assert("abcdefghijklmno".ops.truncate(14, 1).contains("o"))
+    assert("abcdefghijklmno".ops.truncate(14, Integer.MAX_VALUE).contains("o"))
+    assert("abcdefghijklmno".ops.truncate(15, 1).contains(""))
+    assert("abcdefghijklmno".ops.truncate(15, Integer.MAX_VALUE).contains(""))
+    assert("abcdefghijklmno".ops.truncate(Integer.MAX_VALUE, Integer.MAX_VALUE).contains(""))
   }
 }
