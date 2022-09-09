@@ -2295,10 +2295,10 @@ class StringUtilsSpec extends AnyFunSuite {
   }
 
   test("test string wrap if missing string") {
-    assert(nullString.ops.wrapIfMissing(Some("\0000")).isEmpty)
+    assert(nullString.ops.wrapIfMissing(Some("\u0000")).isEmpty)
     assert(noneString.ops.wrapIfMissing("1").isEmpty)
 
-    assert(Some("").ops.wrapIfMissing("\0000").contains(""))
+    assert(Some("").ops.wrapIfMissing("\u0000").contains(""))
     assert(Some("ab").ops.wrapIfMissing(Some("x")).contains("xabx"))
     assert("ab".ops.wrapIfMissing("\"").contains("\"ab\""))
     assert("\"ab\"".ops.wrapIfMissing("\"").contains("\"ab\""))
@@ -2315,5 +2315,22 @@ class StringUtilsSpec extends AnyFunSuite {
 
     assert("ab/ab".ops.wrapIfMissing("ab").contains("ab/ab"))
     assert("//x//".ops.wrapIfMissing("//").contains("//x//"))
+  }
+
+  test("test string to root lower case") {
+    assert(noneString.ops.toRootLowerCase.isEmpty)
+    assert(Some("A").ops.toRootLowerCase.contains("a"))
+    assert(Some("a").ops.toRootLowerCase.contains("a"))
+    val TURKISH = Locale.forLanguageTag("tr")
+    // Sanity checks:
+    assert("TITLE".toLowerCase(TURKISH) != "title")
+    assert("TITLE".toLowerCase(Locale.ROOT) == "title")
+    assert("TITLE".ops.toRootLowerCase.contains("title"))
+    // Make sure we are not using the default Locale:
+    val defaultLocale = Locale.getDefault
+    try {
+      Locale.setDefault(TURKISH)
+      assert("TITLE".ops.toRootLowerCase.contains("title"))
+    } finally Locale.setDefault(defaultLocale)
   }
 }
