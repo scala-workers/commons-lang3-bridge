@@ -2242,5 +2242,17 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("".ops.upperCase(Locale.ENGLISH).contains(""), "upperCase(empty-string, Locale) failed")
   }
 
+  test("test string wrap with char") {
+    assert(nullString.ops.wrap(CharUtils.NUL).isEmpty)
+    assert(noneString.ops.wrap('1').isEmpty)
 
+    assert("".ops.wrap(CharUtils.NUL).contains(""))
+    assert("ab".ops.wrap('x').contains("xabx"))
+    assert(Some("ab").ops.wrap('\"').contains("\"ab\""))
+    assert("\"ab\"".ops.wrap('\"').contains("\"\"ab\"\""))
+    assert("ab".ops.wrap('\'').contains("'ab'"))
+    assert("'abcd'".ops.wrap('\'').contains("''abcd''"))
+    assert("\"abcd\"".ops.wrap('\'').contains("'\"abcd\"'"))
+    assert("'abcd'".ops.wrap('\"').contains("\"'abcd'\""))
+  }
 }
