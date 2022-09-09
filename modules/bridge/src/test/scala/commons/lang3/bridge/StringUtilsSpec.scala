@@ -2179,4 +2179,18 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("abcdefghijklmno".ops.truncate(15, Integer.MAX_VALUE).contains(""))
     assert("abcdefghijklmno".ops.truncate(Integer.MAX_VALUE, Integer.MAX_VALUE).contains(""))
   }
+
+  test("test string uncapitalize") {
+    assert(noneString.ops.uncapitalize.isEmpty)
+
+    assert(FOO_CAP.ops.uncapitalize.contains(FOO_UNCAP), "uncapitalize(String) failed")
+    assert(FOO_UNCAP.ops.uncapitalize.contains(FOO_UNCAP), "uncapitalize(string) failed")
+    assert("".ops.uncapitalize.contains(""), "uncapitalize(empty-string) failed")
+    assert(Some("X").ops.uncapitalize.contains("x"), "uncapitalize(single-char-string) failed")
+
+    // Examples from uncapitalize Javadoc
+    assert("cat".ops.uncapitalize.contains("cat"))
+    assert("Cat".ops.uncapitalize.contains("cat"))
+    assert("CAT".ops.uncapitalize.contains("cAT"))
+  }
 }
