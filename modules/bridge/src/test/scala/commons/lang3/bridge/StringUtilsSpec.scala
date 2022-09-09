@@ -2,7 +2,7 @@ package commons.lang3.bridge
 
 import commons.lang3.bridge.StringUtils.ops._
 import org.apache.commons.lang3.mutable.MutableInt
-import org.apache.commons.lang3.{ArrayUtils, ObjectUtils, StringUtils => Strings, SystemUtils}
+import org.apache.commons.lang3.{ArrayUtils, CharUtils, StringUtils => Strings}
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.nio.CharBuffer
@@ -2192,5 +2192,22 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("cat".ops.uncapitalize.contains("cat"))
     assert("Cat".ops.uncapitalize.contains("cat"))
     assert("CAT".ops.uncapitalize.contains("cAT"))
+  }
+
+  test("test string unwrap with wrap token") {
+    assert(noneString.ops.unwrap(nullString).isEmpty)
+    assert(nullString.ops.unwrap(CharUtils.NUL).isEmpty)
+    assert(nullString.ops.unwrap('1').isEmpty)
+
+    assert(Some("abc").ops.unwrap(noneString).contains("abc"))
+    assert("a".ops.unwrap(Some("a")).contains("a"))
+    assert("aa".ops.unwrap("a").contains(""))
+    assert("\'abc\'".ops.unwrap('\'').contains("abc"))
+    assert(Some("AabcA").ops.unwrap('A').contains("abc"))
+    assert("AAabcAA".ops.unwrap('A').contains("AabcA"))
+    assert("abc".ops.unwrap('b').contains("abc"))
+    assert("#A".ops.unwrap('#').contains("#A"))
+    assert("A#".ops.unwrap('#').contains("A#"))
+    assert("AABAA".ops.unwrap('A').contains("ABA"))
   }
 }
