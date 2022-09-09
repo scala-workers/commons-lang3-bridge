@@ -1943,4 +1943,100 @@ class StringUtilsSpec extends AnyFunSuite {
     }
 
   }
+
+  test("test string split preserve all tokens with separator char and max times") {
+    assert(noneString.ops.splitPreserveAllTokens(".").isEmpty)
+    assert(nullString.ops.splitPreserveAllTokens(".", 3).isEmpty)
+
+    assert("".ops.splitPreserveAllTokens(Some(".")).exists(_.length == 0))
+    assert(Some("").ops.splitPreserveAllTokens(".", 3).exists(_.length == 0))
+
+    innerTestSplitPreserveAllTokens('.', ".", ' ')
+    innerTestSplitPreserveAllTokens('.', ".", ',')
+    innerTestSplitPreserveAllTokens('.', ".,", 'x')
+    for (i <- 0 until WHITESPACE.length) {
+      for (j <- 0 until NON_WHITESPACE.length) {
+        innerTestSplitPreserveAllTokens(WHITESPACE.charAt(i), null, NON_WHITESPACE.charAt(j))
+        innerTestSplitPreserveAllTokens(WHITESPACE.charAt(i), String.valueOf(WHITESPACE.charAt(i)), NON_WHITESPACE.charAt(j))
+      }
+    }
+
+    var expectedResults: Array[String] = Array("ab", "de fg")
+    var results: Array[String]         = "ab de fg".ops.splitPreserveAllTokens(nullString, 2).get
+    assert(expectedResults.length == results.length)
+    for (i <- expectedResults.indices) {
+      assert(expectedResults(i) == results(i))
+    }
+
+    expectedResults = Array("ab", "  de fg")
+    results = "ab   de fg".ops.splitPreserveAllTokens(noneString, 2).get
+    assert(expectedResults.length == results.length)
+    for (i <- expectedResults.indices) {
+      assert(expectedResults(i) == results(i))
+    }
+
+    expectedResults = Array("ab", "::de:fg")
+    results = "ab:::de:fg".ops.splitPreserveAllTokens(":", 2).get
+    assert(expectedResults.length == results.length)
+    for (i <- expectedResults.indices) {
+      assert(expectedResults(i) == results(i))
+    }
+
+    expectedResults = Array("ab", "", " de fg")
+    results = Some("ab   de fg").ops.splitPreserveAllTokens(nullString, 3).get
+    assert(expectedResults.length == results.length)
+    for (i <- expectedResults.indices) {
+      assert(expectedResults(i) == results(i))
+    }
+
+    expectedResults = Array("ab", "", "", "de fg")
+    results = "ab   de fg".ops.splitPreserveAllTokens(noneString, 4).get
+    assert(expectedResults.length == results.length)
+    for (i <- expectedResults.indices) {
+      assert(expectedResults(i) == results(i))
+    }
+
+    expectedResults = Array("ab", "cd:ef")
+    results = "ab:cd:ef".ops.splitPreserveAllTokens(Some(":"), 2).get
+    assert(expectedResults.length == results.length)
+    for (i <- expectedResults.indices) {
+      assert(expectedResults(i) == results(i))
+    }
+
+    expectedResults = Array("ab", ":cd:ef")
+    results = "ab::cd:ef".ops.splitPreserveAllTokens(":", 2).get
+    assert(expectedResults.length == results.length)
+    for (i <- expectedResults.indices) {
+      assert(expectedResults(i) == results(i))
+    }
+
+    expectedResults = Array("ab", "", ":cd:ef")
+    results = "ab:::cd:ef".ops.splitPreserveAllTokens(":", 3).get
+    assert(expectedResults.length == results.length)
+    for (i <- expectedResults.indices) {
+      assert(expectedResults(i) == results(i))
+    }
+
+    expectedResults = Array("ab", "", "", "cd:ef")
+    results = Some("ab:::cd:ef").ops.splitPreserveAllTokens(Some(":"), 4).get
+    assert(expectedResults.length == results.length)
+    for (i <- expectedResults.indices) {
+      assert(expectedResults(i) == results(i))
+    }
+
+    expectedResults = Array("", "ab", "", "", "cd:ef")
+    results = ":ab:::cd:ef".ops.splitPreserveAllTokens(":", 5).get
+    assert(expectedResults.length == results.length)
+    for (i <- expectedResults.indices) {
+      assert(expectedResults(i) == results(i))
+    }
+
+    expectedResults = Array("", "", "ab", "", "", "cd:ef")
+    results = "::ab:::cd:ef".ops.splitPreserveAllTokens(":", 6).get
+    assert(expectedResults.length == results.length)
+    for (i <- expectedResults.indices) {
+      assert(expectedResults(i) == results(i))
+    }
+
+  }
 }
