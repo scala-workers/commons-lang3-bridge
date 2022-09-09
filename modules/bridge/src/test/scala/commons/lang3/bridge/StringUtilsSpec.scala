@@ -2272,4 +2272,25 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("\"abcd\"".ops.wrap("'").contains("'\"abcd\"'"))
     assert("'abcd'".ops.wrap("\"").contains("\"'abcd'\""))
   }
+
+  test("test string wrap if missing char") {
+    assert(noneString.ops.wrapIfMissing(CharUtils.NUL).isEmpty)
+    assert(nullString.ops.wrapIfMissing('1').isEmpty)
+
+    assert(Some("").ops.wrapIfMissing(CharUtils.NUL).contains(""))
+    assert("ab".ops.wrapIfMissing('x').contains("xabx"))
+    assert("ab".ops.wrapIfMissing('\"').contains("\"ab\""))
+    assert("\"ab\"".ops.wrapIfMissing('\"').contains("\"ab\""))
+    assert("ab".ops.wrapIfMissing('\'').contains("'ab'"))
+    assert("'abcd'".ops.wrapIfMissing('\'').contains("'abcd'"))
+    assert("\"abcd\"".ops.wrapIfMissing('\'').contains("'\"abcd\"'"))
+    assert(Some("'abcd'").ops.wrapIfMissing('\"').contains("\"'abcd'\""))
+    assert("x".ops.wrapIfMissing('/').contains("/x/"))
+    assert("x/y/z".ops.wrapIfMissing('/').contains("/x/y/z/"))
+    assert("/x/y/z".ops.wrapIfMissing('/').contains("/x/y/z/"))
+    assert("x/y/z/".ops.wrapIfMissing('/').contains("/x/y/z/"))
+
+    assert("/".ops.wrapIfMissing('/').contains("/"))
+    assert("/x/".ops.wrapIfMissing('/').contains("/x/"))
+  }
 }
