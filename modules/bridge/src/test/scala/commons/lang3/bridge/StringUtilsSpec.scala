@@ -2333,4 +2333,24 @@ class StringUtilsSpec extends AnyFunSuite {
       assert("TITLE".ops.toRootLowerCase.contains("title"))
     } finally Locale.setDefault(defaultLocale)
   }
+
+  test("test string to root upper case") {
+    assert(noneString.ops.toRootUpperCase.isEmpty)
+    assert(Some("a").ops.toRootUpperCase.contains("A"))
+    assert("A".ops.toRootUpperCase.contains("A"))
+    val TURKISH = Locale.forLanguageTag("tr")
+    // Sanity checks:
+    assert("TITLE" != "title".toUpperCase(TURKISH))
+    assert("TITLE" == "title".toUpperCase(Locale.ROOT))
+    assert(Some("title").ops.toRootUpperCase.contains("TITLE"))
+    // Make sure we are not using the default Locale:
+    val defaultLocale = Locale.getDefault();
+    try {
+      Locale.setDefault(TURKISH)
+      assert("title".ops.toRootUpperCase.contains("TITLE"));
+    } finally {
+      Locale.setDefault(defaultLocale);
+    }
+  }
+
 }
