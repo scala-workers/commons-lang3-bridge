@@ -1734,4 +1734,30 @@ class StringUtilsSpec extends AnyFunSuite {
       assert(splitWithMultipleSeparatorExpectedResults(i) == splitWithMultipleSeparator(i))
     }
   }
+
+  test("test split by whole string separator and max times") {
+    assert(noneString.ops.splitByWholeSeparator(".", 3).isEmpty)
+
+    assert("".ops.splitByWholeSeparator(".", 3).exists(_.length == 0))
+
+    val stringToSplitOnNulls       = "ab   de fg"
+    val splitOnNullExpectedResults = Array("ab", "de fg")
+    // String[] splitOnNullExpectedResults = { "ab", "de" } ;
+
+    val splitOnNullResults = Some(stringToSplitOnNulls).ops.splitByWholeSeparator(null, 2).get
+    assert(splitOnNullExpectedResults.length == splitOnNullResults.length)
+    for (i <- splitOnNullExpectedResults.indices) {
+      assert(splitOnNullExpectedResults(i) == splitOnNullResults(i))
+    }
+
+    val stringToSplitOnCharactersAndString = "abstemiouslyaeiouyabstemiouslyaeiouyabstemiously"
+
+    val splitOnStringExpectedResults = Array("abstemiously", "abstemiouslyaeiouyabstemiously")
+    // String[] splitOnStringExpectedResults = { "abstemiously", "abstemiously" } ;
+    val splitOnStringResults = stringToSplitOnCharactersAndString.ops.splitByWholeSeparator("aeiouy", 2).get
+    assert(splitOnStringExpectedResults.length == splitOnStringResults.length)
+    for (i <- splitOnStringExpectedResults.indices) {
+      assert(splitOnStringExpectedResults(i) == splitOnStringResults(i))
+    }
+  }
 }
