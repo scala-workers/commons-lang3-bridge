@@ -2232,4 +2232,15 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("AAA\"abc\'xyz\'\"AAA".ops.unwrap("A").contains("AA\"abc\'xyz\'\"AA"))
     assert("\"abc\'xyz\'\"AA".ops.unwrap("AA").contains("\"abc\'xyz\'\"AA"))
   }
+
+  test("test string upper case") {
+    assert(nullString.ops.upperCase.isEmpty)
+    assert(noneString.ops.upperCase(Locale.ENGLISH).isEmpty)
+    assert(Some("fOo test THING").ops.upperCase.contains("FOO TEST THING"), "upperCase(String) failed")
+    assert("".ops.upperCase.contains(""), "upperCase(empty-string) failed")
+    assert("fOo test THING".ops.upperCase(Locale.ENGLISH).contains("FOO TEST THING"), "upperCase(String, Locale) failed")
+    assert("".ops.upperCase(Locale.ENGLISH).contains(""), "upperCase(empty-string, Locale) failed")
+  }
+
+
 }
