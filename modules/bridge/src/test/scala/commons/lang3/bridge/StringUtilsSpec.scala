@@ -2210,4 +2210,26 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("A#".ops.unwrap('#').contains("A#"))
     assert("AABAA".ops.unwrap('A').contains("ABA"))
   }
+
+  test("test string unwrap with wrap token string") {
+    assert(nullString.ops.unwrap(noneString).isEmpty)
+    assert(noneString.ops.unwrap("").isEmpty)
+    assert(nullString.ops.unwrap(Some("1")).isEmpty)
+
+    assert("abc".ops.unwrap(nullString).contains("abc"))
+    assert("abc".ops.unwrap("").contains("abc"))
+    assert(Some("a").ops.unwrap("a").contains("a"))
+    assert("ababa".ops.unwrap(Some("aba")).contains("ababa"))
+    assert("aa".ops.unwrap("a").contains(""))
+    assert("\'abc\'".ops.unwrap("\'").contains("abc"))
+    assert("\"abc\"".ops.unwrap("\"").contains("abc"))
+    assert(Some("\"abc\"xyz\"").ops.unwrap("\"").contains("abc\"xyz"))
+    assert("\"abc\"xyz\"\"".ops.unwrap("\"").contains("abc\"xyz\""))
+    assert("\"abc\'xyz\'\"".ops.unwrap("\"").contains("abc\'xyz\'"))
+    assert("AA\"abc\'xyz\'\"AA".ops.unwrap("AA").contains("\"abc\'xyz\'\""))
+    assert("123\"abc\'xyz\'\"123".ops.unwrap("123").contains("\"abc\'xyz\'\""))
+    assert("AA\"abc\'xyz\'\"".ops.unwrap("AA").contains("AA\"abc\'xyz\'\""))
+    assert("AAA\"abc\'xyz\'\"AAA".ops.unwrap("A").contains("AA\"abc\'xyz\'\"AA"))
+    assert("\"abc\'xyz\'\"AA".ops.unwrap("AA").contains("\"abc\'xyz\'\"AA"))
+  }
 }
