@@ -2255,4 +2255,21 @@ class StringUtilsSpec extends AnyFunSuite {
     assert("\"abcd\"".ops.wrap('\'').contains("'\"abcd\"'"))
     assert("'abcd'".ops.wrap('\"').contains("\"'abcd'\""))
   }
+
+  test("test string wrap with string") {
+    assert(noneString.ops.wrap(nullString).isEmpty)
+    assert(nullString.ops.wrap("").isEmpty)
+    assert(noneString.ops.wrap("1").isEmpty)
+
+    assert(nullString.ops.wrap(noneString).isEmpty)
+    assert(Some("").ops.wrap("").contains(""))
+    assert("ab".ops.wrap(nullString).contains("ab"))
+    assert(Some("ab").ops.wrap(Some("x")).contains("xabx"))
+    assert("ab".ops.wrap("\"").contains("\"ab\""))
+    assert("\"ab\"".ops.wrap("\"").contains("\"\"ab\"\""))
+    assert("ab".ops.wrap(Some("'")).contains("'ab'"))
+    assert("'abcd'".ops.wrap("'").contains("''abcd''"))
+    assert("\"abcd\"".ops.wrap("'").contains("'\"abcd\"'"))
+    assert("'abcd'".ops.wrap("\"").contains("\"'abcd'\""))
+  }
 }
