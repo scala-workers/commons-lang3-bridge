@@ -2,11 +2,11 @@ package commons.lang3.bridge
 
 import commons.lang3.bridge.StringUtils.ops._
 import org.apache.commons.lang3.mutable.MutableInt
-import org.apache.commons.lang3.{ArrayUtils, ObjectUtils, StringUtils => Strings}
+import org.apache.commons.lang3.{ArrayUtils, ObjectUtils, StringUtils => Strings, SystemUtils}
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.nio.CharBuffer
-import java.nio.charset.StandardCharsets
+import java.nio.charset.{Charset, StandardCharsets}
 import java.util
 import java.util.function.Supplier
 import java.util.{Collections, Locale, Objects}
@@ -2068,5 +2068,37 @@ class StringUtilsSpec extends AnyFunSuite {
 
     assert(noneString.ops.toCodePoints.isEmpty)
     assert("".ops.toCodePoints.exists(e => Objects.deepEquals(e, ArrayUtils.EMPTY_INT_ARRAY)))
+  }
+
+  test("test string truncate with max width") {
+    assert(noneString.ops.truncate(12).isEmpty)
+    assertThrows[IllegalArgumentException] {
+      nullString.ops.truncate(-1)
+    }
+    assertThrows[IllegalArgumentException] {
+      noneString.ops.truncate(-10)
+    }
+    assertThrows[IllegalArgumentException] {
+      noneString.ops.truncate(Integer.MIN_VALUE)
+    }
+
+    assert("".ops.truncate(10).contains(""))
+    assert("".ops.truncate(10).contains(""))
+    assert(Some("abcdefghij").ops.truncate(3).contains("abc"))
+    assert("abcdefghij".ops.truncate(6).contains("abcdef"))
+    assert("abcdefghij".ops.truncate(0).contains(""))
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.truncate(-1)
+    }
+    assertThrows[IllegalArgumentException] {
+      "abcdefghij".ops.truncate(-100)
+    }
+    assertThrows[IllegalArgumentException] {
+      Some("abcdefghij").ops.truncate(Integer.MIN_VALUE)
+    }
+    assert("abcdefghijklmno".ops.truncate(10).contains("abcdefghij"))
+    assert("abcdefghijklmno".ops.truncate(Integer.MAX_VALUE).contains("abcdefghijklmno"))
+    assert("abcdefghijklmno".ops.truncate(5).contains("abcde"))
+    assert("abcdefghijklmno".ops.truncate(3).contains("abc"))
   }
 }
