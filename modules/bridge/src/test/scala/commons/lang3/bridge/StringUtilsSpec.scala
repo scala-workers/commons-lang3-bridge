@@ -1703,4 +1703,35 @@ class StringUtilsSpec extends AnyFunSuite {
       assert(expected(i) == actual(i))
     }
   }
+
+  test("test string split by whole string separator") {
+    assert(nullString.ops.splitByWholeSeparator(".").isEmpty)
+
+    assert("".ops.splitByWholeSeparator(".").exists(_.length == 0))
+
+    val stringToSplitOnNulls       = "ab   de fg"
+    val splitOnNullExpectedResults = Array("ab", "de", "fg")
+
+    val splitOnNullResults = stringToSplitOnNulls.ops.splitByWholeSeparator(null).get
+    assert(splitOnNullExpectedResults.length == splitOnNullResults.length)
+    for (i <- splitOnNullExpectedResults.indices) {
+      assert(splitOnNullExpectedResults(i) == splitOnNullResults(i))
+    }
+
+    val stringToSplitOnCharactersAndString = "abstemiouslyaeiouyabstemiously"
+
+    val splitOnStringExpectedResults = Array("abstemiously", "abstemiously")
+    val splitOnStringResults         = stringToSplitOnCharactersAndString.ops.splitByWholeSeparator("aeiouy").get
+    assert(splitOnStringExpectedResults.length == splitOnStringResults.length)
+    for (i <- splitOnStringExpectedResults.indices) {
+      assert(splitOnStringExpectedResults(i) == splitOnStringResults(i))
+    }
+
+    val splitWithMultipleSeparatorExpectedResults = Array("ab", "cd", "ef")
+    val splitWithMultipleSeparator                = "ab:cd::ef".ops.splitByWholeSeparator(":").get
+    assert(splitWithMultipleSeparatorExpectedResults.length == splitWithMultipleSeparator.length)
+    for (i <- splitWithMultipleSeparatorExpectedResults.indices) {
+      assert(splitWithMultipleSeparatorExpectedResults(i) == splitWithMultipleSeparator(i))
+    }
+  }
 }
