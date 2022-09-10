@@ -21,73 +21,7 @@ import scala.collection.mutable
   *   00:53
   */
 class StringUtilsSpec extends AnyFunSuite {
-  val (whitespace: String, non_whitespace: String, hard_space: String, trimmable: String, non_trimmable: String) = {
-    val ws: mutable.StringBuilder  = new mutable.StringBuilder
-    val nws: mutable.StringBuilder = new mutable.StringBuilder
-    val hs: String                 = String.valueOf(160.toChar)
-    val tr: mutable.StringBuilder  = new mutable.StringBuilder
-    val ntr: mutable.StringBuilder = new mutable.StringBuilder
-
-    for (i <- 0 until Character.MAX_VALUE) {
-      if (Character.isWhitespace(i.toChar)) {
-        ws.append(String.valueOf(i.toChar))
-        if (i > 32) ntr.append(String.valueOf(i.toChar))
-      } else if (i < 40) nws.append(String.valueOf(i.toChar))
-    }
-    for (i <- 0 to 32) {
-      tr.append(String.valueOf(i.toChar))
-    }
-    (ws.toString, nws.toString, hs, tr.toString, ntr.toString)
-  }
-  val WHITESPACE: String     = whitespace
-  val NON_WHITESPACE: String = non_whitespace
-  val HARD_SPACE: String     = hard_space
-  val TRIMMABLE: String      = trimmable
-  val NON_TRIMMABLE: String  = non_trimmable
-
-  val ARRAY_LIST: Array[String]       = Array("foo", "bar", "baz")
-  val EMPTY_ARRAY_LIST: Array[String] = Array()
-  val NULL_ARRAY_LIST: Array[String]  = Array(null)
-  val NULL_TO_STRING_LIST: Array[Object] = Array(new Object() {
-    override def toString: String = null
-  })
-  val MIXED_ARRAY_LIST: Array[String]        = Array(null, "", "foo")
-  val MIXED_TYPE_LIST: Array[Any]            = Array("foo", 2L)
-  val LONG_PRIM_LIST: Array[Long]            = Array(1, 2)
-  val INT_PRIM_LIST: Array[Int]              = Array(1, 2)
-  val BYTE_PRIM_LIST: Array[Byte]            = Array(1, 2)
-  val SHORT_PRIM_LIST: Array[Short]          = Array(1, 2)
-  val CHAR_PRIM_LIST: Array[Char]            = Array('1', '2')
-  val FLOAT_PRIM_LIST: Array[Float]          = Array(1, 2)
-  val DOUBLE_PRIM_LIST: Array[Double]        = Array(1, 2)
-  val MIXED_STRING_LIST: util.List[String]   = util.Arrays.asList(null, "", "foo")
-  val MIXED_TYPE_OBJECT_LIST: util.List[Any] = util.Arrays.asList[Any]("foo", 2L)
-  val STRING_LIST: util.List[String]         = util.Arrays.asList("foo", "bar", "baz")
-  val EMPTY_STRING_LIST: List[String]        = List.empty
-  val NULL_STRING_LIST: util.List[String]    = Collections.singletonList(null)
-
-  val SEPARATOR: String          = ","
-  val SEPARATOR_CHAR: Char       = ';'
-  val COMMA_SEPARATOR_CHAR: Char = ','
-
-  val TEXT_LIST: String       = "foo,bar,baz"
-  val TEXT_LIST_CHAR: String  = "foo;bar;baz"
-  val TEXT_LIST_NOSEP: String = "foobarbaz"
-
-  val FOO_UNCAP: String = "foo"
-  val FOO_CAP: String   = "Foo"
-
-  val SENTENCE_UNCAP: String = "foo bar baz"
-  val SENTENCE_CAP: String   = "Foo Bar Baz"
-
-  val EMPTY: Array[Boolean]                  = Array()
-  val ARRAY_FALSE_FALSE: Array[Boolean]      = Array(false, false)
-  val ARRAY_FALSE_TRUE: Array[Boolean]       = Array(false, true)
-  val ARRAY_FALSE_TRUE_FALSE: Array[Boolean] = Array(false, true, false)
-
-  val noneString: Option[String]         = None
-  val nullString: String                 = null
-  val noneStrings: Option[Array[String]] = None
+  import StringUtilsSpec._
 
   private def assertAbbreviateWithAbbrevMarkerAndOffset(expected: String, abbrevMarker: String, offset: Int, maxWidth: Int): Unit = {
     val abcdefghijklmno = "abcdefghijklmno"
@@ -2382,4 +2316,74 @@ class StringUtilsSpec extends AnyFunSuite {
       }
     }
   }
+}
+
+object StringUtilsSpec {
+  val (whitespace: String, non_whitespace: String, hard_space: String, trimmable: String, non_trimmable: String) = {
+    val ws: mutable.StringBuilder  = new mutable.StringBuilder
+    val nws: mutable.StringBuilder = new mutable.StringBuilder
+    val hs: String                 = String.valueOf(160.toChar)
+    val tr: mutable.StringBuilder  = new mutable.StringBuilder
+    val ntr: mutable.StringBuilder = new mutable.StringBuilder
+
+    for (i <- 0 until Character.MAX_VALUE) {
+      if (Character.isWhitespace(i.toChar)) {
+        ws.append(String.valueOf(i.toChar))
+        if (i > 32) ntr.append(String.valueOf(i.toChar))
+      } else if (i < 40) nws.append(String.valueOf(i.toChar))
+    }
+    for (i <- 0 to 32) {
+      tr.append(String.valueOf(i.toChar))
+    }
+    (ws.toString, nws.toString, hs, tr.toString, ntr.toString)
+  }
+  val WHITESPACE: String     = whitespace
+  val NON_WHITESPACE: String = non_whitespace
+  val HARD_SPACE: String     = hard_space
+  val TRIMMABLE: String      = trimmable
+  val NON_TRIMMABLE: String  = non_trimmable
+
+  val ARRAY_LIST: Array[String]       = Array("foo", "bar", "baz")
+  val EMPTY_ARRAY_LIST: Array[String] = Array()
+  val NULL_ARRAY_LIST: Array[String]  = Array(null)
+  val NULL_TO_STRING_LIST: Array[Object] = Array(new Object() {
+    override def toString: String = null
+  })
+  val MIXED_ARRAY_LIST: Array[String]        = Array(null, "", "foo")
+  val MIXED_TYPE_LIST: Array[Any]            = Array("foo", 2L)
+  val LONG_PRIM_LIST: Array[Long]            = Array(1, 2)
+  val INT_PRIM_LIST: Array[Int]              = Array(1, 2)
+  val BYTE_PRIM_LIST: Array[Byte]            = Array(1, 2)
+  val SHORT_PRIM_LIST: Array[Short]          = Array(1, 2)
+  val CHAR_PRIM_LIST: Array[Char]            = Array('1', '2')
+  val FLOAT_PRIM_LIST: Array[Float]          = Array(1, 2)
+  val DOUBLE_PRIM_LIST: Array[Double]        = Array(1, 2)
+  val MIXED_STRING_LIST: util.List[String]   = util.Arrays.asList(null, "", "foo")
+  val MIXED_TYPE_OBJECT_LIST: util.List[Any] = util.Arrays.asList[Any]("foo", 2L)
+  val STRING_LIST: util.List[String]         = util.Arrays.asList("foo", "bar", "baz")
+  val EMPTY_STRING_LIST: List[String]        = List.empty
+  val NULL_STRING_LIST: util.List[String]    = Collections.singletonList(null)
+
+  val SEPARATOR: String          = ","
+  val SEPARATOR_CHAR: Char       = ';'
+  val COMMA_SEPARATOR_CHAR: Char = ','
+
+  val TEXT_LIST: String       = "foo,bar,baz"
+  val TEXT_LIST_CHAR: String  = "foo;bar;baz"
+  val TEXT_LIST_NOSEP: String = "foobarbaz"
+
+  val FOO_UNCAP: String = "foo"
+  val FOO_CAP: String   = "Foo"
+
+  val SENTENCE_UNCAP: String = "foo bar baz"
+  val SENTENCE_CAP: String   = "Foo Bar Baz"
+
+  val EMPTY: Array[Boolean]                  = Array()
+  val ARRAY_FALSE_FALSE: Array[Boolean]      = Array(false, false)
+  val ARRAY_FALSE_TRUE: Array[Boolean]       = Array(false, true)
+  val ARRAY_FALSE_TRUE_FALSE: Array[Boolean] = Array(false, true, false)
+
+  val noneString: Option[String]         = None
+  val nullString: String                 = null
+  val noneStrings: Option[Array[String]] = None
 }
