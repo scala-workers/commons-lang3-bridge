@@ -1296,7 +1296,7 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     Strings.endsWith(strOrNull, str1)
   }
 
-  def endWithAny[S: VarArgsOfCharSequence](searchStrings: S*): Boolean = {
+  def endsWithAny[S: VarArgsOfCharSequence](searchStrings: S*): Boolean = {
     def mapping                                    = TypeMapping.getMapping[VarArgsOfCharSequence, S]
     def mapperSeqString                            = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
     def dealWithSeqString(strs: Seq[CharSequence]) = Strings.endsWithAny(strOrNull, strs: _*)
@@ -1885,9 +1885,13 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
   }
 
   def startsWithAny[CS: VarArgsOfCharSequence](searchStrings: CS*): Boolean = {
-    val mapping = TypeMapping.getMapping[VarArgsOfCharSequence, CS]
-    val strs    = mapping.input(searchStrings).fold(identity, { css => css.map(_.orNull) })
-    Strings.startsWithAny(strOrNull, strs: _*)
+    if (searchStrings == null) {
+      Strings.startsWithAny(strOrNull)
+    } else {
+      val mapping = TypeMapping.getMapping[VarArgsOfCharSequence, CS]
+      val strs    = mapping.input(searchStrings).fold(identity, { css => css.map(_.orNull) })
+      Strings.startsWithAny(strOrNull, strs: _*)
+    }
   }
 
   def startsWithIgnoreCase[P: TypeMapping[*, (String, Option[String])]](prefix: P): Boolean = {
