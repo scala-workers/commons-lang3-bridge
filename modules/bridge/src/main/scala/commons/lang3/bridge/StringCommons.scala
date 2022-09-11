@@ -819,6 +819,30 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     */
   @inline def contains(searchChar: Char): Boolean = Strings.contains(strOrNull, searchChar)
 
+  /** <p>Checks if CharSequence contains a search character, handling {@code null}. This method uses {@link String# indexOf ( int )} if
+    * possible.</p>
+    *
+    * <p>A {@code null} or empty ("") CharSequence will return {@code false}.</p>
+    *
+    * <pre>
+    *
+    * None.ops.contains(*) = false
+    *
+    * Some("").ops.contains(*) = false
+    *
+    * Some("abc").ops.contains('a') = true
+    *
+    * Some("abc").ops.contains('z') = false
+    *
+    * </pre>
+    *
+    * @param searchChar
+    *   the character to find
+    * @return
+    *   true if the CharSequence contains the search character,
+    */
+  @inline def contains(searchChar: Int): Boolean = Strings.contains(strOrNull, searchChar)
+
   /** <p> Checks if the CharSequence contains any character or string in the given set of characters. </p>
     *
     * <p> A {@code None} CharSequence will return {@code false}. A {@code null} search CharSequence will return {@code false}. </p>
@@ -874,7 +898,7 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     * @return
     *   the {@code true} if any of the chars are found, {@code false} if no match or null input
     */
-  def containsAny[S: VarArgsOfCharOrString](searchArgs: S*): Boolean = {
+  def containsAny[S: VarArgsOfCharOrStrings](searchArgs: S*): Boolean = {
     def dealWithSeqChar(chars: Seq[Char]): Boolean = Strings.containsAny(strOrNull, chars.toArray[Char]: _*)
 
     def dealWithSeqCharSequence(css: Seq[CharSequence]): Boolean =
@@ -884,7 +908,7 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
         Strings.containsAny(strOrNull, css: _*)
       }
 
-    def mapping             = TypeMapping.getMapping[VarArgsOfCharOrString, S]
+    def mapping             = TypeMapping.getMapping[VarArgsOfCharOrStrings, S]
     def charOptSeqMapper    = getMapper[Seq[Option[Char]], Seq[Char]].func
     def charSeqOptSeqMapper = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
 
@@ -1356,10 +1380,22 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     Strings.indexOf(strOrNull, str1)
   }
 
+  def indexOf[S: TypeMapping[*, (String, Option[String])]](searchSeq: S, startPos: Int): Int = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(searchSeq)
+    Strings.indexOf(strOrNull, str1, startPos)
+  }
+
   def indexOf(searchChar: Char): Int = Strings.indexOf(strOrNull, searchChar)
 
-  def indexOfAny[S: VarArgsOfCharOrString](searchArgs: S*): Int = {
-    def mapping     = TypeMapping.getMapping[VarArgsOfCharOrString, S]
+  def indexOf(searchChar: Int): Int = Strings.indexOf(strOrNull, searchChar)
+
+  def indexOf(searchChar: Char, startPos: Int): Int = Strings.indexOf(strOrNull, searchChar, startPos)
+
+  def indexOf(searchChar: Int, startPos: Int): Int = Strings.indexOf(strOrNull, searchChar, startPos)
+
+  def indexOfAny[S: VarArgsOfCharOrStrings](searchArgs: S*): Int = {
+    def mapping     = TypeMapping.getMapping[VarArgsOfCharOrStrings, S]
     val mapping2    = mapping.asInstanceOf[TypeMapping[S, (Char, CharSequence, Option[Char], Option[SeqCharSequence])]]
     def indexOfNull = Strings.indexOfAny(strOrNull, null)
 
@@ -1408,10 +1444,16 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
           if (chars.length == 1) { Strings.indexOfAnyBut(strOrNull, chars.head) }
           else { Strings.indexOfAnyBut(strOrNull, chars: _*) },
         ocs =>
-          if (ocs.length == 1) { Strings.indexOfAnyBut(strOrNull, ocs.head.get) }
-          else { Strings.indexOfAnyBut(strOrNull, ocs.filter(_.isDefined).map(_.get): _*) }
+          if (ocs.length == 1) {
+            Strings.indexOfAnyBut(strOrNull, ocs.head.get)
+          } else {
+            Strings.indexOfAnyBut(strOrNull, ocs.filter(_.isDefined).map(_.get): _*)
+          }
       )
   }
+
+  def indexOfAnyBut(searchChars: String): Int         = Strings.indexOfAnyBut(strOrNull, searchChars)
+  def indexOfAnyBut(searchChars: Option[String]): Int = Strings.indexOfAnyBut(strOrNull, searchChars.orNull)
 
   def indexOfDifference[S: TypeMapping[*, (String, Option[String])]](cs: S): Int = {
     val mapper = getMapper[S, Option[String]].func.orNull
@@ -1461,23 +1503,25 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def isWhitespace: Boolean = Strings.isWhitespace(strOrNull)
 
-  def lastIndexOf[S: TypeMapping[*, (Char, String, Option[String])]](searchArg: S): Int = {
-    val mapping = TypeMapping.getMapping[TypeMapping[*, (Char, String, Option[String])], S]
+  def lastIndexOf[S: TypeMapping[*, (Char, Int, CharSequence, Option[CharSequence])]](searchArg: S): Int = {
+    val mapping = TypeMapping.getMapping[TypeMapping[*, (Char, Int, CharSequence, Option[CharSequence])], S]
     mapping
       .input(searchArg)
       .fold(
         ch => Strings.lastIndexOf(strOrNull, ch),
+        i => Strings.lastIndexOf(strOrNull, i),
         str => Strings.lastIndexOf(strOrNull, str),
-        ostr => Strings.indexOf(strOrNull, ostr.orNull)
+        ostr => Strings.lastIndexOf(strOrNull, ostr.orNull)
       )
   }
 
-  def lastIndexOf[S: TypeMapping[*, (Char, String, Option[String])]](searchArg: S, startPos: Int): Int = {
-    val mapping = TypeMapping.getMapping[TypeMapping[*, (Char, String, Option[String])], S]
+  def lastIndexOf[S: TypeMapping[*, (Char, Int, CharSequence, Option[CharSequence])]](searchArg: S, startPos: Int): Int = {
+    val mapping = TypeMapping.getMapping[TypeMapping[*, (Char, Int, CharSequence, Option[CharSequence])], S]
     mapping
       .input(searchArg)
       .fold(
         ch => Strings.lastIndexOf(strOrNull, ch, startPos),
+        i => Strings.lastIndexOf(strOrNull, i, startPos),
         str => Strings.lastIndexOf(strOrNull, str, startPos),
         ostr => Strings.indexOf(strOrNull, ostr.orNull, startPos)
       )

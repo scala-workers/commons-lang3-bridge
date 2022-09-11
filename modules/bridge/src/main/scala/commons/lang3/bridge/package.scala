@@ -2,7 +2,9 @@ package commons.lang3
 
 package object bridge {
 
-  type VarArgsOfCharOrString[U] = TypeMapping[Seq[U], (Seq[Char], Seq[CharSequence], Seq[Option[Char]], Seq[Option[CharSequence]])]
+  type VarArgsOfCharOrStrings[U] = TypeMapping[Seq[U], (Seq[Char], Seq[CharSequence], Seq[Option[Char]], Seq[Option[CharSequence]])]
+
+  type VarArgsOfCharsOrString[U] = TypeMapping[Seq[U], (Seq[Char], Seq[Option[Char]], String, Option[String])]
 
   type VarArgsOfChar[U] = TypeMapping[Seq[U], (Seq[Char], Seq[Option[Char]])]
 
