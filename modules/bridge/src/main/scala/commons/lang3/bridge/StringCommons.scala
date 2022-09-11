@@ -1578,7 +1578,7 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def lowerCase(locale: Locale): Option[String] = Option(Strings.lowerCase(strOrNull, locale))
 
-  def mid(pos: Int, len: Int): String = Strings.mid(strOrNull, pos, len)
+  def mid(pos: Int, len: Int): Option[String] = Option(Strings.mid(strOrNull, pos, len))
 
   def normalizeSpace: Option[String] = Option(Strings.normalizeSpace(strOrNull))
 
@@ -1932,6 +1932,8 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def substringAfter(separator: Char): Option[String] = Option(Strings.substringAfter(strOrNull, separator))
 
+  def substringAfter(separator: Int): Option[String] = Option(Strings.substringAfter(strOrNull, separator))
+
   def substringAfter[S: TypeMapping[*, (String, Option[String])]](separator: S): Option[String] = {
     val mapper = getMapper[S, Option[String]].func.orNull
     val sep    = mapper(separator)
@@ -1940,6 +1942,8 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def substringAfterLast(separator: Char): Option[String] = Option(Strings.substringAfterLast(strOrNull, separator))
 
+  def substringAfterLast(separator: Int): Option[String] = Option(Strings.substringAfterLast(strOrNull, separator))
+
   def substringAfterLast[S: TypeMapping[*, (String, Option[String])]](separator: S): Option[String] = {
     val mapper = getMapper[S, Option[String]].func.orNull
     val sep    = mapper(separator)
@@ -1947,6 +1951,7 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
   }
 
   def substringBefore(separator: Char): Option[String] = Option(Strings.substringBefore(strOrNull, separator))
+  def substringBefore(separator: Int): Option[String]  = Option(Strings.substringBefore(strOrNull, separator))
 
   def substringBefore[S: TypeMapping[*, (String, Option[String])]](separator: S): Option[String] = {
     val mapper = getMapper[S, Option[String]].func.orNull
