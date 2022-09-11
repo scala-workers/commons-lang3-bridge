@@ -1995,9 +1995,9 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def trim: Option[String] = Option(Strings.trim(strOrNull))
 
-  def trimToEmpty: Option[String] = Option(Strings.trimToEmpty(strOrNull))
+  def trimToEmpty: String = Strings.trimToEmpty(strOrNull)
 
-  def trimToNull: Option[String] = Option(Strings.trimToNull(strOrNull))
+  def trimToNone: Option[String] = Option(Strings.trimToNull(strOrNull))
 
   def truncate(maxWidth: Int): Option[String] = Option(Strings.truncate(strOrNull, maxWidth))
 
