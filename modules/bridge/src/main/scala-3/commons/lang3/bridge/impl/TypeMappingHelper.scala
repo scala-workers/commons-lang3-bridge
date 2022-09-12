@@ -25,6 +25,6 @@ end FetchMappingAply
 
 package inner:
   final class CusInnerApply[O[_] <: Tuple](index: Int, value: Any):
-    inline def fold[U](inline funcCol: O[U]): U = funcCol.productElement(index - 1).asInstanceOf[Any => U](value)
+    inline def fold[U](inline funcCol: O[U]): U = funcCol.productElement(index - 1).asInstanceOf[Any => Any](value).asInstanceOf[U]
   end CusInnerApply
 end inner
