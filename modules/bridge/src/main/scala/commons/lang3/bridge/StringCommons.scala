@@ -309,14 +309,14 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     * @return
     *   A new Option[String] if suffix was appended, the same string otherwise.
     */
-  def appendIfMissing[S: TypeMapping[*, (String, Option[String])], SS: VarArgsOfString](suffix: S, suffixes: SS*): Option[String] = {
+  def appendIfMissing[S: TypeMapping[*, (String, Option[String])], SS: VarArgsOfCharSequence](suffix: S, suffixes: SS*): Option[String] = {
     val toStrOpt = getMapper[S, Option[String]].func.orNull
 
     if (suffixes == null) {
       return Option(Strings.appendIfMissing(strOrNull, toStrOpt(suffix)))
     }
 
-    def mapping: VarArgsOfString[SS] = TypeMapping.getMapping[VarArgsOfString, SS]
+    def mapping: VarArgsOfCharSequence[SS] = TypeMapping.getMapping[VarArgsOfCharSequence, SS]
 
     val sfs = mapping
       .input(suffixes)
@@ -328,8 +328,8 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     Option(Strings.appendIfMissing(strOrNull, toStrOpt(suffix), sfs: _*))
   }
   // helpers for method call without suffixes
-  def appendIfMissing(suffix: String): Option[String]         = Option(Strings.appendIfMissing(strOrNull, suffix))
-  def appendIfMissing(suffix: Option[String]): Option[String] = Option(Strings.appendIfMissing(strOrNull, suffix.orNull))
+  def appendIfMissing(suffix: CharSequence): Option[String]         = Option(Strings.appendIfMissing(strOrNull, suffix))
+  def appendIfMissing(suffix: Option[CharSequence]): Option[String] = Option(Strings.appendIfMissing(strOrNull, suffix.orNull))
 
   /** Appends the suffix to the end of the string if the string does not already end with any of the suffixes.
     *
@@ -384,7 +384,7 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     * @return
     *   A new String if suffix was appended, the same string otherwise.
     */
-  def appendIfMissingIgnoreCase[S: TypeMapping[*, (String, Option[String])], SS: VarArgsOfString](
+  def appendIfMissingIgnoreCase[S: TypeMapping[*, (String, Option[String])], SS: VarArgsOfCharSequence](
     suffix: S,
     suffixes: SS*
   ): Option[String] = {
@@ -394,7 +394,7 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
       return Option(Strings.appendIfMissingIgnoreCase(strOrNull, toStrOpt(suffix)))
     }
 
-    def mapping: VarArgsOfString[SS] = TypeMapping.getMapping[VarArgsOfString, SS]
+    def mapping: VarArgsOfCharSequence[SS] = TypeMapping.getMapping[VarArgsOfCharSequence, SS]
 
     val sfs = mapping
       .input(suffixes)
@@ -407,10 +407,10 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
   }
 
   // helpers for method call without suffixes
-  def appendIfMissingIgnoreCase(suffix: String): Option[String] =
+  def appendIfMissingIgnoreCase(suffix: CharSequence): Option[String] =
     Option(Strings.appendIfMissingIgnoreCase(strOrNull, suffix))
 
-  def appendIfMissingIgnoreCase(suffix: Option[String]): Option[String] =
+  def appendIfMissingIgnoreCase(suffix: Option[CharSequence]): Option[String] =
     Option(Strings.appendIfMissingIgnoreCase(strOrNull, suffix.orNull))
 
   /** <p>Capitalizes a String changing the first character to title case as per {@link Character# toTitleCase ( int )}. No other characters
@@ -819,6 +819,30 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     */
   @inline def contains(searchChar: Char): Boolean = Strings.contains(strOrNull, searchChar)
 
+  /** <p>Checks if CharSequence contains a search character, handling {@code null}. This method uses {@link String# indexOf ( int )} if
+    * possible.</p>
+    *
+    * <p>A {@code null} or empty ("") CharSequence will return {@code false}.</p>
+    *
+    * <pre>
+    *
+    * None.ops.contains(*) = false
+    *
+    * Some("").ops.contains(*) = false
+    *
+    * Some("abc").ops.contains('a') = true
+    *
+    * Some("abc").ops.contains('z') = false
+    *
+    * </pre>
+    *
+    * @param searchChar
+    *   the character to find
+    * @return
+    *   true if the CharSequence contains the search character,
+    */
+  @inline def contains(searchChar: Int): Boolean = Strings.contains(strOrNull, searchChar)
+
   /** <p> Checks if the CharSequence contains any character or string in the given set of characters. </p>
     *
     * <p> A {@code None} CharSequence will return {@code false}. A {@code null} search CharSequence will return {@code false}. </p>
@@ -874,7 +898,7 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     * @return
     *   the {@code true} if any of the chars are found, {@code false} if no match or null input
     */
-  def containsAny[S: VarArgsOfCharOrString](searchArgs: S*): Boolean = {
+  def containsAny[S: VarArgsOfCharOrStrings](searchArgs: S*): Boolean = {
     def dealWithSeqChar(chars: Seq[Char]): Boolean = Strings.containsAny(strOrNull, chars.toArray[Char]: _*)
 
     def dealWithSeqCharSequence(css: Seq[CharSequence]): Boolean =
@@ -884,7 +908,7 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
         Strings.containsAny(strOrNull, css: _*)
       }
 
-    def mapping             = TypeMapping.getMapping[VarArgsOfCharOrString, S]
+    def mapping             = TypeMapping.getMapping[VarArgsOfCharOrStrings, S]
     def charOptSeqMapper    = getMapper[Seq[Option[Char]], Seq[Char]].func
     def charSeqOptSeqMapper = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
 
@@ -957,9 +981,9 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     * @return
     *   {@code true} if any of the search CharSequences are found, {@code false} otherwise
     */
-  def containsAnyIgnoreCase[S: VarArgsOfString](searchArgs: S*): Boolean = {
+  def containsAnyIgnoreCase[S: VarArgsOfCharSequence](searchArgs: S*): Boolean = {
     def dealWithSeqCharSeq(strs: Seq[CharSequence]) = Strings.containsAnyIgnoreCase(strOrNull, strs: _*)
-    def mapping                                     = TypeMapping.getMapping[VarArgsOfString, S]
+    def mapping                                     = TypeMapping.getMapping[VarArgsOfCharSequence, S]
     def charSeqSeqOptMappper                        = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
 
     if (searchArgs == null) {
@@ -1225,18 +1249,18 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     Strings.countMatches(strOrNull, str1)
   }
 
-  def defaultIfBlank[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultStr: S): Option[CharSequence] = {
+  def defaultIfBlank[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultStr: S): CharSequence = {
     val mapper = getMapper[S, Option[CharSequence]].func.orNull
     val defStr = mapper(defaultStr)
     val result = Strings.defaultIfBlank(strOrNull, defStr)
-    Option(result)
+    result
   }
 
-  def defaultIfEmpty[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultStr: S): Option[CharSequence] = {
+  def defaultIfEmpty[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultStr: S): CharSequence = {
     val mapper = getMapper[S, Option[CharSequence]].func.orNull
     val str1   = mapper(defaultStr)
     val result = Strings.defaultIfEmpty(strOrNull, str1)
-    Option(result)
+    result
   }
 
   def defaultString: String = Strings.defaultString(strOrNull)
@@ -1272,8 +1296,8 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     Strings.endsWith(strOrNull, str1)
   }
 
-  def endWithAny[S: VarArgsOfString](searchStrings: S*): Boolean = {
-    def mapping                                    = TypeMapping.getMapping[VarArgsOfString, S]
+  def endsWithAny[S: VarArgsOfCharSequence](searchStrings: S*): Boolean = {
+    def mapping                                    = TypeMapping.getMapping[VarArgsOfCharSequence, S]
     def mapperSeqString                            = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
     def dealWithSeqString(strs: Seq[CharSequence]) = Strings.endsWithAny(strOrNull, strs: _*)
 
@@ -1284,8 +1308,14 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     }
   }
 
-  def equalsAnyIgnoreCase[S: VarArgsOfString](searchStrings: S*): Boolean = {
-    def mapping                                    = TypeMapping.getMapping[VarArgsOfString, S]
+  def endsWithIgnoreCase[S: TypeMapping[*, (String, Option[String])]](suffix: S): Boolean = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(suffix)
+    Strings.endsWithIgnoreCase(strOrNull, str1)
+  }
+
+  def equalsAnyIgnoreCase[S: VarArgsOfCharSequence](searchStrings: S*): Boolean = {
+    def mapping                                    = TypeMapping.getMapping[VarArgsOfCharSequence, S]
     def mapperSeqString                            = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
     def dealWithSeqString(strs: Seq[CharSequence]) = Strings.equalsAnyIgnoreCase(strOrNull, strs: _*)
 
@@ -1322,9 +1352,27 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def getDigits: String = Strings.getDigits(strOrNull)
 
-  def getIfBlank(defaultSupplier: Supplier[String]): String = Strings.getIfBlank(strOrNull, defaultSupplier)
+  def getIfBlank[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultSupplier: Supplier[S]): CharSequence = {
+    if (defaultSupplier == null) {
+      return Strings.getIfBlank(strOrNull, null)
+    }
+    val supplier: Supplier[CharSequence] = { () =>
+      val mapper = getMapper[S, Option[CharSequence]].func.orNull
+      mapper(defaultSupplier.get())
+    }
+    Strings.getIfBlank(strOrNull, supplier)
+  }
 
-  def getIfEmpty(defaultSupplier: Supplier[String]): String = Strings.getIfEmpty(strOrNull, defaultSupplier)
+  def getIfEmpty[S: TypeMapping[*, (CharSequence, Option[CharSequence])]](defaultSupplier: Supplier[S]): CharSequence = {
+    if (defaultSupplier == null) {
+      return Strings.getIfEmpty(strOrNull, null)
+    }
+    val supplier: Supplier[CharSequence] = { () =>
+      val mapper = getMapper[S, Option[CharSequence]].func.orNull
+      mapper(defaultSupplier.get())
+    }
+    Strings.getIfEmpty(strOrNull, supplier)
+  }
 
   def indexOf[S: TypeMapping[*, (String, Option[String])]](searchSeq: S): Int = {
     val mapper = getMapper[S, Option[String]].func.orNull
@@ -1332,10 +1380,22 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     Strings.indexOf(strOrNull, str1)
   }
 
+  def indexOf[S: TypeMapping[*, (String, Option[String])]](searchSeq: S, startPos: Int): Int = {
+    val mapper = getMapper[S, Option[String]].func.orNull
+    val str1   = mapper(searchSeq)
+    Strings.indexOf(strOrNull, str1, startPos)
+  }
+
   def indexOf(searchChar: Char): Int = Strings.indexOf(strOrNull, searchChar)
 
-  def indexOfAny[S: VarArgsOfCharOrString](searchArgs: S*): Int = {
-    def mapping     = TypeMapping.getMapping[VarArgsOfCharOrString, S]
+  def indexOf(searchChar: Int): Int = Strings.indexOf(strOrNull, searchChar)
+
+  def indexOf(searchChar: Char, startPos: Int): Int = Strings.indexOf(strOrNull, searchChar, startPos)
+
+  def indexOf(searchChar: Int, startPos: Int): Int = Strings.indexOf(strOrNull, searchChar, startPos)
+
+  def indexOfAny[S: VarArgsOfCharOrStrings](searchArgs: S*): Int = {
+    def mapping     = TypeMapping.getMapping[VarArgsOfCharOrStrings, S]
     val mapping2    = mapping.asInstanceOf[TypeMapping[S, (Char, CharSequence, Option[Char], Option[SeqCharSequence])]]
     def indexOfNull = Strings.indexOfAny(strOrNull, null)
 
@@ -1384,10 +1444,16 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
           if (chars.length == 1) { Strings.indexOfAnyBut(strOrNull, chars.head) }
           else { Strings.indexOfAnyBut(strOrNull, chars: _*) },
         ocs =>
-          if (ocs.length == 1) { Strings.indexOfAnyBut(strOrNull, ocs.head.get) }
-          else { Strings.indexOfAnyBut(strOrNull, ocs.filter(_.isDefined).map(_.get): _*) }
+          if (ocs.length == 1) {
+            Strings.indexOfAnyBut(strOrNull, ocs.head.get)
+          } else {
+            Strings.indexOfAnyBut(strOrNull, ocs.filter(_.isDefined).map(_.get): _*)
+          }
       )
   }
+
+  def indexOfAnyBut(searchChars: String): Int         = Strings.indexOfAnyBut(strOrNull, searchChars)
+  def indexOfAnyBut(searchChars: Option[String]): Int = Strings.indexOfAnyBut(strOrNull, searchChars.orNull)
 
   def indexOfDifference[S: TypeMapping[*, (String, Option[String])]](cs: S): Int = {
     val mapper = getMapper[S, Option[String]].func.orNull
@@ -1406,6 +1472,10 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     val str1   = mapper(searchStr)
     Strings.indexOfIgnoreCase(strOrNull, str1, startPos)
   }
+
+  def isAllLowerCase: Boolean = Strings.isAllLowerCase(strOrNull)
+
+  def isAllUpperCase: Boolean = Strings.isAllUpperCase(strOrNull)
 
   def isAlpha: Boolean = Strings.isAlpha(strOrNull)
 
@@ -1433,40 +1503,32 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def isWhitespace: Boolean = Strings.isWhitespace(strOrNull)
 
-  def join(arr: Array[Object]): String = Strings.join(arr, strOrNull)
-
-  def joinWith(objs: Object*): String = {
-    if (objs == null) {
-      Strings.joinWith(strOrNull, null)
-    } else {
-      Strings.joinWith(strOrNull, objs: _*)
-    }
-  }
-
-  def lastIndexOf[S: TypeMapping[*, (Char, String, Option[String])]](searchArg: S): Int = {
-    val mapping = TypeMapping.getMapping[TypeMapping[*, (Char, String, Option[String])], S]
+  def lastIndexOf[S: TypeMapping[*, (Char, Int, CharSequence, Option[CharSequence])]](searchArg: S): Int = {
+    val mapping = TypeMapping.getMapping[TypeMapping[*, (Char, Int, CharSequence, Option[CharSequence])], S]
     mapping
       .input(searchArg)
       .fold(
         ch => Strings.lastIndexOf(strOrNull, ch),
+        i => Strings.lastIndexOf(strOrNull, i),
         str => Strings.lastIndexOf(strOrNull, str),
-        ostr => Strings.indexOf(strOrNull, ostr.orNull)
+        ostr => Strings.lastIndexOf(strOrNull, ostr.orNull)
       )
   }
 
-  def lastIndexOf[S: TypeMapping[*, (Char, String, Option[String])]](searchArg: S, startPos: Int): Int = {
-    val mapping = TypeMapping.getMapping[TypeMapping[*, (Char, String, Option[String])], S]
+  def lastIndexOf[S: TypeMapping[*, (Char, Int, CharSequence, Option[CharSequence])]](searchArg: S, startPos: Int): Int = {
+    val mapping = TypeMapping.getMapping[TypeMapping[*, (Char, Int, CharSequence, Option[CharSequence])], S]
     mapping
       .input(searchArg)
       .fold(
         ch => Strings.lastIndexOf(strOrNull, ch, startPos),
+        i => Strings.lastIndexOf(strOrNull, i, startPos),
         str => Strings.lastIndexOf(strOrNull, str, startPos),
         ostr => Strings.indexOf(strOrNull, ostr.orNull, startPos)
       )
   }
 
-  def lastIndexOfAny[S: VarArgsOfString](searchArgs: S*): Int = {
-    def mapping      = TypeMapping.getMapping[VarArgsOfString, S]
+  def lastIndexOfAny[S: VarArgsOfCharSequence](searchArgs: S*): Int = {
+    def mapping      = TypeMapping.getMapping[VarArgsOfCharSequence, S]
     def seqOptMapper = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
 
     def dealWithCharSeqSeq(strs: Seq[CharSequence]) = Strings.lastIndexOfAny(strOrNull, strs: _*)
@@ -1516,9 +1578,9 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def lowerCase(locale: Locale): Option[String] = Option(Strings.lowerCase(strOrNull, locale))
 
-  def mid(pos: Int, len: Int): String = Strings.mid(strOrNull, pos, len)
+  def mid(pos: Int, len: Int): Option[String] = Option(Strings.mid(strOrNull, pos, len))
 
-  def normalizeSpace: String = Strings.normalizeSpace(strOrNull)
+  def normalizeSpace: Option[String] = Option(Strings.normalizeSpace(strOrNull))
 
   def ordinalIndexOf[S: TypeMapping[*, (String, Option[String])]](searchStr: S, ordinal: Int): Int = {
     val mapper = getMapper[S, Option[String]].func.orNull
@@ -1533,11 +1595,15 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     Option(result2)
   }
 
-  def prependIfMissing[P: TypeMapping[*, (String, Option[String])], Ps: VarArgsOfString](prefix: P, prefixes: Ps*): Option[String] = {
-    def prefixMapper = getMapper[P, Option[String]].func.orNull
+  def prependIfMissing[P: TypeMapping[*, (CharSequence, Option[CharSequence])], Ps: VarArgsOfCharSequence](
+    prefix: P,
+    prefixes: Ps*
+  ): Option[String] = {
+
+    def prefixMapper = getMapper[P, Option[CharSequence]].func.orNull
     def prefixStr    = prefixMapper(prefix)
 
-    def prefixesMapping                             = TypeMapping.getMapping[VarArgsOfString, Ps]
+    def prefixesMapping                             = TypeMapping.getMapping[VarArgsOfCharSequence, Ps]
     def getCharSeqOptionMapper                      = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
     def dealWithCharSeqSeq(strs: Seq[CharSequence]) = Strings.prependIfMissing(strOrNull, prefixStr, strs: _*)
 
@@ -1550,13 +1616,18 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     }
   }
 
-  def prependIfMissingIgnoreCase[P: TypeMapping[*, (String, Option[String])], Ps: VarArgsOfString](
+  def prependIfMissing(prefix: CharSequence): Option[String] =
+    Option(Strings.prependIfMissing(strOrNull, prefix))
+  def prependIfMissing(prefix: Option[CharSequence]): Option[String] =
+    Option(Strings.prependIfMissing(strOrNull, prefix.orNull))
+
+  def prependIfMissingIgnoreCase[P: TypeMapping[*, (String, Option[String])], Ps: VarArgsOfCharSequence](
     prefix: P,
     prefixes: Ps*
   ): Option[String] = {
     def prefixMapper    = getMapper[P, Option[String]].func.orNull
     def prefixStr       = prefixMapper(prefix)
-    def prefixesMapping = TypeMapping.getMapping[VarArgsOfString, Ps]
+    def prefixesMapping = TypeMapping.getMapping[VarArgsOfCharSequence, Ps]
 
     def getCharSeqOptionMapper                      = getMapper[Seq[Option[CharSequence]], Seq[CharSequence]].func
     def dealWithCharSeqSeq(strs: Seq[CharSequence]) = Strings.prependIfMissingIgnoreCase(strOrNull, prefixStr, strs: _*)
@@ -1568,6 +1639,12 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
       Option(result)
     }
   }
+
+  def prependIfMissingIgnoreCase(prefix: CharSequence): Option[String] =
+    Option(Strings.prependIfMissingIgnoreCase(strOrNull, prefix))
+
+  def prependIfMissingIgnoreCase(prefix: Option[CharSequence]): Option[String] =
+    Option(Strings.prependIfMissingIgnoreCase(strOrNull, prefix.orNull))
 
   def remove(rmv: Char): Option[String] = Option(Strings.remove(strOrNull, rmv))
 
@@ -1666,6 +1743,19 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def replaceIgnoreCase[S: TypeMapping[*, (String, Option[String])], R: TypeMapping[*, (String, Option[String])]](
     searchString: S,
+    replacement: R
+  ): Option[String] = {
+    val searchMapping      = getMapper[S, Option[String]].func.orNull
+    val replacementMapping = getMapper[R, Option[String]].func.orNull
+
+    val sstr = searchMapping(searchString)
+    val rstr = replacementMapping(replacement)
+
+    Option(Strings.replaceIgnoreCase(strOrNull, sstr, rstr))
+  }
+
+  def replaceIgnoreCase[S: TypeMapping[*, (String, Option[String])], R: TypeMapping[*, (String, Option[String])]](
+    searchString: S,
     replacement: R,
     max: Int
   ): Option[String] = {
@@ -1689,6 +1779,19 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     val rstr = replacementMapping(replacement)
 
     Option(Strings.replaceOnce(strOrNull, sstr, rstr))
+  }
+
+  def replaceOnceIgnoreCase[S: TypeMapping[*, (String, Option[String])], R: TypeMapping[*, (String, Option[String])]](
+    searchString: S,
+    replacement: R
+  ): Option[String] = {
+    val searchMapping      = getMapper[S, Option[String]].func.orNull
+    val replacementMapping = getMapper[R, Option[String]].func.orNull
+
+    val sstr = searchMapping(searchString)
+    val rstr = replacementMapping(replacement)
+
+    Option(Strings.replaceOnceIgnoreCase(strOrNull, sstr, rstr))
   }
 
   def reverse: Option[String] = Option(Strings.reverse(strOrNull))
@@ -1781,10 +1884,14 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
     Strings.startsWith(strOrNull, pre)
   }
 
-  def startsWithAny[CS: VarArgsOfString](searchStrings: CS*): Boolean = {
-    val mapping = TypeMapping.getMapping[VarArgsOfString, CS]
-    val strs    = mapping.input(searchStrings).fold(identity, { css => css.map(_.orNull) })
-    Strings.startsWithAny(strOrNull, strs: _*)
+  def startsWithAny[CS: VarArgsOfCharSequence](searchStrings: CS*): Boolean = {
+    if (searchStrings == null) {
+      Strings.startsWithAny(strOrNull)
+    } else {
+      val mapping = TypeMapping.getMapping[VarArgsOfCharSequence, CS]
+      val strs    = mapping.input(searchStrings).fold(identity, { css => css.map(_.orNull) })
+      Strings.startsWithAny(strOrNull, strs: _*)
+    }
   }
 
   def startsWithIgnoreCase[P: TypeMapping[*, (String, Option[String])]](prefix: P): Boolean = {
@@ -1825,6 +1932,8 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def substringAfter(separator: Char): Option[String] = Option(Strings.substringAfter(strOrNull, separator))
 
+  def substringAfter(separator: Int): Option[String] = Option(Strings.substringAfter(strOrNull, separator))
+
   def substringAfter[S: TypeMapping[*, (String, Option[String])]](separator: S): Option[String] = {
     val mapper = getMapper[S, Option[String]].func.orNull
     val sep    = mapper(separator)
@@ -1833,6 +1942,8 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def substringAfterLast(separator: Char): Option[String] = Option(Strings.substringAfterLast(strOrNull, separator))
 
+  def substringAfterLast(separator: Int): Option[String] = Option(Strings.substringAfterLast(strOrNull, separator))
+
   def substringAfterLast[S: TypeMapping[*, (String, Option[String])]](separator: S): Option[String] = {
     val mapper = getMapper[S, Option[String]].func.orNull
     val sep    = mapper(separator)
@@ -1840,6 +1951,7 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
   }
 
   def substringBefore(separator: Char): Option[String] = Option(Strings.substringBefore(strOrNull, separator))
+  def substringBefore(separator: Int): Option[String]  = Option(Strings.substringBefore(strOrNull, separator))
 
   def substringBefore[S: TypeMapping[*, (String, Option[String])]](separator: S): Option[String] = {
     val mapper = getMapper[S, Option[String]].func.orNull
@@ -1883,9 +1995,9 @@ class StringCommons[T: TypeMapping[*, (String, Option[String])]](value: T) {
 
   def trim: Option[String] = Option(Strings.trim(strOrNull))
 
-  def trimToEmpty: Option[String] = Option(Strings.trimToEmpty(strOrNull))
+  def trimToEmpty: String = Strings.trimToEmpty(strOrNull)
 
-  def trimToNull: Option[String] = Option(Strings.trimToNull(strOrNull))
+  def trimToNone: Option[String] = Option(Strings.trimToNull(strOrNull))
 
   def truncate(maxWidth: Int): Option[String] = Option(Strings.truncate(strOrNull, maxWidth))
 
