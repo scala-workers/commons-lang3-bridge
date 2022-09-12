@@ -18,14 +18,12 @@ object CommonSettings {
     val common = Seq(
       "-unchecked",
       "-deprecation",
-      "-Xlint",
       // "-Xfatal-warnings",
-      "-Ywarn-dead-code",
       "-encoding",
       "UTF-8"
     )
     val compat = scalaVersion match {
-      case Some((2, scalaMajor)) if scalaMajor == 11 => Seq("-Xexperimental")
+      case Some((2, scalaMajor)) if scalaMajor == 11 => Seq("-Xexperimental", "-Xlint", "-Ywarn-dead-code")
       case Some((3, scalaMajor))                     => Seq("-Ykind-projector")
       case _                                         => Nil
     }
@@ -53,7 +51,7 @@ object CommonSettings {
     common +: compat
   }
 
-  val supportedScalaVersions = Seq(scalaVersions.v213, scalaVersions.v212, scalaVersions.v211, scalaVersions.v312)
+  val supportedScalaVersions = Seq(scalaVersions.v213, scalaVersions.v212, scalaVersions.v211, scalaVersions.v320)
 
   val pushSettings = Seq(
     version              := "0.0.1",
@@ -114,4 +112,5 @@ object CommonSettings {
   val commonProjectSettings  = pushSettings ++ commonSetting ++ Seq(crossScalaVersions := supportedScalaVersions)
   val codegenProjectSettings = commonSetting
 
+  val versionSchema = Some("pvp")
 }

@@ -11,5 +11,6 @@ package commons.lang3.bridge
 class TypeMapping[Input, Sum](val index: Int) extends AnyVal
 
 object TypeMapping extends impl.TypeMappingImplicitOptsPolyHigher {
-  @inline def getMapping[F[_] <: TypeMapping[_, _], A](implicit f: F[A]): F[A] = f
+  object alias extends impl.TypeMappingAlias
+  @inline def getMapping[F[_] <: TypeMapping[_, _]]: impl.FetchMappingAply[F] = impl.FetchMappingAply.get
 }
