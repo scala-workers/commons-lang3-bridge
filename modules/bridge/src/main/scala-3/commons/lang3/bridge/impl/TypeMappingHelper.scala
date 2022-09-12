@@ -13,13 +13,13 @@ final class FetchMappingAply[F[_] <: TypeMapping[_, _]]:
   import inner.CusInnerApply as InnerApply
 
   inline final def input[T](inline data: T)(using inline mapping: F[T]): InnerApply[[t] =>> Tuple.Map[TakeTuple[F[T]], [x] =>> (x => t)]] =
-    new InnerApply(index = mapping.index, value = data)
+    InnerApply(index = mapping.index, value = data)
   end input
 
 end FetchMappingAply
 
 object FetchMappingAply:
-  private val value: FetchMappingAply[TypeMapping[*, Any]]       = new FetchMappingAply[TypeMapping[*, Any]]
+  private val value: FetchMappingAply[TypeMapping[*, Any]]       = new FetchMappingAply
   inline def get[F[_] <: TypeMapping[_, _]]: FetchMappingAply[F] = value.asInstanceOf[FetchMappingAply[F]]
 end FetchMappingAply
 
