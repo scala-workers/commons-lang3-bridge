@@ -10,5 +10,5 @@ trait TypeMappingImplicitOptsPolyLower:
 end TypeMappingImplicitOptsPolyLower
 
 trait MappingApply:
-  inline def getMapping[F[_] <: TypeMapping[_, _]]: FetchMappingAply[F] = null
+  inline final def getMapping[F[_] <: TypeMapping[_, _]]: FetchMappingAply[F] = null
 end MappingApply
