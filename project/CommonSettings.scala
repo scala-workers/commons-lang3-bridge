@@ -53,7 +53,7 @@ object CommonSettings {
     common +: compat
   }
 
-  val supportedScalaVersions = Seq(scalaVersions.v213, scalaVersions.v212, scalaVersions.v211, scalaVersions.v312)
+  val supportedScalaVersions = Seq(scalaVersions.v213, scalaVersions.v212, scalaVersions.v211, scalaVersions.v320)
 
   val pushSettings = Seq(
     version              := "0.0.1",

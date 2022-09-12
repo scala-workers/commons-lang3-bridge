@@ -1,18 +1,22 @@
-package commons.lang3.bridge
+package commons.lang3.bridge.impl
 
-package impl:
+import commons.lang3.bridge.TypeMapping
+import commons.lang3.bridge.HelperIO
+
+package inner:
 
   class CusInnerApply[O[_] <: Tuple](index: Int, value: Any):
     inline def fold[U](inline funcCol: O[U]): U = funcCol.drop(index - 1).asInstanceOf[NonEmptyTuple].head.asInstanceOf[Any => U](value)
   end CusInnerApply
 
-end impl
+end inner
 
-object TypeMappingInnerHelper:
+trait HelperIOImplicit:
+  import inner.CusInnerApply as InnerApply
 
-  import impl.CusInnerApply as InnerApply
+  given [E, A <: Tuple]: HelperIO.Aux[TypeMapping[E, A], InnerApply[[t] =>> Tuple.Map[A, [x] =>> (x => t)]]] =
+    new HelperIO[TypeMapping[E, A]]:
+      override type Out = InnerApply[[t] =>> Tuple.Map[A, [x] =>> (x => t)]]
+      override def helper(index: Int, value: Any): InnerApply[[t] =>> Tuple.Map[A, [x] =>> (x => t)]] = new InnerApply(index, value)
 
-  extension [I, T <: Tuple](inline mapping: TypeMapping[I, T])
-    inline def input(inline i: I): InnerApply[[t] =>> Tuple.Map[T, [x] =>> (x => t)]] = new InnerApply(index = mapping.index, value = i)
-
-end TypeMappingInnerHelper
+end HelperIOImplicit
