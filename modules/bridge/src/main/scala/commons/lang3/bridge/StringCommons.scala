@@ -71,23 +71,17 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * max-3) + "...")}.</li> <li>If {@code maxWidth} is less than {@code 4}, throw an {@code IllegalArgumentException}.</li> <li>In no case
     * will it return a String of length greater than {@code maxWidth}.</li> </ul>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.abbreviate(*) = None
-    *
     * None.abbreviate(4) = Some("")
-    *
     * Some("abcdefg").ops.abbreviate(6) = Some("abc...")
-    *
     * Some("abcdefg").ops.abbreviate(7) = Some("abcdefg")
-    *
     * Some("abcdefg").ops.abbreviate(8) = Some("abcdefg")
-    *
     * Some("abcdefg").ops.abbreviate(4) = Some("a...")
-    *
     * Some("abcdefg").ops.abbreviate(3) = IllegalArgumentException
     *
-    * </pre>
+    * }}}
     *
     * @param maxWidth
     *   maximum length of result String, must be at least 4
@@ -106,35 +100,23 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * <p>In no case will it return a String of length greater than {@code maxWidth}.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.abbreviate(*, *) = None
-    *
     * Some("").ops.abbreviate(0, 4) = Some("")
-    *
     * Some("abcdefghijklmno").ops.abbreviate(-1, 10) = Some("abcdefg...")
-    *
     * Some("abcdefghijklmno").ops.abbreviate(0, 10) = Some("abcdefg...")
-    *
     * Some("abcdefghijklmno").ops.abbreviate(1, 10) = Some("abcdefg...")
-    *
     * Some("abcdefghijklmno").ops.abbreviate(4, 10) = Some("abcdefg...")
-    *
     * Some("abcdefghijklmno").ops.abbreviate(5, 10) = Some("...fghi...")
-    *
     * Some("abcdefghijklmno").ops.abbreviate(6, 10) = Some("...ghij...")
-    *
     * Some("abcdefghijklmno").ops.abbreviate(8, 10) = Some("...ijklmno")
-    *
     * Some("abcdefghijklmno").ops.abbreviate(10, 10) = Some("...ijklmno")
-    *
     * Some("abcdefghijklmno").ops.abbreviate(12, 10) = Some("...ijklmno")
-    *
     * Some("abcdefghij").ops.abbreviate(0, 3) = IllegalArgumentException
-    *
     * Some("abcdefghij").ops.abbreviate(5, 6) = IllegalArgumentException
     *
-    * </pre>
+    * }}}
     *
     * @param offset
     *   left edge of source String
@@ -155,29 +137,19 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * is less than {@code abbrevMarker.length + 1}, throw an {@code IllegalArgumentException}.</li> <li>In no case will it return a String
     * of length greater than {@code maxWidth}.</li> </ul>
     *
-    * <pre>
-    *
+    * {{{
     * None.ops.abbreviate(Some("..."), *) = None
-    *
     * Some("abcdefg")ops..abbreviate(None, *) = Some("abcdefg")
-    *
     * Some("")ops..abbreviate(Some("..."), 4) = Some("")
-    *
     * Some("abcdefg").ops.abbreviate(Some("."), 5) = Some("abcd.")
-    *
     * Some("abcdefg").ops.abbreviate(Some("."), 7) = Some("abcdefg")
-    *
     * Some("abcdefg").ops.abbreviate(Some("."), 8) = Some("abcdefg")
-    *
     * Some("abcdefg").ops.abbreviate(Some(".."), 4) = Some("ab..")
-    *
     * Some("abcdefg").ops.abbreviate(Some(".."), 3) = Some("a..")
-    *
     * Some("abcdefg").ops.abbreviate(Some(".."), 2) = IllegalArgumentException
-    *
     * Some("abcdefg").abbreviate(Some("..."), 3) = IllegalArgumentException
     *
-    * </pre>
+    * }}}
     *
     * @param abbrevMarker
     *   the String used as replacement marker
@@ -204,37 +176,24 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * <p>In no case will it return a String of length greater than {@code maxWidth}.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.abbreviate(None, *, *) = None
-    *
     * Some("abcdefghijklmno").ops.abbreviate(None, *, *) = Some("abcdefghijklmno")
-    *
     * Some("").ops.abbreviate("...", 0, 4) = Some("")
-    *
     * Some("abcdefghijklmno").ops.abbreviate("---", -1, 10) = Some("abcdefg---")
-    *
     * Some("abcdefghijklmno").ops.abbreviate(",", 0, 10) = Some("abcdefghi,")
-    *
     * Some("abcdefghijklmno").ops.abbreviate(",", 1, 10) = Some("abcdefghi,")
-    *
     * Some("abcdefghijklmno").ops.abbreviate(",", 2, 10) = Some("abcdefghi,")
-    *
     * Some("abcdefghijklmno").ops.abbreviate("::", 4, 10) = Some("::efghij::")
-    *
     * Some("abcdefghijklmno").ops.abbreviate("...", 6, 10) = Some("...ghij...")
-    *
     * Some("abcdefghijklmno").ops.abbreviate("*", 9, 10) = Some("*ghijklmno")
-    *
     * Some("abcdefghijklmno").ops.abbreviate("'", 10, 10) = Some("'ghijklmno")
-    *
     * Some("abcdefghijklmno").ops.abbreviate("!", 12, 10) = Some("!ghijklmno")
-    *
     * Some("abcdefghij").ops.abbreviate("abra", 0, 4) = IllegalArgumentException
-    *
     * Some("abcdefghij").ops.abbreviate("...", 5, 6) = IllegalArgumentException
     *
-    * </pre>
+    * }}}
     *
     * @param abbrevMarker
     *   the String used as replacement marker
@@ -262,19 +221,15 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * String and the first and last characters of the supplied String for abbreviation</li> </ul> <p>Otherwise, the returned String will be
     * the same as the supplied String for abbreviation. </p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.abbreviateMiddle(None, 0) = None
-    *
     * Some("abc").ops.abbreviateMiddle(None, 0) = Some("abc")
-    *
     * Some("abc")ops..abbreviateMiddle(".", 0) = Some("abc")
-    *
     * Some("abc").ops.abbreviateMiddle(".", 3) = Some("abc")
-    *
     * Some("abcdef").ops.abbreviateMiddle(".", 4) = Some("ab.f")
     *
-    * </pre>
+    * }}}
     *
     * @param middle
     *   the String to replace the middle characters with, may be null
@@ -320,47 +275,32 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
 
   /** Appends the suffix to the end of the string if the string does not already end with any of the suffixes.
     *
-    * <pre>
-    *
+    * {{{
     * None.ops.appendIfMissing(None) = None
-    *
     * Some("abc").ops.appendIfMissing(None) = Some("abc")
-    *
     * Some("").ops.appendIfMissing("xyz") = Some("xyz")
-    *
     * Some("abc").ops.appendIfMissing("xyz") = Some("abcxyz")
-    *
     * Some("abcxyz").ops.appendIfMissing("xyz") = Some("abcxyz")
-    *
     * Some("abcXYZ").ops.appendIfMissing("xyz") = Some("abcXYZxyz")
     *
-    * </pre>
+    * }}}
     *
     * <p>With additional suffixes,</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.appendIfMissing(None, None) = None
-    *
     * Some("abc").ops.appendIfMissing(null, null) = Some("abc")
-    *
     * Some("").ops.appendIfMissing("xyz", null) = Some("xyz")
-    *
     * Some("abc").ops.appendIfMissing(Some("xyz"), new CharSequence[]{null}) = Some("abcxyz")
-    *
     * Some("abc").ops.appendIfMissing("xyz", "") = Some("abc")
-    *
     * Some("abc").ops.appendIfMissing("xyz", "mno") = Some("abcxyz")
-    *
     * Some("abcxyz").ops.appendIfMissing("xyz", "mno") = Some("abcxyz")
-    *
     * Some("abcmno").ops.appendIfMissing("xyz", "mno") = Some("abcmno")
-    *
     * Some("abcXYZ").ops.appendIfMissing("xyz", "mno") = Some("abcXYZxyz")
-    *
     * Some("abcMNO").ops.appendIfMissing("xyz", "mno") = Some("abcMNOxyz")
     *
-    * </pre>
+    * }}}
     *
     * @param suffix
     *   The suffix to append to the end of the string.
@@ -414,21 +354,16 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * <p>Equivalent to {@code center(str, size, " ")}.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.center(*) = None
-    *
     * Some("").ops.center(4) = Some(" ")
-    *
     * Some("ab").ops.center(-1) = Some("ab")
-    *
     * Some("ab").ops.center(4) = Some(" ab ")
-    *
     * Some("abcd").ops.center(2) = Some("abcd")
-    *
     * Some("a").ops.center(4) = Some(" a ")
     *
-    * </pre>
+    * }}}
     *
     * @param size
     *   the int size of new String, negative treated as zero
@@ -442,23 +377,17 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * <p>If the size is less than the String length, the String is returned. A {@code null} String returns {@code null}. A negative size is
     * treated as zero.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.center(*, *) = None
-    *
     * Some("").ops.center(4, ' ') = Some(" ")
-    *
     * Some("ab").ops.center(-1, ' ') = Some("ab")
-    *
     * Some("ab").ops.center(4, ' ') = Some(" ab ")
-    *
     * Some("abcd").ops.center(2, ' ') = Some("abcd")
-    *
     * Some("a").ops.center(4, ' ') = Some(" a ")
-    *
     * Some("a").ops.center(4, 'y') = Some("yayy")
     *
-    * </pre>
+    * }}}
     *
     * @param size
     *   the int size of new String, negative treated as zero
@@ -474,10 +403,17 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * <p>If the size is less than the String length, the String is returned. A {@code null} String returns {@code null}. A negative size is
     * treated as zero.</p>
     *
-    * <pre> None.center(*, *) = None Some("").center(4, " ") = Some(" ") Some("ab").center(-1, " ") = Some("ab") Some("ab").center(4, " ") =
-    * Some(" ab ") Some("abcd").center(2, " ") = Some("abcd") Some("a").center(4, " ") = Some(" a ") Some("a").center(4, "yz") =
-    * Some("yayz") Some("abc").center(7, None) = Some(" abc ") Some("abc").center(7, "") = Some(" abc ") </pre>
-    *
+    * {{{
+    * None.center(*, *) = None
+    * Some("").center(4, " ") = Some(" ")
+    * Some("ab").center(-1, " ") = Some("ab")
+    * Some("ab").center(4, " ") = Some(" ab ")
+    * Some("abcd").center(2, " ") = Some("abcd")
+    * Some("a").center(4, " ") = Some(" a ")
+    * Some("a").center(4, "yz") = Some("yayz")
+    * Some("abc").center(7, None) = Some(" abc ")
+    * Some("abc").center(7, "") = Some(" abc ")
+    * }}}
     * @param size
     *   the int size of new String, negative treated as zero
     * @param padStr
@@ -497,31 +433,21 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * <p>NOTE: This method changed in 2.0. It now more closely matches Perl chomp.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.chomp = None
-    *
     * Some("").ops.chomp = Some("")
-    *
     * Some("abc \r").ops.chomp = Some("abc ")
-    *
     * Some("abc\n").ops.chomp = Some("abc")
-    *
     * Some("abc\r\n").ops.chomp = Some("abc")
-    *
     * Some("abc\r\n\r\n").ops.chomp = Some("abc\r\n")
-    *
     * Some("abc\n\r").ops.chomp = Some("abc\n")
-    *
     * Some("abc\n\rabc").ops.chomp = Some("abc\n\rabc")
-    *
     * Some("\r").ops.chomp = Some("")
-    *
     * Some("\n").ops.chomp = Some("")
-    *
     * Some("\r\n").ops.chomp = Some("")
     *
-    * </pre>
+    * }}}
     *
     * @return
     *   Option[String] without newline, {@code None} if null String input
@@ -532,31 +458,21 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * <p>If the String ends in {@code \r\n}, then remove both of them.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.chop = None
-    *
     * Some("").ops.chop = Some("")
-    *
     * Some("abc \r").ops.chop = Some("abc ")
-    *
     * Some("abc\n").ops.chop = Some("abc")
-    *
     * Some("abc\r\n").ops.chop = Some("abc")
-    *
     * Some("abc").ops.chop = Some("ab")
-    *
     * Some("abc\nabc").ops.chop = Some("abc\nab")
-    *
     * Some("a").ops.chop = Some("")
-    *
     * Some("\r").ops.chop = Some("")
-    *
     * Some("\n").ops.chop = Some("")
-    *
     * Some("\r\n").ops.chop = Some("")
     *
-    * </pre>
+    * }}}
     *
     * @return
     *   String without last character, {@code None} if None String input
@@ -571,25 +487,16 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * <p>{@code null} value is considered less than non-{@code null} value. Two {@code null} references are considered equal.</p>
     *
-    * <pre>
-    *
+    * {{{
     * None.ops.compare(null) = 0
-    *
     * None.ops.compare("a") &lt; 0
-    *
     * Some("a")).ops.compare(null) &gt; 0
-    *
     * "abc".ops.compare("abc") = 0
-    *
     * "a".ops.compare("b") &lt; 0
-    *
     * "b".ops.compare("a") &gt; 0
-    *
     * "a".ops.compare("B") &gt; 0
-    *
     * "ab".ops.compare("abc") &lt; 0
-    *
-    * </pre>
+    * }}}
     *
     * @param other
     *   the String to compare to
@@ -612,29 +519,20 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * <p>{@code null} inputs are handled according to the {@code nullIsLess} parameter. Two {@code null} references are considered
     * equal.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.compare(None, *) = 0
-    *
     * None.ops.compare(Some("a"), true) &lt; 0
-    *
     * None.ops.compare(Some("a"), false) &gt; 0
-    *
     * Some("a").ops.compare(None, true) &gt; 0
-    *
     * Some("a").ops.compare(None, false) &lt; 0
-    *
     * Some("abc").ops.compare(Some("abc"), *) = 0
-    *
     * Some("a").ops.compare(Some("b"), *) &lt; 0
-    *
     * Some("b").ops.compare("a", *) &gt; 0
-    *
     * Some("a").ops.compare("B", *) &gt; 0
-    *
     * Some("ab").ops.compare("abc", *) &lt; 0
     *
-    * </pre>
+    * }}}
     *
     * @param other
     *   the String to compare to
@@ -659,29 +557,20 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * <p>{@code null} value is considered less than non-{@code null} value. Two {@code null} references are considered equal. Comparison is
     * case insensitive.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.compareToIgnoreCase(None) = 0
-    *
     * None.ops.compareToIgnoreCase(None , "a") &lt; 0
-    *
     * Some("a").ops.compareToIgnoreCase(None) &gt; 0
-    *
     * Some("abc").ops.compareToIgnoreCase("abc") = 0
-    *
     * Some("abc").ops.compareToIgnoreCase("ABC") = 0
-    *
     * Some("a").ops.compareToIgnoreCase("b") &lt; 0
-    *
     * Some("b").ops.compareToIgnoreCase("a") &gt; 0
-    *
     * Some("a").ops.compareToIgnoreCase("B") &lt; 0
-    *
     * Some("A").ops.compareToIgnoreCase("b") &lt; 0
-    *
     * Some("ab").compareToIgnoreCase("ABC") &lt; 0
     *
-    * </pre>
+    * }}}
     *
     * @param other
     *   the String to compare to
@@ -704,23 +593,18 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * <p>{@code None} inputs are handled according to the {@code nullIsLess} parameter. Two {@code null} references are considered equal.
     * Comparison is case insensitive.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.compareToIgnoreCase(null, *) = 0
-    *
-    * None.ops.compareToIgnoreCase("a", true) &lt; 0
-    *
-    * None.ops.compareToIgnoreCase("a", false) &gt; 0
-    *
-    * "a".ops.compareToIgnoreCase(null, true) &gt; 0
-    *
-    * Some("a").ops.compareToIgnoreCase(None, false) &lt; 0
-    *
+    * None.ops.compareToIgnoreCase("a", true) > 0
+    * None.ops.compareToIgnoreCase("a", false) > 0
+    * "a".ops.compareToIgnoreCase(null, true) > 0
+    * Some("a").ops.compareToIgnoreCase(None, false) < 0
     * "abc".ops.compareToIgnoreCase(Some("abc"), *) = 0
-    *
     * "abc".compareToIgnoreCase("ABC", *) = 0
+    * "a".ops.compareToIgnoreCase("b", *) < 0
     *
-    * "a".ops.compareToIgnoreCase("b", *) &lt; 0
+    * }}}
     *
     * StringUtils.compareIgnoreCase("b", "a", *) &gt; 0 StringUtils.compareIgnoreCase("a", "B", *) &lt; 0 StringUtils.compareIgnoreCase("A",
     * "b", *) &lt; 0 StringUtils.compareIgnoreCase("ab", "abc", *) &lt; 0 </pre>
@@ -744,21 +628,16 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * <p>A {@code null} CharSequence will return {@code false}.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.contains(*) = false
-    *
     * *.ops.contains(None) = false
-    *
     * Some("").ops.contains("") = true
-    *
     * Some("abc").ops.contains("") = true
-    *
     * Some("abc").ops.contains("a") = true
-    *
     * Some("abc").ops.contains("z") = false
     *
-    * </pre>
+    * }}}
     *
     * @param searchSeq
     *   the CharSequence to find, may be null
@@ -777,17 +656,14 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * <p>A {@code null} or empty ("") CharSequence will return {@code false}.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.contains(*) = false
-    *
     * Some("").ops.contains(*) = false
-    *
     * Some("abc").ops.contains('a') = true
-    *
     * Some("abc").ops.contains('z') = false
     *
-    * </pre>
+    * }}}
     *
     * @param searchChar
     *   the character to find
@@ -801,17 +677,14 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * <p>A {@code null} or empty ("") CharSequence will return {@code false}.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.contains(*) = false
-    *
     * Some("").ops.contains(*) = false
-    *
     * Some("abc").ops.contains('a') = true
-    *
     * Some("abc").ops.contains('z') = false
     *
-    * </pre>
+    * }}}
     *
     * @param searchChar
     *   the character to find
@@ -824,49 +697,33 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * <p> A {@code None} CharSequence will return {@code false}. A {@code null} search CharSequence will return {@code false}. </p>
     *
-    * <pre>
-    *
-    * * <pre>
+    * {{{
     *
     * None.ops.containsAny(*) = false
-    *
     * Some("").ops.containsAny(*) = false
-    *
     * Option(*).ops.containsAny(None) = false
-    *
     * Option(*).ops.containsAny([]) = false
-    *
     * Some("zzabyycdxx").ops.containsAny(['z', 'a']) = true
-    *
     * Some("zzabyycdxx").ops.containsAny(['b', 'y']) = true
-    *
     * Some("zzabyycdxx").ops.containsAny(['z', 'y']) = true
-    *
     * Some("aba").ops.containsAny(['z']) = false
     *
-    * </pre>
+    * }}}
+    *
+    * {{{
     *
     * None.ops.containsAny(*) = false
-    *
     * Some("").ops.containsAny(*) = false
-    *
     * Option(*).ops.containsAny(None) = false
-    *
     * Option(*).ops.containsAny("") = false
-    *
     * Some("zzabyycdxx").ops.containAny("za") = true
-    *
     * Some("zzabyycdxx").ops.containAny("by") = true
-    *
     * Some("zzabyycdxx").ops.containAny("zy") = true
-    *
     * Some("zzabyycdxx").containAny("\tx") = true
-    *
     * Some("zzabyycdxx").containAny("$.#yF") = true
-    *
     * Some("aba").containAny("z") = false
     *
-    * </pre>
+    * }}}
     *
     * @param searchChars
     *   the chars to search for, may be null
@@ -910,41 +767,26 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * </p>
     *
-    * <pre>
+    * {{{
     *
     * None.containsAnyIgnoreCase(, *) = false
-    *
     * "".ops.containsAnyIgnoreCase(*) = false
-    *
     * Some(*).ops.containsAnyIgnoreCase(null) = false
-    *
     * *.ops.containsAnyIgnoreCase([]) = false
-    *
     * "abcd"ops.containsAnyIgnoreCase("ab", null) = true
-    *
     * Some("abcd").ops.containsAnyIgnoreCase(Some("ab"), Some("cd")) = true
-    *
     * "abc".ops.containsAnyIgnoreCase("d", "abc") = true
-    *
     * "abc".ops.containsAnyIgnoreCase("D", "ABC") = true
-    *
     * "ABC".ops.containsAnyIgnoreCase( "d", "abc") = true
-    *
-    * </pre> None.containsIgnoreCase(*) = false
-    *
+    *  None.containsIgnoreCase(*) = false
     * Option(*).ops.containsIgnoreCase(None) = false
-    *
     * "".ops.containsIgnoreCase "") = true
-    *
     * StringUtils.containsIgnoreCase("abc", "") = true
-    *
     * StringUtils.containsIgnoreCase("abc", "a") = true
-    *
     * StringUtils.containsIgnoreCase("abc", "z") = false
-    *
     * StringUtils.containsIgnoreCase("abc", "A") = true
-    *
     * StringUtils.containsIgnoreCase("abc", "Z") = false
+    * }}}
     *
     * @param searchArgs
     *   The array of CharSequences to search for, may be null. Individual CharSequences may be null as well.
@@ -971,25 +813,18 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * <p>A {@code null} CharSequence will return {@code false}.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.containsIgnoreCase(*) = false
-    *
     * Option(*).ops.containsIgnoreCase(null) = false
-    *
     * Some("").ops.containsIgnoreCase("") = true
-    *
     * "abc".ops.containsIgnoreCase(Some("")) = true
-    *
     * StringUtils.containsIgnoreCase("abc", "a") = true
-    *
     * StringUtils.containsIgnoreCase("abc", "z") = false
-    *
     * StringUtils.containsIgnoreCase("abc", "A") = true
-    *
     * StringUtils.containsIgnoreCase("abc", "Z") = false
     *
-    * </pre>
+    * }}}
     *
     * @param searchStr
     *   the CharSequence to find, may be null
@@ -1010,23 +845,17 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * A {@code None} CharSequence will return {@code true}. A {@code null} invalid character array will return {@code true}. An empty String
     * ("") always returns true.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.containsNone(*) = true
-    *
     * Option(*).ops.containsNone(null) = true
-    *
     * Some("").ops.containsNone(*) = true
-    *
     * "ab".ops.containsNone("") = true
-    *
     * Some("abab").ops.containsNone("xyz") = true
-    *
     * "ab1".ops.containsNone("xyz") = true
-    *
     * "abz".ops.containsNone("xyz") = false
     *
-    * </pre>
+    * }}}
     *
     * @param invalidChars
     *   a String of invalid chars, may be null
@@ -1042,23 +871,17 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * A {@code None} CharSequence will return {@code true}. A {@code None} invalid character array will return {@code true}. An empty String
     * (Some("")) always returns true.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.containsNone(*) = true
-    *
     * Option(*).ops.containsNone(None) = true
-    *
     * Some("").ops.containsNone(*) = true
-    *
     * "ab".ops.containsNone(Some("")) = true
-    *
     * Some("abab").ops.containsNone(Some("xyz")) = true
-    *
     * "ab1".ops.containsNone(Some("xyz")) = true
-    *
     * "abz".ops.containsNone(Some("xyz")) = false
     *
-    * </pre>
+    * }}}
     *
     * @param invalidChars
     *   a String of invalid chars, may be null
@@ -1072,23 +895,17 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * <p>A {@code null} CharSequence will return {@code true}. A {@code null} invalid character array will return {@code true}. An empty
     * CharSequence (length()=0) always returns true.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.containsNone(*) = true
-    *
     * *.ops.containsNone(null) = true
-    *
     * "".ops.containsNone(*) = true
-    *
     * "ab".ops.containsNone('') = true
-    *
     * "abab".ops.containsNone('xyz') = true
-    *
     * "ab1".ops.containsNone('xyz') = true
-    *
     * "abz".ops.containsNone('xyz') = false
     *
-    * </pre>
+    * }}}
     *
     * @param invalidChars
     *   an array of invalid chars, may be null
@@ -1108,23 +925,17 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * <p>A {@code null} CharSequence will return {@code false}. A {@code null} valid character String will return {@code false}. An empty
     * String (length()=0) always returns {@code true}.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.containsOnly(*) = false
-    *
     * *.ops.containsOnly(null) = false
-    *
     * "".ops.containsOnly(*) = true
-    *
     * Some("ab").ops.containsOnly("") = false
-    *
     * "abab".ops.containsOnly("abc") = true
-    *
     * "ab1".ops.containsOnly("abc") = false
-    *
     * "abz".ops.containsOnly("abc") = false
     *
-    * </pre>
+    * }}}
     *
     * @param validChars
     *   a String of valid chars, may be null
@@ -1138,23 +949,17 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * <p>A {@code None} CharSequence will return {@code false}. A {@code None} valid character String will return {@code false}. An empty
     * String (length()=0) always returns {@code true}.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.containsOnly(*) = false
-    *
     * *.ops.containsOnly(None) = false
-    *
     * "".ops.containsOnly(*) = true
-    *
     * Some("ab").ops.containsOnly(Some("")) = false
-    *
     * "abab".ops.containsOnly(Some("abc")) = true
-    *
     * "ab1".ops.containsOnly(Some("abc")) = false
-    *
     * "abz".ops.containsOnly(Some("abc")) = false
     *
-    * </pre>
+    * }}}
     *
     * @param validChars
     *   a Option String of valid chars, may be None
@@ -1168,23 +973,18 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * <p>A {@code null} CharSequence will return {@code false}. A {@code null} valid character array will return {@code false}. An empty
     * CharSequence (length()=0) always returns {@code true}.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.containsOnly(*) = false
-    *
     * *.ops.containsOnly(null) = false
-    *
     * Some("").containsOnly(*) = true
-    *
     * "ab".ops.containsOnly('') = false
-    *
     * Some("abab").ops.containsOnly('abc') = true
-    *
     * "ab1".ops.containsOnly('abc') = false
-    *
     * "abz".ops.containsOnly('abc') = false
     *
-    * </pre>
+    * }}}
+    *
     * @param valid
     *   an array of valid chars, may be null
     * @tparam V
@@ -1211,21 +1011,16 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * <p>A {@code null} or empty ("") String input returns {@code 0}.</p>
     *
-    * <pre>
+    * {{{
     *
     * None.ops.countMatches(*) = 0
-    *
     * "".ops.countMatches(*) = 0
-    *
     * "abba".ops.countMatches(0) = 0
-    *
     * "abba".ops.countMatches('a') = 2
-    *
     * "abba".ops.countMatches('b') = 2
-    *
     * "abba".ops.countMatches('x') = 0
     *
-    * </pre>
+    * }}}
     *
     * @param ch
     *   the char to count
@@ -1238,25 +1033,18 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * <p>A {@code null} or empty ("") String input returns {@code 0}.</p>
     *
-    * <pre>
+    * {{{
     *
     * StringUtils.countMatches(null, *) = 0
-    *
     * StringUtils.countMatches("", *) = 0
-    *
     * StringUtils.countMatches("abba", null) = 0
-    *
     * StringUtils.countMatches("abba", "") = 0
-    *
     * StringUtils.countMatches("abba", "a") = 2
-    *
     * StringUtils.countMatches("abba", "ab") = 1
-    *
     * StringUtils.countMatches("abba", "xxx") = 0
-    *
     * StringUtils.countMatches("ababa", "aba") = 1
     *
-    * </pre>
+    * }}}
     *
     * @param str
     *   the CharSequence to check, may be null
@@ -1276,25 +1064,18 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * <p>A {@code null} or empty ("") String input returns {@code 0}.</p>
     *
-    * <pre>
+    * {{{
     *
     * StringUtils.countMatches(null, *) = 0
-    *
     * StringUtils.countMatches("", *) = 0
-    *
     * StringUtils.countMatches("abba", null) = 0
-    *
     * StringUtils.countMatches("abba", "") = 0
-    *
     * StringUtils.countMatches("abba", "a") = 2
-    *
     * StringUtils.countMatches("abba", "ab") = 1
-    *
     * StringUtils.countMatches("abba", "xxx") = 0
-    *
     * StringUtils.countMatches("ababa", "aba") = 1
     *
-    * </pre>
+    * }}}
     *
     * @param str
     *   the CharSequence to check, may be null
