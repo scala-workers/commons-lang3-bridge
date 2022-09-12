@@ -112,4 +112,5 @@ object CommonSettings {
   val commonProjectSettings  = pushSettings ++ commonSetting ++ Seq(crossScalaVersions := supportedScalaVersions)
   val codegenProjectSettings = commonSetting
 
+  val versionSchema = Some("pvp")
 }

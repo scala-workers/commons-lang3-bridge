@@ -397,9 +397,6 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
   /** <p>Capitalizes a String changing the first character to title case as per {@link Character# toTitleCase ( int )}. No other characters
     * are changed.</p>
     *
-    * <p>For a word based algorithm, see {@link org.apache.commons.lang3.text.WordUtils# capitalize ( String )}. A {@code null} input String
-    * returns {@code null}.</p>
-    *
     * <pre> None.capitalize = None Some("").capitalize = Some("") Some("cat").capitalize = "Cat" Some("cAt") .capitalize = "CAt"
     * Some("'cat'").capitalize = "'cat'" </pre>
     *
@@ -694,8 +691,8 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *   &lt; 0, 0, &gt; 0, if {@code this} is respectively less, equal ou greater than {@code other}, ignoring case differences.
     */
   def compareIgnoreCase[O: TypeOptions2[*, String, Option[String]]](other: O): Int = {
-    val orhterOrNull = mapToStrOpt.input(other).orNull
-    Strings.compareIgnoreCase(strOrNull, orhterOrNull)
+    val otherOrNull = mapToStrOpt.input(other).orNull
+    Strings.compareIgnoreCase(strOrNull, otherOrNull)
   }
 
   /** <p>Compare two Strings lexicographically, ignoring case differences, as per {@link String# compareToIgnoreCase ( String )}, returning
@@ -884,14 +881,15 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     def dealWithSeqChar(chars: Seq[Char]): Boolean = Strings.containsAny(strOrNull, chars.toArray[Char]: _*)
     def mapping = TypeMapping.getMapping[TypeOptions4[*, Seq[Char], Seq[CharSequence], Seq[Option[Char]], Seq[Option[CharSequence]]]]
 
-    def dealWithSeqCharSequence(css: Seq[CharSequence]): Boolean = if (css.length == 1)
+    def dealWithSeqCharSequence(css: Seq[CharSequence]): Boolean = if (css.length == 1) {
       Strings.containsAny(strOrNull, css.head)
-    else
+    } else {
       Strings.containsAny(strOrNull, css: _*)
+    }
 
-    if (searchArgs == null)
+    if (searchArgs == null) {
       Strings.containsAny(strOrNull, null)
-    else
+    } else
       mapping
         .input(searchArgs)
         .fold(
@@ -961,10 +959,11 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     def dealWithSeqCharSeq(strs: Seq[CharSequence]) = Strings.containsAnyIgnoreCase(strOrNull, strs: _*)
     def mapping                                     = TypeMapping.getMapping[TypeOptions2[*, Seq[CharSequence], Seq[Option[CharSequence]]]]
 
-    if (searchArgs == null)
+    if (searchArgs == null) {
       Strings.equalsAnyIgnoreCase(strOrNull, null)
-    else
+    } else {
       mapping.input(searchArgs).fold(dealWithSeqCharSeq, s => dealWithSeqCharSeq(mapTo[Seq[CharSequence]].input(s)))
+    }
   }
 
   /** <p>Checks if CharSequence contains a search CharSequence irrespective of case, handling {@code null}. Case-insensitivity is defined as
@@ -1208,13 +1207,104 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     */
   def containsWhitespace: Boolean = Strings.containsWhitespace(strOrNull)
 
+  /** <p>Counts how many times the char appears in the given string.</p>
+    *
+    * <p>A {@code null} or empty ("") String input returns {@code 0}.</p>
+    *
+    * <pre>
+    *
+    * None.ops.countMatches(*) = 0
+    *
+    * "".ops.countMatches(*) = 0
+    *
+    * "abba".ops.countMatches(0) = 0
+    *
+    * "abba".ops.countMatches('a') = 2
+    *
+    * "abba".ops.countMatches('b') = 2
+    *
+    * "abba".ops.countMatches('x') = 0
+    *
+    * </pre>
+    *
+    * @param ch
+    *   the char to count
+    * @return
+    *   the number of occurrences, 0 if the CharSequence is {@code null}
+    */
   def countMatches(ch: Char): Int = Strings.countMatches(strOrNull, ch)
 
+  /** <p>Counts how many times the substring appears in the larger string. Note that the code only counts non-overlapping matches.</p>
+    *
+    * <p>A {@code null} or empty ("") String input returns {@code 0}.</p>
+    *
+    * <pre>
+    *
+    * StringUtils.countMatches(null, *) = 0
+    *
+    * StringUtils.countMatches("", *) = 0
+    *
+    * StringUtils.countMatches("abba", null) = 0
+    *
+    * StringUtils.countMatches("abba", "") = 0
+    *
+    * StringUtils.countMatches("abba", "a") = 2
+    *
+    * StringUtils.countMatches("abba", "ab") = 1
+    *
+    * StringUtils.countMatches("abba", "xxx") = 0
+    *
+    * StringUtils.countMatches("ababa", "aba") = 1
+    *
+    * </pre>
+    *
+    * @param str
+    *   the CharSequence to check, may be null
+    * @param sub
+    *   the substring to count, may be null
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   the number of occurrences, 0 if either CharSequence is {@code null}
+    */
   def countMatches[S: TypeOptions2[*, String, Option[String]]](sub: S): Int = {
     val str1 = mapToStrOpt.input(sub).orNull
     Strings.countMatches(strOrNull, str1)
   }
 
+  /** <p>Counts how many times the substring appears in the larger string. Note that the code only counts non-overlapping matches.</p>
+    *
+    * <p>A {@code null} or empty ("") String input returns {@code 0}.</p>
+    *
+    * <pre>
+    *
+    * StringUtils.countMatches(null, *) = 0
+    *
+    * StringUtils.countMatches("", *) = 0
+    *
+    * StringUtils.countMatches("abba", null) = 0
+    *
+    * StringUtils.countMatches("abba", "") = 0
+    *
+    * StringUtils.countMatches("abba", "a") = 2
+    *
+    * StringUtils.countMatches("abba", "ab") = 1
+    *
+    * StringUtils.countMatches("abba", "xxx") = 0
+    *
+    * StringUtils.countMatches("ababa", "aba") = 1
+    *
+    * </pre>
+    *
+    * @param str
+    *   the CharSequence to check, may be null
+    * @param sub
+    *   the substring to count, may be null
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   the number of occurrences, 0 if either CharSequence is {@code null}
+    */
   def defaultIfBlank[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](defaultStr: S): CharSequence = {
     val defStr = mapTo[Option[CharSequence]].input(defaultStr).orNull
     val result = Strings.defaultIfBlank(strOrNull, defStr)
