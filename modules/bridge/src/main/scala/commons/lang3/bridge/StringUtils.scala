@@ -12,7 +12,9 @@ object StringUtils {
 
   object ops {
 
-    implicit class StringOptExt[T: TypeMapping[*, (String, Option[String])]](x: T) {
+    import TypeMapping.alias._
+
+    implicit class StringOptExt[T: TypeOptions2[*, String, Option[String]]](x: T) {
       val ops: StringCommons[T] = new StringCommons(x)
     }
 

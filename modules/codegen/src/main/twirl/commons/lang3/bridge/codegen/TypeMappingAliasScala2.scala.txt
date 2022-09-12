@@ -1,0 +1,14 @@
+@()
+package commons.lang3.bridge.impl
+import commons.lang3.bridge.TypeMapping
+
+@buildHList(start: Int, i1: Int) = { @if(start < i1) {
+    HlistTypeMappingPositive[I@{start + 1}, @buildHList(start + 1, i1)]
+} else { HlistTypeMappingZero } }
+
+trait TypeMappingAlias {
+    @for(i1 <- 1 to 22) {
+        type TypeOptions@{i1}[A, @for(i2 <- 1 to i1) { @if(i2 == 1) { I@{i2} } else { , I@{i2} } }] = TypeMapping[A, @buildHList(0, i1)]
+        type TypeOptions@{i1}F[F[_], A, @for(i2 <- 1 to i1) { @if(i2 == 1) { I@{i2} } else { , I@{i2} } }] = TypeMapping[F[A], @buildHList(0, i1)]
+    }
+}

@@ -13,16 +13,23 @@ object Scala2CodegenExec {
     val writePath  = rootPath.resolve(Paths.get("commons", "lang3", "bridge", "impl"))
     Files.createDirectories(writePath)
     locally {
-      val filePath = writePath.resolve("TypeMappingImplicitOptsPoly1.scala")
+      val filePath = writePath.resolve("TypeMappingAlias.scala")
       Using.resource(new PrintWriter(filePath.toFile, StandardCharsets.UTF_8)) { writer =>
-        val linerContent = commons.lang3.bridge.codegen.txt.TypeMappingImplicitOptsPoly1().body
+        val linerContent = commons.lang3.bridge.codegen.txt.TypeMappingAliasScala2().body
         writer.println(linerContent)
       }
     }
     locally {
-      val filePath = writePath.resolve("TypeMappingInnerHelper.scala")
+      val filePath = writePath.resolve("InnerTypeMappingClass.scala")
       Using.resource(new PrintWriter(filePath.toFile, StandardCharsets.UTF_8)) { writer =>
-        val linerContent = commons.lang3.bridge.codegen.txt.TypeMappingInnerHelper().body
+        val linerContent = commons.lang3.bridge.codegen.txt.InnerTypeMappingClassScala2().body
+        writer.println(linerContent)
+      }
+    }
+    locally {
+      val filePath = writePath.resolve("HelperIOImplicit.scala")
+      Using.resource(new PrintWriter(filePath.toFile, StandardCharsets.UTF_8)) { writer =>
+        val linerContent = commons.lang3.bridge.codegen.txt.HelperIOImplicitScala2().body
         writer.println(linerContent)
       }
     }

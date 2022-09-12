@@ -1,0 +1,17 @@
+@()
+package commons.lang3.bridge.impl
+
+@paramType(start: Int, i1: Int) = { @for(i2 <- start to i1) { @if(i2 > start){ , } I@{i2} } }
+@paramFunc(start: Int, i1: Int) = { @for(i2 <- start to i1) { @if(i2 > start){ , } func@{i2}: I@{i2} => T } }
+
+@forMatch(start: Int, i1: Int) = { @for(i2 <- start to i1) { case @{i2} => func@{i2}(value.asInstanceOf[I@{i2}]) } }
+
+object InnerTypeMappingClass {
+    @for(i1 <- 2 to 22) {
+        class CusInnerApply@{i1}[@paramType(1, i1)](index: Int, value: Any) {
+            @@inline def fold[T](@paramFunc(1, i1)): T = index match {
+                @forMatch(1, i1)
+            }
+        }
+    }
+}
