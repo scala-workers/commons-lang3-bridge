@@ -18,14 +18,12 @@ object CommonSettings {
     val common = Seq(
       "-unchecked",
       "-deprecation",
-      "-Xlint",
       // "-Xfatal-warnings",
-      "-Ywarn-dead-code",
       "-encoding",
       "UTF-8"
     )
     val compat = scalaVersion match {
-      case Some((2, scalaMajor)) if scalaMajor == 11 => Seq("-Xexperimental")
+      case Some((2, scalaMajor)) if scalaMajor == 11 => Seq("-Xexperimental", "-Xlint", "-Ywarn-dead-code")
       case Some((3, scalaMajor))                     => Seq("-Ykind-projector")
       case _                                         => Nil
     }

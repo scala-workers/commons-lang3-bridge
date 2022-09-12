@@ -305,17 +305,14 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     suffix: S,
     suffixes: SS*
   ): Option[String] = {
-    val suffixOrNull = mapToStrOpt.input(suffix).orNull
+    def suffixOrNull = mapToStrOpt.input(suffix).orNull
     def mapping      = TypeMapping.getMapping[TypeOptions2[*, Seq[CharSequence], Seq[Option[CharSequence]]]]
 
-    val resultOrNull =
-      if (suffixes == null) Strings.appendIfMissing(strOrNull, suffixOrNull)
-      else {
-        val sfs = mapping.input(suffixes).fold(identity, oss => oss.map(_.orNull))
-        Strings.appendIfMissing(strOrNull, suffixOrNull, sfs: _*)
-      }
-
-    Option(resultOrNull)
+    if (suffixes == null) Option(Strings.appendIfMissing(strOrNull, suffixOrNull))
+    else {
+      val sfs = mapping.input(suffixes).fold(identity, oss => oss.map(_.orNull))
+      Option(Strings.appendIfMissing(strOrNull, suffixOrNull, sfs: _*))
+    }
   }
   // helpers for method call without suffixes
   def appendIfMissing(suffix: CharSequence): Option[String]         = Option(Strings.appendIfMissing(strOrNull, suffix))
@@ -380,9 +377,8 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     suffix: S,
     suffixes: SS*
   ): Option[String] = {
-    val suffixOrNull = mapToStrOpt.input(suffix).orNull
-
-    def mapping = TypeMapping.getMapping[TypeOptions2[*, Seq[CharSequence], Seq[Option[CharSequence]]]]
+    def suffixOrNull = mapToStrOpt.input(suffix).orNull
+    def mapping      = TypeMapping.getMapping[TypeOptions2[*, Seq[CharSequence], Seq[Option[CharSequence]]]]
 
     if (suffixes == null) Option(Strings.appendIfMissingIgnoreCase(strOrNull, suffixOrNull))
     else {
