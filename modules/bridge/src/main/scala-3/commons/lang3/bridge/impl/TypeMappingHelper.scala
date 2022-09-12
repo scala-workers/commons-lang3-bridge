@@ -2,7 +2,7 @@ package commons.lang3.bridge.impl
 
 import commons.lang3.bridge.TypeMapping
 
-trait FetchMappingAply[F[_] <: TypeMapping[_, _]]:
+final class FetchMappingAply[F[_] <: TypeMapping[_, _]]:
   type TakeTuple[T <: TypeMapping[_, _]] <: Tuple = T match
     case TypeMapping[a, b] =>
       b match
@@ -19,12 +19,12 @@ trait FetchMappingAply[F[_] <: TypeMapping[_, _]]:
 end FetchMappingAply
 
 object FetchMappingAply:
-  private object value extends FetchMappingAply[TypeMapping[*, Any]]
+  private val value: FetchMappingAply[TypeMapping[*, Any]]       = new FetchMappingAply[TypeMapping[*, Any]]
   inline def get[F[_] <: TypeMapping[_, _]]: FetchMappingAply[F] = value.asInstanceOf[FetchMappingAply[F]]
 end FetchMappingAply
 
 package inner:
-  class CusInnerApply[O[_] <: Tuple](index: Int, value: Any):
+  final class CusInnerApply[O[_] <: Tuple](index: Int, value: Any):
     inline def fold[U](inline funcCol: O[U]): U = funcCol.drop(index - 1).asInstanceOf[NonEmptyTuple].head.asInstanceOf[Any => U](value)
   end CusInnerApply
 end inner

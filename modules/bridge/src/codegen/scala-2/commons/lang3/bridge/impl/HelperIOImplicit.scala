@@ -1,5 +1,4 @@
 package commons.lang3.bridge.impl
-import commons.lang3.bridge.TypeMapping
 import commons.lang3.bridge.HelperIO
 
 

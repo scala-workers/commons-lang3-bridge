@@ -4,7 +4,7 @@ import commons.lang3.bridge.TypeMapping
 
 sealed trait HlistTypeMapping
 
-trait HlistTypeMappingPositive[Current, Tail <: HlistTypeMapping] extends HlistTypeMapping
+final class HlistTypeMappingPositive[Current, Tail <: HlistTypeMapping] extends HlistTypeMapping
 object HlistTypeMappingPositive extends HlistTypeMappingPositiveLower {
   @inline implicit def hlistTypeMappingPositiveImplicit1[B <: A, A, Tail <: HlistTypeMapping]
     : TypeMapping[B, HlistTypeMappingPositive[A, Tail]] =
@@ -16,4 +16,4 @@ trait HlistTypeMappingPositiveLower {
   ): TypeMapping[B, HlistTypeMappingPositive[A, Tail]] = new TypeMapping(tailMapping.index + 1)
 }
 
-class HlistTypeMappingZero extends HlistTypeMapping
+final class HlistTypeMappingZero extends HlistTypeMapping
