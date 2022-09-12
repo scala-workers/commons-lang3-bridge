@@ -11,7 +11,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl2 extends HelperIO[Any] {
     override type Out = CusInnerApply2[Any, Any]
-    override def helper(index: Int, value: Any): CusInnerApply2[Any, Any] = new CusInnerApply2(index, value)
+    @inline override def helper(index: Int, value: Any): CusInnerApply2[Any, Any] = new CusInnerApply2(index, value)
   }
 
   class CusInnerApply3[I1, I2, I3](index: Int, value: Any) {
@@ -23,7 +23,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl3 extends HelperIO[Any] {
     override type Out = CusInnerApply3[Any, Any, Any]
-    override def helper(index: Int, value: Any): CusInnerApply3[Any, Any, Any] = new CusInnerApply3(index, value)
+    @inline override def helper(index: Int, value: Any): CusInnerApply3[Any, Any, Any] = new CusInnerApply3(index, value)
   }
 
   class CusInnerApply4[I1, I2, I3, I4](index: Int, value: Any) {
@@ -36,7 +36,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl4 extends HelperIO[Any] {
     override type Out = CusInnerApply4[Any, Any, Any, Any]
-    override def helper(index: Int, value: Any): CusInnerApply4[Any, Any, Any, Any] = new CusInnerApply4(index, value)
+    @inline override def helper(index: Int, value: Any): CusInnerApply4[Any, Any, Any, Any] = new CusInnerApply4(index, value)
   }
 
   class CusInnerApply5[I1, I2, I3, I4, I5](index: Int, value: Any) {
@@ -50,7 +50,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl5 extends HelperIO[Any] {
     override type Out = CusInnerApply5[Any, Any, Any, Any, Any]
-    override def helper(index: Int, value: Any): CusInnerApply5[Any, Any, Any, Any, Any] = new CusInnerApply5(index, value)
+    @inline override def helper(index: Int, value: Any): CusInnerApply5[Any, Any, Any, Any, Any] = new CusInnerApply5(index, value)
   }
 
   class CusInnerApply6[I1, I2, I3, I4, I5, I6](index: Int, value: Any) {
@@ -65,7 +65,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl6 extends HelperIO[Any] {
     override type Out = CusInnerApply6[Any, Any, Any, Any, Any, Any]
-    override def helper(index: Int, value: Any): CusInnerApply6[Any, Any, Any, Any, Any, Any] = new CusInnerApply6(index, value)
+    @inline override def helper(index: Int, value: Any): CusInnerApply6[Any, Any, Any, Any, Any, Any] = new CusInnerApply6(index, value)
   }
 
   class CusInnerApply7[I1, I2, I3, I4, I5, I6, I7](index: Int, value: Any) {
@@ -82,7 +82,8 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl7 extends HelperIO[Any] {
     override type Out = CusInnerApply7[Any, Any, Any, Any, Any, Any, Any]
-    override def helper(index: Int, value: Any): CusInnerApply7[Any, Any, Any, Any, Any, Any, Any] = new CusInnerApply7(index, value)
+    @inline override def helper(index: Int, value: Any): CusInnerApply7[Any, Any, Any, Any, Any, Any, Any] =
+      new CusInnerApply7(index, value)
   }
 
   class CusInnerApply8[I1, I2, I3, I4, I5, I6, I7, I8](index: Int, value: Any) {
@@ -108,7 +109,8 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl8 extends HelperIO[Any] {
     override type Out = CusInnerApply8[Any, Any, Any, Any, Any, Any, Any, Any]
-    override def helper(index: Int, value: Any): CusInnerApply8[Any, Any, Any, Any, Any, Any, Any, Any] = new CusInnerApply8(index, value)
+    @inline override def helper(index: Int, value: Any): CusInnerApply8[Any, Any, Any, Any, Any, Any, Any, Any] =
+      new CusInnerApply8(index, value)
   }
 
   class CusInnerApply9[I1, I2, I3, I4, I5, I6, I7, I8, I9](index: Int, value: Any) {
@@ -136,7 +138,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl9 extends HelperIO[Any] {
     override type Out = CusInnerApply9[Any, Any, Any, Any, Any, Any, Any, Any, Any]
-    override def helper(index: Int, value: Any): CusInnerApply9[Any, Any, Any, Any, Any, Any, Any, Any, Any] =
+    @inline override def helper(index: Int, value: Any): CusInnerApply9[Any, Any, Any, Any, Any, Any, Any, Any, Any] =
       new CusInnerApply9(index, value)
   }
 
@@ -167,7 +169,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl10 extends HelperIO[Any] {
     override type Out = CusInnerApply10[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any]
-    override def helper(index: Int, value: Any): CusInnerApply10[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] =
+    @inline override def helper(index: Int, value: Any): CusInnerApply10[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] =
       new CusInnerApply10(index, value)
   }
 
@@ -200,7 +202,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl11 extends HelperIO[Any] {
     override type Out = CusInnerApply11[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any]
-    override def helper(index: Int, value: Any): CusInnerApply11[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] =
+    @inline override def helper(index: Int, value: Any): CusInnerApply11[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] =
       new CusInnerApply11(index, value)
   }
 
@@ -235,7 +237,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl12 extends HelperIO[Any] {
     override type Out = CusInnerApply12[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any]
-    override def helper(index: Int, value: Any): CusInnerApply12[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] =
+    @inline override def helper(index: Int, value: Any): CusInnerApply12[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] =
       new CusInnerApply12(index, value)
   }
 
@@ -272,7 +274,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl13 extends HelperIO[Any] {
     override type Out = CusInnerApply13[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any]
-    override def helper(index: Int, value: Any): CusInnerApply13[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] =
+    @inline override def helper(index: Int, value: Any): CusInnerApply13[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] =
       new CusInnerApply13(index, value)
   }
 
@@ -311,8 +313,10 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl14 extends HelperIO[Any] {
     override type Out = CusInnerApply14[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any]
-    override def helper(index: Int, value: Any): CusInnerApply14[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] =
-      new CusInnerApply14(index, value)
+    @inline override def helper(
+      index: Int,
+      value: Any
+    ): CusInnerApply14[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] = new CusInnerApply14(index, value)
   }
 
   class CusInnerApply15[I1, I2, I3, I4, I5, I6, I7, I8, I9, I10, I11, I12, I13, I14, I15](index: Int, value: Any) {
@@ -352,7 +356,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl15 extends HelperIO[Any] {
     override type Out = CusInnerApply15[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any]
-    override def helper(
+    @inline override def helper(
       index: Int,
       value: Any
     ): CusInnerApply15[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] = new CusInnerApply15(index, value)
@@ -397,7 +401,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl16 extends HelperIO[Any] {
     override type Out = CusInnerApply16[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any]
-    override def helper(
+    @inline override def helper(
       index: Int,
       value: Any
     ): CusInnerApply16[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] = new CusInnerApply16(index, value)
@@ -444,7 +448,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl17 extends HelperIO[Any] {
     override type Out = CusInnerApply17[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any]
-    override def helper(
+    @inline override def helper(
       index: Int,
       value: Any
     ): CusInnerApply17[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] =
@@ -494,7 +498,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl18 extends HelperIO[Any] {
     override type Out = CusInnerApply18[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any]
-    override def helper(
+    @inline override def helper(
       index: Int,
       value: Any
     ): CusInnerApply18[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] =
@@ -546,7 +550,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl19 extends HelperIO[Any] {
     override type Out = CusInnerApply19[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any]
-    override def helper(
+    @inline override def helper(
       index: Int,
       value: Any
     ): CusInnerApply19[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] =
@@ -600,7 +604,7 @@ object InnerTypeMappingClass {
   }
   object HelperIOImpl20 extends HelperIO[Any] {
     override type Out = CusInnerApply20[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any]
-    override def helper(
+    @inline override def helper(
       index: Int,
       value: Any
     ): CusInnerApply20[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] =
@@ -660,7 +664,7 @@ object InnerTypeMappingClass {
   object HelperIOImpl21 extends HelperIO[Any] {
     override type Out =
       CusInnerApply21[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any]
-    override def helper(
+    @inline override def helper(
       index: Int,
       value: Any
     ): CusInnerApply21[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] =
@@ -722,7 +726,7 @@ object InnerTypeMappingClass {
   object HelperIOImpl22 extends HelperIO[Any] {
     override type Out =
       CusInnerApply22[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any]
-    override def helper(
+    @inline override def helper(
       index: Int,
       value: Any
     ): CusInnerApply22[Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any] =
