@@ -6,41 +6,36 @@ import commons.lang3.bridge.HelperIO
 
 
 
+
 trait HelperIOImplicit {
     import InnerTypeMappingClass._
 
     
-        implicit def helperIOImplicit2[A,    I1   ,  I2  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit2[A,    I1   ,  I2  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,   HlistTypeMappingZero  ]
  ]
- ], CusInnerApply2[   I1   ,  I2  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply2[   I1   ,  I2  ]] = HelperIOImpl2.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,   HlistTypeMappingZero  ]
  ]
- ]] {
-            override type Out = CusInnerApply2[   I1   ,  I2  ]
-            override def helper(index: Int, value: Any): CusInnerApply2[   I1   ,  I2  ] = new CusInnerApply2(index, value)
-        }
+ , CusInnerApply2[   I1   ,  I2  ]]]
     
-        implicit def helperIOImplicit3[A,    I1   ,  I2   ,  I3  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit3[A,    I1   ,  I2   ,  I3  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,   HlistTypeMappingZero  ]
  ]
  ]
- ], CusInnerApply3[   I1   ,  I2   ,  I3  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply3[   I1   ,  I2   ,  I3  ]] = HelperIOImpl3.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,   HlistTypeMappingZero  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply3[   I1   ,  I2   ,  I3  ]
-            override def helper(index: Int, value: Any): CusInnerApply3[   I1   ,  I2   ,  I3  ] = new CusInnerApply3(index, value)
-        }
+ , CusInnerApply3[   I1   ,  I2   ,  I3  ]]]
     
-        implicit def helperIOImplicit4[A,    I1   ,  I2   ,  I3   ,  I4  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit4[A,    I1   ,  I2   ,  I3   ,  I4  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -48,7 +43,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply4[   I1   ,  I2   ,  I3   ,  I4  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply4[   I1   ,  I2   ,  I3   ,  I4  ]] = HelperIOImpl4.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -56,12 +51,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply4[   I1   ,  I2   ,  I3   ,  I4  ]
-            override def helper(index: Int, value: Any): CusInnerApply4[   I1   ,  I2   ,  I3   ,  I4  ] = new CusInnerApply4(index, value)
-        }
+ , CusInnerApply4[   I1   ,  I2   ,  I3   ,  I4  ]]]
     
-        implicit def helperIOImplicit5[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit5[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -71,7 +63,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply5[   I1   ,  I2   ,  I3   ,  I4   ,  I5  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply5[   I1   ,  I2   ,  I3   ,  I4   ,  I5  ]] = HelperIOImpl5.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -81,12 +73,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply5[   I1   ,  I2   ,  I3   ,  I4   ,  I5  ]
-            override def helper(index: Int, value: Any): CusInnerApply5[   I1   ,  I2   ,  I3   ,  I4   ,  I5  ] = new CusInnerApply5(index, value)
-        }
+ , CusInnerApply5[   I1   ,  I2   ,  I3   ,  I4   ,  I5  ]]]
     
-        implicit def helperIOImplicit6[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit6[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -98,7 +87,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply6[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply6[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6  ]] = HelperIOImpl6.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -110,12 +99,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply6[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6  ]
-            override def helper(index: Int, value: Any): CusInnerApply6[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6  ] = new CusInnerApply6(index, value)
-        }
+ , CusInnerApply6[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6  ]]]
     
-        implicit def helperIOImplicit7[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit7[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -129,7 +115,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply7[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply7[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7  ]] = HelperIOImpl7.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -143,12 +129,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply7[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7  ]
-            override def helper(index: Int, value: Any): CusInnerApply7[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7  ] = new CusInnerApply7(index, value)
-        }
+ , CusInnerApply7[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7  ]]]
     
-        implicit def helperIOImplicit8[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit8[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -164,7 +147,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply8[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply8[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8  ]] = HelperIOImpl8.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -180,12 +163,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply8[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8  ]
-            override def helper(index: Int, value: Any): CusInnerApply8[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8  ] = new CusInnerApply8(index, value)
-        }
+ , CusInnerApply8[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8  ]]]
     
-        implicit def helperIOImplicit9[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit9[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -203,7 +183,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply9[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply9[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9  ]] = HelperIOImpl9.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -221,12 +201,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply9[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9  ]
-            override def helper(index: Int, value: Any): CusInnerApply9[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9  ] = new CusInnerApply9(index, value)
-        }
+ , CusInnerApply9[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9  ]]]
     
-        implicit def helperIOImplicit10[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit10[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -246,7 +223,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply10[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply10[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10  ]] = HelperIOImpl10.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -266,12 +243,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply10[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10  ]
-            override def helper(index: Int, value: Any): CusInnerApply10[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10  ] = new CusInnerApply10(index, value)
-        }
+ , CusInnerApply10[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10  ]]]
     
-        implicit def helperIOImplicit11[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit11[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -293,7 +267,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply11[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply11[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11  ]] = HelperIOImpl11.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -315,12 +289,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply11[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11  ]
-            override def helper(index: Int, value: Any): CusInnerApply11[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11  ] = new CusInnerApply11(index, value)
-        }
+ , CusInnerApply11[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11  ]]]
     
-        implicit def helperIOImplicit12[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit12[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -344,7 +315,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply12[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply12[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12  ]] = HelperIOImpl12.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -368,12 +339,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply12[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12  ]
-            override def helper(index: Int, value: Any): CusInnerApply12[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12  ] = new CusInnerApply12(index, value)
-        }
+ , CusInnerApply12[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12  ]]]
     
-        implicit def helperIOImplicit13[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit13[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -399,7 +367,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply13[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply13[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13  ]] = HelperIOImpl13.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -425,12 +393,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply13[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13  ]
-            override def helper(index: Int, value: Any): CusInnerApply13[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13  ] = new CusInnerApply13(index, value)
-        }
+ , CusInnerApply13[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13  ]]]
     
-        implicit def helperIOImplicit14[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit14[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -458,7 +423,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply14[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply14[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14  ]] = HelperIOImpl14.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -486,12 +451,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply14[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14  ]
-            override def helper(index: Int, value: Any): CusInnerApply14[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14  ] = new CusInnerApply14(index, value)
-        }
+ , CusInnerApply14[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14  ]]]
     
-        implicit def helperIOImplicit15[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit15[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -521,7 +483,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply15[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply15[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15  ]] = HelperIOImpl15.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -551,12 +513,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply15[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15  ]
-            override def helper(index: Int, value: Any): CusInnerApply15[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15  ] = new CusInnerApply15(index, value)
-        }
+ , CusInnerApply15[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15  ]]]
     
-        implicit def helperIOImplicit16[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit16[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -588,7 +547,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply16[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply16[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16  ]] = HelperIOImpl16.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -620,12 +579,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply16[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16  ]
-            override def helper(index: Int, value: Any): CusInnerApply16[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16  ] = new CusInnerApply16(index, value)
-        }
+ , CusInnerApply16[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16  ]]]
     
-        implicit def helperIOImplicit17[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit17[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -659,7 +615,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply17[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply17[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17  ]] = HelperIOImpl17.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -693,12 +649,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply17[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17  ]
-            override def helper(index: Int, value: Any): CusInnerApply17[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17  ] = new CusInnerApply17(index, value)
-        }
+ , CusInnerApply17[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17  ]]]
     
-        implicit def helperIOImplicit18[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit18[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -734,7 +687,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply18[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply18[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18  ]] = HelperIOImpl18.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -770,12 +723,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply18[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18  ]
-            override def helper(index: Int, value: Any): CusInnerApply18[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18  ] = new CusInnerApply18(index, value)
-        }
+ , CusInnerApply18[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18  ]]]
     
-        implicit def helperIOImplicit19[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit19[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -813,7 +763,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply19[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply19[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19  ]] = HelperIOImpl19.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -851,12 +801,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply19[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19  ]
-            override def helper(index: Int, value: Any): CusInnerApply19[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19  ] = new CusInnerApply19(index, value)
-        }
+ , CusInnerApply19[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19  ]]]
     
-        implicit def helperIOImplicit20[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit20[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -896,7 +843,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply20[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply20[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20  ]] = HelperIOImpl20.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -936,12 +883,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply20[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20  ]
-            override def helper(index: Int, value: Any): CusInnerApply20[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20  ] = new CusInnerApply20(index, value)
-        }
+ , CusInnerApply20[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20  ]]]
     
-        implicit def helperIOImplicit21[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20   ,  I21  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit21[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20   ,  I21  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -983,7 +927,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply21[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20   ,  I21  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply21[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20   ,  I21  ]] = HelperIOImpl21.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -1025,12 +969,9 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply21[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20   ,  I21  ]
-            override def helper(index: Int, value: Any): CusInnerApply21[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20   ,  I21  ] = new CusInnerApply21(index, value)
-        }
+ , CusInnerApply21[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20   ,  I21  ]]]
     
-        implicit def helperIOImplicit22[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20   ,  I21   ,  I22  ]: HelperIO.Aux[TypeMapping[A,  
+        @inline implicit def helperIOImplicit22[A,    I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20   ,  I21   ,  I22  ]: HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -1074,7 +1015,7 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ], CusInnerApply22[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20   ,  I21   ,  I22  ]] = new HelperIO[TypeMapping[A,  
+ , CusInnerApply22[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20   ,  I21   ,  I22  ]] = HelperIOImpl22.asInstanceOf[HelperIO.Aux[ 
     HlistTypeMappingPositive[I1,  
     HlistTypeMappingPositive[I2,  
     HlistTypeMappingPositive[I3,  
@@ -1118,9 +1059,6 @@ trait HelperIOImplicit {
  ]
  ]
  ]
- ]] {
-            override type Out = CusInnerApply22[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20   ,  I21   ,  I22  ]
-            override def helper(index: Int, value: Any): CusInnerApply22[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20   ,  I21   ,  I22  ] = new CusInnerApply22(index, value)
-        }
+ , CusInnerApply22[   I1   ,  I2   ,  I3   ,  I4   ,  I5   ,  I6   ,  I7   ,  I8   ,  I9   ,  I10   ,  I11   ,  I12   ,  I13   ,  I14   ,  I15   ,  I16   ,  I17   ,  I18   ,  I19   ,  I20   ,  I21   ,  I22  ]]]
     
 }
