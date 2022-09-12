@@ -5,7 +5,6 @@ import commons.lang3.bridge.HelperIO
 
 
 
-
 trait HelperIOImplicit {
     import InnerTypeMappingClass._
 

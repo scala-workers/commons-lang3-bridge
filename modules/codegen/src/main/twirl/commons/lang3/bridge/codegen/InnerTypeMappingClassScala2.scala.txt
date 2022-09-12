@@ -17,7 +17,7 @@ object InnerTypeMappingClass {
         }
         object HelperIOImpl@{i1} extends HelperIO[Any] {
             override type Out = CusInnerApply@{i1}[@paramTypeAny(1, i1)]
-            override def helper(index: Int, value: Any): CusInnerApply@{i1}[@paramTypeAny(1, i1)] = new CusInnerApply@{i1}(index, value)
+            @@inline override def helper(index: Int, value: Any): CusInnerApply@{i1}[@paramTypeAny(1, i1)] = new CusInnerApply@{i1}(index, value)
         }
     }
 }
