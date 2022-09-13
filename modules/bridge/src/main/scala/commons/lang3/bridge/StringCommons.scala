@@ -1,7 +1,7 @@
 package commons.lang3.bridge
 
+import commons.lang3.bridge.TypeMapping.alias._
 import org.apache.commons.lang3.{StringUtils => Strings}
-import TypeMapping.alias._
 
 import java.nio.charset.Charset
 import java.util.Locale
@@ -15,8 +15,9 @@ private object privateUtils {
     private object value extends SingleTypeMapApply[Any]
     @inline def get[U]: SingleTypeMapApply[U] = value.asInstanceOf[SingleTypeMapApply[U]]
   }
-  @inline def mapTo[O]: SingleTypeMapApply[O]                 = SingleTypeMapApply.get
-  @inline val mapToStrOpt: SingleTypeMapApply[Option[String]] = SingleTypeMapApply.get
+  @inline def mapTo[O]: SingleTypeMapApply[O]                      = SingleTypeMapApply.get
+  @inline val mapToStrOpt: SingleTypeMapApply[Option[String]]      = SingleTypeMapApply.get
+  @inline val mapToCsOpt: SingleTypeMapApply[Option[CharSequence]] = SingleTypeMapApply.get
 
   @FunctionalInterface
   trait SingleTypeMap[I, O] {
@@ -73,8 +74,8 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.abbreviate(*) = None
-    * None.abbreviate(4) = Some("")
+    * none.ops.abbreviate(*) = None
+    * none.abbreviate(4) = Some("")
     * Some("abcdefg").ops.abbreviate(6) = Some("abc...")
     * Some("abcdefg").ops.abbreviate(7) = Some("abcdefg")
     * Some("abcdefg").ops.abbreviate(8) = Some("abcdefg")
@@ -102,7 +103,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.abbreviate(*, *) = None
+    * none.ops.abbreviate(*, *) = None
     * Some("").ops.abbreviate(0, 4) = Some("")
     * Some("abcdefghijklmno").ops.abbreviate(-1, 10) = Some("abcdefg...")
     * Some("abcdefghijklmno").ops.abbreviate(0, 10) = Some("abcdefg...")
@@ -138,7 +139,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * of length greater than {@code maxWidth}.</li> </ul>
     *
     * {{{
-    * None.ops.abbreviate(Some("..."), *) = None
+    * none.ops.abbreviate(Some("..."), *) = None
     * Some("abcdefg")ops..abbreviate(None, *) = Some("abcdefg")
     * Some("")ops..abbreviate(Some("..."), 4) = Some("")
     * Some("abcdefg").ops.abbreviate(Some("."), 5) = Some("abcd.")
@@ -178,7 +179,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.abbreviate(None, *, *) = None
+    * none.ops.abbreviate(None, *, *) = None
     * Some("abcdefghijklmno").ops.abbreviate(None, *, *) = Some("abcdefghijklmno")
     * Some("").ops.abbreviate("...", 0, 4) = Some("")
     * Some("abcdefghijklmno").ops.abbreviate("---", -1, 10) = Some("abcdefg---")
@@ -223,7 +224,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.abbreviateMiddle(None, 0) = None
+    * none.ops.abbreviateMiddle(None, 0) = None
     * Some("abc").ops.abbreviateMiddle(None, 0) = Some("abc")
     * Some("abc")ops..abbreviateMiddle(".", 0) = Some("abc")
     * Some("abc").ops.abbreviateMiddle(".", 3) = Some("abc")
@@ -276,7 +277,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
   /** Appends the suffix to the end of the string if the string does not already end with any of the suffixes.
     *
     * {{{
-    * None.ops.appendIfMissing(None) = None
+    * none.ops.appendIfMissing(None) = None
     * Some("abc").ops.appendIfMissing(None) = Some("abc")
     * Some("").ops.appendIfMissing("xyz") = Some("xyz")
     * Some("abc").ops.appendIfMissing("xyz") = Some("abcxyz")
@@ -289,7 +290,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.appendIfMissing(None, None) = None
+    * none.ops.appendIfMissing(None, None) = None
     * Some("abc").ops.appendIfMissing(null, null) = Some("abc")
     * Some("").ops.appendIfMissing("xyz", null) = Some("xyz")
     * Some("abc").ops.appendIfMissing(Some("xyz"), new CharSequence[]{null}) = Some("abcxyz")
@@ -356,7 +357,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.center(*) = None
+    * none.ops.center(*) = None
     * Some("").ops.center(4) = Some(" ")
     * Some("ab").ops.center(-1) = Some("ab")
     * Some("ab").ops.center(4) = Some(" ab ")
@@ -379,7 +380,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.center(*, *) = None
+    * none.ops.center(*, *) = None
     * Some("").ops.center(4, ' ') = Some(" ")
     * Some("ab").ops.center(-1, ' ') = Some("ab")
     * Some("ab").ops.center(4, ' ') = Some(" ab ")
@@ -404,7 +405,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * treated as zero.</p>
     *
     * {{{
-    * None.center(*, *) = None
+    * none.center(*, *) = None
     * Some("").center(4, " ") = Some(" ")
     * Some("ab").center(-1, " ") = Some("ab")
     * Some("ab").center(4, " ") = Some(" ab ")
@@ -435,7 +436,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.chomp = None
+    * none.ops.chomp = None
     * Some("").ops.chomp = Some("")
     * Some("abc \r").ops.chomp = Some("abc ")
     * Some("abc\n").ops.chomp = Some("abc")
@@ -460,7 +461,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.chop = None
+    * none.ops.chop = None
     * Some("").ops.chop = Some("")
     * Some("abc \r").ops.chop = Some("abc ")
     * Some("abc\n").ops.chop = Some("abc")
@@ -488,8 +489,8 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * <p>{@code null} value is considered less than non-{@code null} value. Two {@code null} references are considered equal.</p>
     *
     * {{{
-    * None.ops.compare(null) = 0
-    * None.ops.compare("a") &lt; 0
+    * none.ops.compare(null) = 0
+    * none.ops.compare("a") &lt; 0
     * Some("a")).ops.compare(null) &gt; 0
     * "abc".ops.compare("abc") = 0
     * "a".ops.compare("b") &lt; 0
@@ -521,9 +522,9 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.compare(None, *) = 0
-    * None.ops.compare(Some("a"), true) &lt; 0
-    * None.ops.compare(Some("a"), false) &gt; 0
+    * none.ops.compare(None, *) = 0
+    * none.ops.compare(Some("a"), true) &lt; 0
+    * none.ops.compare(Some("a"), false) &gt; 0
     * Some("a").ops.compare(None, true) &gt; 0
     * Some("a").ops.compare(None, false) &lt; 0
     * Some("abc").ops.compare(Some("abc"), *) = 0
@@ -559,8 +560,8 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.compareToIgnoreCase(None) = 0
-    * None.ops.compareToIgnoreCase(None , "a") &lt; 0
+    * none.ops.compareToIgnoreCase(None) = 0
+    * none.ops.compareToIgnoreCase(None , "a") &lt; 0
     * Some("a").ops.compareToIgnoreCase(None) &gt; 0
     * Some("abc").ops.compareToIgnoreCase("abc") = 0
     * Some("abc").ops.compareToIgnoreCase("ABC") = 0
@@ -595,9 +596,9 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.compareToIgnoreCase(null, *) = 0
-    * None.ops.compareToIgnoreCase("a", true) > 0
-    * None.ops.compareToIgnoreCase("a", false) > 0
+    * none.ops.compareToIgnoreCase(null, *) = 0
+    * none.ops.compareToIgnoreCase("a", true) > 0
+    * none.ops.compareToIgnoreCase("a", false) > 0
     * "a".ops.compareToIgnoreCase(null, true) > 0
     * Some("a").ops.compareToIgnoreCase(None, false) < 0
     * "abc".ops.compareToIgnoreCase(Some("abc"), *) = 0
@@ -630,7 +631,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.contains(*) = false
+    * none.ops.contains(*) = false
     * *.ops.contains(None) = false
     * Some("").ops.contains("") = true
     * Some("abc").ops.contains("") = true
@@ -658,7 +659,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.contains(*) = false
+    * none.ops.contains(*) = false
     * Some("").ops.contains(*) = false
     * Some("abc").ops.contains('a') = true
     * Some("abc").ops.contains('z') = false
@@ -679,7 +680,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.contains(*) = false
+    * none.ops.contains(*) = false
     * Some("").ops.contains(*) = false
     * Some("abc").ops.contains('a') = true
     * Some("abc").ops.contains('z') = false
@@ -699,7 +700,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.containsAny(*) = false
+    * none.ops.containsAny(*) = false
     * Some("").ops.containsAny(*) = false
     * Option(*).ops.containsAny(None) = false
     * Option(*).ops.containsAny([]) = false
@@ -712,7 +713,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.containsAny(*) = false
+    * none.ops.containsAny(*) = false
     * Some("").ops.containsAny(*) = false
     * Option(*).ops.containsAny(None) = false
     * Option(*).ops.containsAny("") = false
@@ -769,7 +770,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.containsAnyIgnoreCase(, *) = false
+    * none.containsAnyIgnoreCase(, *) = false
     * "".ops.containsAnyIgnoreCase(*) = false
     * Some(*).ops.containsAnyIgnoreCase(null) = false
     * *.ops.containsAnyIgnoreCase([]) = false
@@ -815,7 +816,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.containsIgnoreCase(*) = false
+    * none.ops.containsIgnoreCase(*) = false
     * Option(*).ops.containsIgnoreCase(null) = false
     * Some("").ops.containsIgnoreCase("") = true
     * "abc".ops.containsIgnoreCase(Some("")) = true
@@ -847,7 +848,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.containsNone(*) = true
+    * none.ops.containsNone(*) = true
     * Option(*).ops.containsNone(null) = true
     * Some("").ops.containsNone(*) = true
     * "ab".ops.containsNone("") = true
@@ -873,7 +874,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.containsNone(*) = true
+    * none.ops.containsNone(*) = true
     * Option(*).ops.containsNone(None) = true
     * Some("").ops.containsNone(*) = true
     * "ab".ops.containsNone(Some("")) = true
@@ -897,7 +898,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.containsNone(*) = true
+    * none.ops.containsNone(*) = true
     * *.ops.containsNone(null) = true
     * "".ops.containsNone(*) = true
     * "ab".ops.containsNone('') = true
@@ -927,7 +928,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.containsOnly(*) = false
+    * none.ops.containsOnly(*) = false
     * *.ops.containsOnly(null) = false
     * "".ops.containsOnly(*) = true
     * Some("ab").ops.containsOnly("") = false
@@ -951,7 +952,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.containsOnly(*) = false
+    * none.ops.containsOnly(*) = false
     * *.ops.containsOnly(None) = false
     * "".ops.containsOnly(*) = true
     * Some("ab").ops.containsOnly(Some("")) = false
@@ -975,7 +976,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.containsOnly(*) = false
+    * none.ops.containsOnly(*) = false
     * *.ops.containsOnly(null) = false
     * Some("").containsOnly(*) = true
     * "ab".ops.containsOnly('') = false
@@ -1013,7 +1014,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * None.ops.countMatches(*) = 0
+    * none.ops.countMatches(*) = 0
     * "".ops.countMatches(*) = 0
     * "abba".ops.countMatches(0) = 0
     * "abba".ops.countMatches('a') = 2
@@ -1035,14 +1036,14 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * StringUtils.countMatches(null, *) = 0
-    * StringUtils.countMatches("", *) = 0
-    * StringUtils.countMatches("abba", null) = 0
-    * StringUtils.countMatches("abba", "") = 0
-    * StringUtils.countMatches("abba", "a") = 2
-    * StringUtils.countMatches("abba", "ab") = 1
-    * StringUtils.countMatches("abba", "xxx") = 0
-    * StringUtils.countMatches("ababa", "aba") = 1
+    * none.ops.countMatches(*) = 0
+    * "".ops.countMatches(*) = 0
+    * "abba".ops.countMatches(null) = 0
+    * "abba".ops.countMatches("") = 0
+    * "abba".ops.countMatches("a") = 2
+    * "abba".ops.countMatches("ab") = 1
+    * "abba".ops.countMatches("xxx") = 0
+    * "ababa".ops.countMatches("aba") = 1
     *
     * }}}
     *
@@ -1066,14 +1067,14 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     *
     * {{{
     *
-    * StringUtils.countMatches(null, *) = 0
-    * StringUtils.countMatches("", *) = 0
-    * StringUtils.countMatches("abba", null) = 0
-    * StringUtils.countMatches("abba", "") = 0
-    * StringUtils.countMatches("abba", "a") = 2
-    * StringUtils.countMatches("abba", "ab") = 1
-    * StringUtils.countMatches("abba", "xxx") = 0
-    * StringUtils.countMatches("ababa", "aba") = 1
+    * none.ops.countMatches(*) = 0
+    * "".ops.countMatches(*) = 0
+    * "abba".ops.countMatches(null) = 0
+    * "abba".ops.countMatches("") = 0
+    * "abba".ops.countMatches("a") = 2
+    * "abba".ops.countMatches("ab") = 1
+    * "abba".ops.countMatches("xxx") = 0
+    * "ababa".ops.countMatches("aba") = 1
     *
     * }}}
     *
@@ -1092,41 +1093,156 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     result
   }
 
+  /** Returns either the passed in CharSequence, or if the CharSequence is empty or {@code null}, the value of {@code defaultStr}.
+    *
+    * {{{
+    * none.ops.defaultIfEmpty("NULL")  = "NULL"
+    * "".ops.defaultIfEmpty("NULL")    = "NULL"
+    * " ".ops.defaultIfEmpty("NULL")   = " "
+    * "bat".ops.defaultIfEmpty("NULL") = "bat"
+    * "".ops.defaultIfEmpty(null)      = null
+    * }}}
+    *
+    * @param defaultStr
+    *   the default CharSequence to return
+    * @tparam S
+    *   CharSequence or Option[CharSequence]
+    * @return
+    *   the passed in CharSequence, or the default
+    */
   def defaultIfEmpty[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](defaultStr: S): CharSequence = {
     val str1   = mapTo[Option[CharSequence]].input(defaultStr).orNull
     val result = Strings.defaultIfEmpty(strOrNull, str1)
     result
   }
 
+  /** <p>Returns either the passed in String, or if the String is {@code null}, an empty String ("").</p>
+    *
+    * {{{
+    * none.ops.defaultString  = ""
+    * "".ops.defaultString    = ""
+    * "bat".ops.defaultString = "bat"
+    * }}}
+    *
+    * @return
+    *   the passed in String, or the empty String if it
+    */
   def defaultString: String = Strings.defaultString(strOrNull)
 
+  /** <p>Returns either the passed in String, or if the String is {@code null}, the value of {@code defaultStr}.</p>
+    *
+    * {{{
+    * none.ops.defaultString("NULL")  = "NULL"
+    * "".ops.defaultString("NULL")    = ""
+    * "bat".ops.defaultString("NULL") = "bat"
+    * }}}
+    *
+    * @param defaultStr
+    *   the default String to return
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   the passed in String, or the default if it was {@code null}
+    */
   def defaultString[S: TypeOptions2[*, String, Option[String]]](defaultStr: S): String = {
     val str1   = mapToStrOpt.input(defaultStr).orNull
     val result = Strings.defaultString(strOrNull, str1)
     result
   }
 
-  def orDefault: Option[String] = Some(Strings.defaultString(strOrNull))
-
-  def orDefault[S: TypeOptions2[*, String, Option[String]]](defaultStr: S): Option[String] = {
-    val str1   = mapToStrOpt.input(defaultStr).orNull
-    val result = Strings.defaultString(strOrNull, str1)
-    Option(result)
-  }
-
+  /** <p>Deletes all whitespaces from a String as defined by {@link Character# isWhitespace ( char )}.</p>
+    *
+    * {{{
+    * null.ops.deleteWhitespace()         = null
+    * "".ops.deleteWhitespace()           = ""
+    * "abc".ops.deleteWhitespace()        = "abc"
+    * "   ab  c  ".ops.deleteWhitespace() = "abc"
+    * }}}
+    *
+    * @return
+    *   the String to delete whitespace from, may be null
+    */
   def deleteWhitespace(): Option[String] = strOpt.map(Strings.deleteWhitespace)
 
+  /** <p>Compares two Strings, and returns the portion where they differ. More precisely, return the remainder of the second String,
+    * starting from where it's different from the first. This means that the difference between "abc" and "ab" is the empty String and not
+    * "c". </p>
+    *
+    * <p>For example, {@code "i am a machine".ops.difference("i am a robot") -> "robot"}.</p>
+    *
+    * {{{
+    * none.ops.difference(null) = null
+    * "".ops.difference("") = ""
+    * "".ops.difference("abc") = "abc"
+    * "abc".ops.difference("") = ""
+    * "abc".ops.difference("abc") = ""
+    * "abc".ops.difference("ab") = ""
+    * "ab".ops.difference("abxyz") = "xyz"
+    * "abcde".ops.difference("abxyz") = "xyz"
+    * "abcde".ops.difference("xyz") = "xyz"
+    * }}}
+    *
+    * @param other
+    *   the other String, may be null or Option
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   the portion of str2 where it differs from str1; returns the empty String if they are equal
+    */
   def difference[S: TypeOptions2[*, String, Option[String]]](other: S): Option[String] = {
     val str1   = mapToStrOpt.input(other).orNull
     val result = Strings.difference(strOrNull, str1)
     Option(result)
   }
 
+  /** <p>Check if a CharSequence ends with a specified suffix.</p>
+    *
+    * <p>{@code null}s are handled without exceptions. Two {@code null} references are considered to be equal. The comparison is case
+    * sensitive.</p>
+    *
+    * {{{
+    * none.ops.endsWith(null)      = true
+    * null.ops.endsWith("def")     = false
+    * "abcdef".ops.endsWith(null)  = false
+    * "abcdef".ops.endsWith("def") = true
+    * "ABCDEF".ops.endsWith("def") = false
+    * "ABCDEF".ops.endsWith("cde") = false
+    * "ABCDEF".ops.endsWith("")    = true
+    * }}}
+    *
+    * @param suffix
+    *   the suffix to find, may be null
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   if the CharSequence ends with the suffix, case sensitive, or both {@code null}
+    */
   def endsWith[S: TypeOptions2[*, String, Option[String]]](suffix: S): Boolean = {
     val str1 = mapToStrOpt.input(suffix).orNull
     Strings.endsWith(strOrNull, str1)
   }
 
+  /** <p>Check if a CharSequence ends with any of the provided case-sensitive suffixes.</p>
+    *
+    * {{{
+    * none.ops.endsWithAny(null)      = false
+    * null.ops.endsWithAny(new String[] {"abc"})  = false
+    * "abcxyz".ops.endsWithAny(null)     = false
+    * "abcxyz".ops.endsWithAny(new String[] {""}) = true
+    * "abcxyz".ops.endsWithAny(new String[] {"xyz"}) = true
+    * "abcxyz".ops.endsWithAny(new String[] {null, "xyz", "abc"}) = true
+    * "abcXYZ".ops.endsWithAny("def", "XYZ") = true
+    * "abcXYZ".ops.endsWithAny("def", "xyz") = false
+    * }}}
+    *
+    * @param searchStrings
+    *   the case-sensitive CharSequences to find, may be empty or contain {@code null}
+    * @tparam S
+    *   CharSequence or Option[CharSequence]
+    * @return
+    *   {@code true} if the input {@code sequence} is {@code null} AND no {@code searchStrings} are provided, or the input {@code sequence}
+    *   ends in any of the provided case-sensitive {@code searchStrings}.
+    */
   def endsWithAny[S: TypeOptions2F[Seq, *, Seq[CharSequence], Seq[Option[CharSequence]]]](searchStrings: S*): Boolean = {
     def mapping                                    = TypeMapping.getMapping[TypeOptions2[*, Seq[CharSequence], Seq[Option[CharSequence]]]]
     def dealWithSeqString(strs: Seq[CharSequence]) = Strings.endsWithAny(strOrNull, strs: _*)
@@ -1137,11 +1253,74 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
       mapping.input(searchStrings).fold(dealWithSeqString, s => dealWithSeqString(mapTo[Seq[CharSequence]].input(s)))
   }
 
-  def endsWithIgnoreCase[S: TypeOptions2[*, String, Option[String]]](suffix: S): Boolean = {
-    val str1 = mapToStrOpt.input(suffix).orNull
-    Strings.endsWithIgnoreCase(strOrNull, str1)
+  /** <p>Case insensitive check if a CharSequence ends with a specified suffix.</p>
+    *
+    * <p>{@code null}s are handled without exceptions. Two {@code null} references are considered to be equal. The comparison is case
+    * insensitive.</p>
+    *
+    * {{{
+    * none.ops.endsWithIgnoreCase(null)      = true
+    * null.ops.endsWithIgnoreCase("def")     = false
+    * "abcdef".ops.endsWithIgnoreCase(null)  = false
+    * "abcdef".ops.endsWithIgnoreCase("def") = true
+    * "ABCDEF".ops.endsWithIgnoreCase("def") = true
+    * "ABCDEF".ops.endsWithIgnoreCase("cde") = false
+    * }}}
+    *
+    * @param suffix
+    *   the suffix to find, may be null
+    * @tparam S
+    *   CharSequence Or Option[CharSequence]
+    * @return
+    *   {@code true} if the CharSequence ends with the suffix, case insensitive, or both {@code null}
+    */
+  def endsWithIgnoreCase[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](suffix: S): Boolean = {
+    val str2 = mapToCsOpt.input(suffix).orNull
+    Strings.endsWithIgnoreCase(strOrNull, str2)
   }
 
+  /** * <p>Compares two CharSequences, returning {@code true} if they represent equal sequences of characters.</p>
+    *
+    * NOTE: I package it just for symmetry. We have equals ignore case, so we should have queals. But the semantic of ops's equals method
+    * has a little strange smell. em...
+    *
+    * Please use buildin equals in Object, or static equals method in commons string utils or Objects type as far as possible.
+    *
+    * <p>{@code null}s are handled without exceptions. Two {@code null} references are considered to be equal. The comparison is
+    * <strong>case sensitive</strong>.</p>
+    *
+    * <pre> none.ops.equals(null) = true none.ops.equals("abc") = false "abc".ops.equals(null) = false "abc".ops.equals("abc") = true
+    * "abc".ops.equals("ABC") = false </pre>
+    *
+    * @param other
+    * @tparam S
+    * @return
+    */
+  def equals[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](other: S): Boolean = {
+    val str2 = mapToCsOpt.input(other).orNull
+    Strings.endsWithIgnoreCase(strOrNull, str2)
+  }
+
+  /** * <p>Compares given {@code string} to a CharSequences vararg of {@code searchStrings}, returning {@code true} if the {@code string} is
+    * equal to any of the {@code searchStrings}.</p>
+    *
+    * {{{
+    * StringUtils.equalsAny(null, (CharSequence[]) null) = false
+    * StringUtils.equalsAny(null, null, null)    = true
+    * StringUtils.equalsAny(null, "abc", "def")  = false
+    * StringUtils.equalsAny("abc", null, "def")  = false
+    * StringUtils.equalsAny("abc", "abc", "def") = true
+    * StringUtils.equalsAny("abc", "ABC", "DEF") = false
+    * }}}
+    *
+    * @param searchStrings
+    *   a vararg of strings, may be {@code null}.
+    * @tparam S
+    *   CharSequence or Option[CharSequence]
+    * @return
+    *   {@code true} if the string is equal (case-sensitive) to any other element of {@code searchStrings}; {@code false} if {@code
+    *   searchStrings} is null or contains no matches.
+    */
   def equalsAnyIgnoreCase[S: TypeOptions2F[Seq, *, Seq[CharSequence], Seq[Option[CharSequence]]]](searchStrings: S*): Boolean = {
     def mapping                                    = TypeMapping.getMapping[TypeOptions2[*, Seq[CharSequence], Seq[Option[CharSequence]]]]
     def dealWithSeqString(strs: Seq[CharSequence]) = Strings.equalsAnyIgnoreCase(strOrNull, strs: _*)
@@ -1152,11 +1331,37 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
       mapping.input(searchStrings).fold(dealWithSeqString, s => dealWithSeqString(mapTo[Seq[CharSequence]].input(s)))
   }
 
-  def equalsIgnoreCase[S: TypeOptions2[*, String, Option[String]]](other: S): Boolean = {
-    val str1 = mapToStrOpt.input(other).orNull
+  /** <p>Compares two CharSequences, returning {@code true} if they represent equal sequences of characters, ignoring case.</p>
+    *
+    * <p>{@code null}s are handled without exceptions. Two {@code null} references are considered equal. The comparison is <strong>case
+    * insensitive</strong>.</p>
+    *
+    * {{{
+    * none.ops.equalsIgnoreCase(null)   = true
+    * null.ops.equalsIgnoreCase("abc")  = false
+    * "abc".ops.equalsIgnoreCase(null)  = false
+    * "abc".ops.equalsIgnoreCase("abc") = true
+    * "abc".ops.equalsIgnoreCase("ABC") = true
+    * }}}
+    *
+    * @param other
+    *   the other CharSequence, may be {@code null}
+    * @tparam S
+    * @return
+    */
+  def equalsIgnoreCase[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](other: S): Boolean = {
+    val str1 = mapToCsOpt.input(other).orNull
     Strings.equalsIgnoreCase(strOrNull, str1)
   }
 
+  /** Calls {@link String#getBytes(Charset)} in a null-safe manner.
+    * @param charset
+    *   The {@link Charset} to encode the {@code String}. If null, then use the default Charset.
+    * @tparam C
+    *   Charset or Option[CharSet]
+    * @return
+    *   The empty byte[] if {@code string} is null, the result of {@link String# getBytes ( Charset )} otherwise.
+    */
   def getBytes[C: TypeOptions4[*, Charset, Option[Charset], String, Option[String]]](charset: C): Array[Byte] = {
     val mapping = TypeMapping.getMapping[TypeOptions4[*, Charset, Option[Charset], String, Option[String]]]
 
@@ -1175,8 +1380,48 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
       )
   }
 
+  /** <p>Checks if a String {@code str} contains Unicode digits, if yes then concatenate all the digits in {@code str} and return it as a
+    * String.</p>
+    *
+    * <p>An empty ("") String will be returned if no digits found in {@code str}.</p>
+    *
+    * {{{
+    * none.ops.getDigits  = null
+    * "".ops.getDigits    = ""
+    * "abc".ops.getDigits = ""
+    * "1000$".ops.getDigits = "1000"
+    * "1123~45".ops.getDigits = "112345"
+    * "(541) 754-3010".ops.getDigits = "5417543010"
+    * "\u0967\u0968\u0969".ops.getDigits = "\u0967\u0968\u0969"
+    * }}}
+    *
+    * @return
+    */
   def getDigits: String = Strings.getDigits(strOrNull)
 
+  /** <p>Returns either the passed in CharSequence, or if the CharSequence is whitespace, empty ("") or {@code null}, the value supplied by
+    * {@code defaultStrSupplier}.</p>
+    *
+    * <p>Whitespace is defined by {@link Character# isWhitespace ( char )}.</p>
+    *
+    * <p>Caller responsible for thread-safety and exception handling of default value supplier</p>
+    *
+    * {{{
+    *
+    * StringUtils.getIfBlank(null, () -> "NULL")   = "NULL"
+    * StringUtils.getIfBlank("", () -> "NULL")     = "NULL"
+    * StringUtils.getIfBlank(" ", () -> "NULL")    = "NULL"
+    * StringUtils.getIfBlank("bat", () -> "NULL")  = "bat"
+    * StringUtils.getIfBlank("", () -> null)       = null
+    * StringUtils.getIfBlank("", null)             = null
+    * }}}
+    * @param defaultSupplier
+    *   the supplier of default CharSequence to return
+    * @tparam S
+    *   CharSequence or Option[CharSequence]
+    * @return
+    *   the passed in CharSequence, or the default
+    */
   def getIfBlank[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](defaultSupplier: Supplier[S]): CharSequence =
     if (defaultSupplier == null) Strings.getIfBlank(strOrNull, null)
     else {
@@ -1184,6 +1429,29 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
       Strings.getIfBlank(strOrNull, supplier)
     }
 
+  /** <p>Returns either the passed in CharSequence, or if the CharSequence is empty or {@code null}, the value supplied by {@code
+    * defaultStrSupplier}.
+    *
+    * <p>Caller responsible for thread-safety and exception handling of default value supplier</p>
+    *
+    * {{{
+    *
+    * null.ops.getIfEmpty(() =>"NULL")    = "NULL"
+    * "".ops.getIfEmpty(() -> "NULL")      = "NULL"
+    * " ".ops.getIfEmpty(() -> "NULL")     = " "
+    * "bat".ops.getIfEmpty(() -> "NULL")   = "bat"
+    * "".ops.getIfEmpty(() -> null)        = null
+    * "".ops.getIfEmpty(null)              = null
+    *
+    * }}}
+    *
+    * @param defaultSupplier
+    *   the supplier of default CharSequence to return
+    * @tparam S
+    *   CharSequence or Option[CharSequence]
+    * @return
+    *   the passed in CharSequence, or the default
+    */
   def getIfEmpty[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](defaultSupplier: Supplier[S]): CharSequence =
     if (defaultSupplier == null) Strings.getIfEmpty(strOrNull, null)
     else {
@@ -1191,35 +1459,253 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
       Strings.getIfEmpty(strOrNull, supplier)
     }
 
-  def indexOf[S: TypeOptions2[*, String, Option[String]]](searchSeq: S): Int = {
-    val str1 = mapToStrOpt.input(searchSeq).orNull
+  /** <p>Finds the first index within a CharSequence, handling {@code null}. This method uses {@link String# indexOf ( String, int)} if
+    * possible.</p>
+    *
+    * <p>A {@code null} CharSequence will return {@code -1}.</p>
+    *
+    * {{{
+    *
+    * none.ops.indexOf(*) = -1
+    * *.ops.indexOf(null) = -1
+    * "".ops.indexOf("") = 0
+    * "".ops.indexOf(*) = -1 (except when * = "")
+    * "aabaabaa".ops.indexOf("a") = 0
+    * "aabaabaa".ops.indexOf("b") = 2
+    * "aabaabaa".ops.indexOf("ab") = 1
+    * "aabaabaa".ops.indexOf("") = 0
+    * }}}
+    *
+    * @param searchSeq
+    *   the CharSequence to find, may be null
+    * @tparam S
+    *   CharSequence or Option[CharSequence]
+    * @return
+    *   the first index of the search CharSequence,
+    * -1 if no match or {@code null} string input
+    */
+  def indexOf[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](searchSeq: S): Int = {
+    val str1 = mapToCsOpt.input(searchSeq).orNull
     Strings.indexOf(strOrNull, str1)
   }
 
-  def indexOf[S: TypeOptions2[*, String, Option[String]]](searchSeq: S, startPos: Int): Int = {
-    val str1 = mapToStrOpt.input(searchSeq).orNull
+  /** <p>Finds the first index within a CharSequence, handling {@code null}. This method uses {@link String# indexOf ( String, int)} if
+    * possible.</p>
+    *
+    * <p>A {@code null} CharSequence will return {@code -1}. A negative start position is treated as zero. An empty ("") search CharSequence
+    * always matches. A start position greater than the string length only matches an empty search CharSequence.</p>
+    *
+    * {{{
+    * none.ops.indexOf(*, *)          = -1
+    * *.ops.indexOf(null, *)          = -1
+    * "".ops.indexOf("", 0)           = 0
+    * "".ops.indexOf(*, 0)            = -1 (except when * = "")
+    * "aabaabaa".ops.indexOf("a", 0)  = 0
+    * "aabaabaa".ops.indexOf("b", 0)  = 2
+    * "aabaabaa".ops.indexOf("ab", 0) = 1
+    * "aabaabaa".ops.indexOf("b", 3)  = 5
+    * "aabaabaa".ops.indexOf("b", 9)  = -1
+    * "aabaabaa".ops.indexOf("b", -1) = 2
+    * "aabaabaa".ops.indexOf("", 2)   = 2
+    * "abc".ops.indexOf("", 9)        = 3
+    * }}}
+    *
+    * @param searchSeq
+    *   the CharSequence to find, may be null
+    * @param startPos
+    *   the start position, negative treated as zero
+    * @tparam S
+    *   CharSequence or Option[CharSequence]
+    * @return
+    *   the first index of the search CharSequence (always &ge; startPos),
+    * -1 if no match or {@code null} string input
+    */
+  def indexOf[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](searchSeq: S, startPos: Int): Int = {
+    val str1 = mapToCsOpt.input(searchSeq).orNull
     Strings.indexOf(strOrNull, str1, startPos)
   }
 
+  /** Returns the index within {@code seq} of the first occurrence of the specified character. If a character with value {@code searchChar}
+    * occurs in the character sequence represented by {@code seq} {@code CharSequence} object, then the index (in Unicode code units) of the
+    * first such occurrence is returned. For values of {@code searchChar} in the range from 0 to 0xFFFF (inclusive), this is the smallest
+    * value <i>k</i> such that:
+    * {{{
+    * this.charAt(<i>k</i>) == searchChar
+    * }}}
+    * is true. For other values of {@code searchChar}, it is the smallest value <i>k</i> such that:
+    * {{{
+    * this.codePointAt(<i>k</i>) == searchChar
+    * }}}
+    * is true. In either case, if no such character occurs in {@code seq}, then {@code INDEX_NOT_FOUND (-1)} is returned.
+    *
+    * <p>Furthermore, a {@code null} or empty ("") CharSequence will return {@code INDEX_NOT_FOUND (-1)}.</p>
+    *
+    * {{{
+    * StringUtils.indexOf(null, *)         = -1
+    * StringUtils.indexOf("", *)           = -1
+    * StringUtils.indexOf("aabaabaa", 'a') = 0
+    * StringUtils.indexOf("aabaabaa", 'b') = 2
+    * }}}
+    *
+    * @param searchChar
+    *   the character to find
+    * @return
+    *   the first index of the search character,
+    * -1 if no match or {@code null} string input
+    */
   def indexOf(searchChar: Char): Int = Strings.indexOf(strOrNull, searchChar)
 
+  /** Returns the index within {@code seq} of the first occurrence of the specified character. If a character with value {@code searchChar}
+    * occurs in the character sequence represented by {@code seq} {@code CharSequence} object, then the index (in Unicode code units) of the
+    * first such occurrence is returned. For values of {@code searchChar} in the range from 0 to 0xFFFF (inclusive), this is the smallest
+    * value <i>k</i> such that:
+    * {{{
+    * this.charAt(<i>k</i>) == searchChar
+    * }}}
+    * is true. For other values of {@code searchChar}, it is the smallest value <i>k</i> such that:
+    * {{{
+    * this.codePointAt(<i>k</i>) == searchChar
+    * }}}
+    * is true. In either case, if no such character occurs in {@code seq}, then {@code INDEX_NOT_FOUND (-1)} is returned.
+    *
+    * <p>Furthermore, a {@code null} or empty ("") CharSequence will return {@code INDEX_NOT_FOUND (-1)}.</p>
+    *
+    * {{{
+    * StringUtils.indexOf(null, *)         = -1
+    * StringUtils.indexOf("", *)           = -1
+    * StringUtils.indexOf("aabaabaa", 'a') = 0
+    * StringUtils.indexOf("aabaabaa", 'b') = 2
+    * }}}
+    *
+    * @param searchChar
+    *   the character to find
+    * @return
+    *   the first index of the search character,
+    * -1 if no match or {@code null} string input
+    */
   def indexOf(searchChar: Int): Int = Strings.indexOf(strOrNull, searchChar)
 
+  /** Returns the index within {@code seq} of the first occurrence of the specified character, starting the search at the specified index.
+    * <p> If a character with value {@code searchChar} occurs in the character sequence represented by the {@code seq} {@code CharSequence}
+    * object at an index no smaller than {@code startPos}, then the index of the first such occurrence is returned. For values of {@code
+    * searchChar} in the range from 0 to 0xFFFF (inclusive), this is the smallest value <i>k</i> such that:
+    * {{{
+    * (this.charAt(<i>k</i>) == searchChar) &amp;&amp; (<i>k</i> >= startPos)
+    * }}}
+    * is true. For other values of {@code searchChar}, it is the smallest value <i>k</i> such that:
+    * {{{
+    * (this.codePointAt(<i>k</i>) == searchChar) && (<i>k</i> >= startPos)
+    * }}}
+    * is true. In either case, if no such character occurs in {@code seq} at or after position {@code startPos}, then {@code -1} is
+    * returned.
+    *
+    * <p> There is no restriction on the value of {@code startPos}. If it is negative, it has the same effect as if it were zero: this
+    * entire string may be searched. If it is greater than the length of this string, it has the same effect as if it were equal to the
+    * length of this string: {@code (INDEX_NOT_FOUND) -1} is returned. Furthermore, a {@code null} or empty ("") CharSequence will return
+    * {@code (INDEX_NOT_FOUND) -1}.
+    *
+    * <p>All indices are specified in {@code char} values (Unicode code units).
+    *
+    * {{{
+    * none.ops.indexof(*, *)          = -1
+    * "".ops.indexof(*, *)            = -1
+    * "aabaabaa".ops.indexOf('b', 0)  = 2
+    * "aabaabaa".ops.indexOf('b', 3)  = 5
+    * "aabaabaa".ops.indexOf('b', 9)  = -1
+    * "aabaabaa".ops.indexOf'b', -1)  = 2
+    * }}}
+    *
+    * @param searchChar
+    *   the character to find
+    * @param startPos
+    *   the start position, negative treated as zero
+    * @return
+    *   the first index of the search character (always &ge; startPos),
+    * -1 if no match or {@code null} string input
+    */
   def indexOf(searchChar: Char, startPos: Int): Int = Strings.indexOf(strOrNull, searchChar, startPos)
 
+  /** Returns the index within {@code seq} of the first occurrence of the specified character, starting the search at the specified index.
+    * <p> If a character with value {@code searchChar} occurs in the character sequence represented by the {@code seq} {@code CharSequence}
+    * object at an index no smaller than {@code startPos}, then the index of the first such occurrence is returned. For values of {@code
+    * searchChar} in the range from 0 to 0xFFFF (inclusive), this is the smallest value <i>k</i> such that:
+    * {{{
+    * (this.charAt(<i>k</i>) == searchChar) &amp;&amp; (<i>k</i> >= startPos)
+    * }}}
+    * is true. For other values of {@code searchChar}, it is the smallest value <i>k</i> such that:
+    * {{{
+    * (this.codePointAt(<i>k</i>) == searchChar) && (<i>k</i> >= startPos)
+    * }}}
+    * is true. In either case, if no such character occurs in {@code seq} at or after position {@code startPos}, then {@code -1} is
+    * returned.
+    *
+    * <p> There is no restriction on the value of {@code startPos}. If it is negative, it has the same effect as if it were zero: this
+    * entire string may be searched. If it is greater than the length of this string, it has the same effect as if it were equal to the
+    * length of this string: {@code (INDEX_NOT_FOUND) -1} is returned. Furthermore, a {@code null} or empty ("") CharSequence will return
+    * {@code (INDEX_NOT_FOUND) -1}.
+    *
+    * <p>All indices are specified in {@code char} values (Unicode code units).
+    *
+    * {{{
+    * none.ops.indexof(*, *)          = -1
+    * "".ops.indexof(*, *)            = -1
+    * "aabaabaa".ops.indexOf('b', 0)  = 2
+    * "aabaabaa".ops.indexOf('b', 3)  = 5
+    * "aabaabaa".ops.indexOf('b', 9)  = -1
+    * "aabaabaa".ops.indexOf'b', -1)  = 2
+    * }}}
+    *
+    * @param searchChar
+    *   the character to find
+    * @param startPos
+    *   the start position, negative treated as zero
+    * @return
+    *   the first index of the search character (always &ge; startPos),
+    * -1 if no match or {@code null} string input
+    */
   def indexOf(searchChar: Int, startPos: Int): Int = Strings.indexOf(strOrNull, searchChar, startPos)
 
-  def indexOfAny[S: TypeOptions4F[Seq, *, Seq[Char], Seq[CharSequence], Seq[Option[Char]], Seq[Option[CharSequence]]]: TypeOptions4[
-    *,
-    Char,
-    CharSequence,
-    Option[Char],
-    Option[SeqCharSequence]
-  ]](
+  /** <p>Search a CharSequence to find the first index of any character in the given set of characters.</p>
+    *
+    * <p>A {@code null} String will return {@code -1}. A {@code null} or zero length search array will return {@code -1}.</p>
+    *
+    * {{{
+    * null.ops.indexOfAny(*)                  = -1
+    * "".ops.indexOfAny(*)                    = -1
+    * *.ops.indexOfAny(null)                  = -1
+    * *.ops.indexOfAny([])                    = -1
+    * "zzabyycdxx".ops.indexOfAny('z', 'a') = 0
+    * "zzabyycdxx".ops.indexOfAny('b', 'y') = 3
+    * "aba", 'z')             = -1
+    *
+    * null.ops.indexOfAny(*)                      = -1
+    * *.ops.indexOfAny(null)                      = -1
+    * *.ops.indexOfAny([])                        = -1
+    * "zzabyycdxx".ops.indexOfAny("ab", "cd")   = 2
+    * "zzabyycdxx".ops.indexOfAny("cd", "ab")   = 2
+    * "zzabyycdxx".ops.indexOfAny("mn", "op")   = -1
+    * "zzabyycdxx".ops.indexOfAny("zab", "aby") = 1
+    * "zzabyycdxx".ops.indexOfAny("")           = 0
+    * "".ops.indexOfAny("")                     = 0
+    * "".ops.indexOfAny("a")                    = -1
+    * }}}
+    *
+    * @param searchArgs
+    *   the chars to search for, may be null
+    * @tparam S
+    *   varargs of Char, CharSequence, Option[Char] or Option[CharSequence]
+    * @return
+    *   the index of any of the chars, -1 if no match or null input
+    */
+  def indexOfAny[
+    S: TypeOptions3F[Seq, *, Seq[Char], Seq[CharSequence], Seq[Option[CharSequence]]]: TypeOptions3[*, Char, CharSequence, Option[
+      SeqCharSequence
+    ]]
+  ](
     searchArgs: S*
   ): Int = {
-    def seqMapping  = TypeMapping.getMapping[TypeOptions4[*, Seq[Char], Seq[CharSequence], Seq[Option[Char]], Seq[Option[CharSequence]]]]
-    def charMapping = TypeMapping.getMapping[TypeOptions4[*, Char, CharSequence, Option[Char], Option[SeqCharSequence]]]
+    def seqMapping  = TypeMapping.getMapping[TypeOptions3[*, Seq[Char], Seq[CharSequence], Seq[Option[CharSequence]]]]
+    def charMapping = TypeMapping.getMapping[TypeOptions3[*, Char, CharSequence, Option[SeqCharSequence]]]
     def indexOfNull = Strings.indexOfAny(strOrNull, null)
 
     def dealWithSeqChar(chars: Seq[Char])             = Strings.indexOfAny(strOrNull, chars: _*)
@@ -1235,7 +1721,6 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
         .fold(
           dealWithChar,
           dealWithString,
-          opt => opt.map(dealWithChar).getOrElse(indexOfNull),
           opt => opt.map(dealWithString).getOrElse(indexOfNull)
         )
     else
@@ -1244,47 +1729,160 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
         .fold(
           dealWithSeqChar,
           dealWithSeqString,
-          s => dealWithSeqChar(mapTo[Seq[Char]].input(s)),
           s => dealWithSeqString(mapTo[Seq[CharSequence]].input(s))
         )
   }
 
-  // 实现存疑，Tag，osc.head.get 可能抛异常
-  def indexOfAnyBut[S: TypeOptions2F[Seq, *, Seq[Char], Seq[Option[Char]]]](searchChars: S*): Int = {
-    def mapping = TypeMapping.getMapping[TypeOptions2[*, Seq[Char], Seq[Option[Char]]]]
+  /** <p>Searches a CharSequence to find the first index of any character not in the given set of characters.</p>
+    *
+    * <p>A {@code null} CharSequence will return {@code -1}. A {@code null} or zero length search array will return {@code -1}.</p>
+    *
+    * {{{
+    * none.ops.indexOfAnyBut(*)                              = -1
+    * "".ops.indexOfAnyBut(*)                                = -1
+    * *.ops.indexOfAnyBut(null)                              = -1
+    * *.ops.indexOfAnyBut([])                                = -1
+    * "zzabyycdxx".ops.indexOfAnyBut('z', 'a') = 3
+    * "aba".ops.indexOfAnyBut('z')             = 0
+    * "aba".ops.indexOfAnyBut('a', 'b')        = -1
+    *
+    * }}}
+    *
+    * @param searchChars
+    *   the chars to search for, may be null
+    * @return
+    *   the index of any of the chars, -1 if no match or null input
+    */
+  def indexOfAnyBut(searchChars: Char*): Int = Strings.indexOfAnyBut(strOrNull, searchChars: _*)
 
-    if (searchChars == null) Strings.indexOfAnyBut(strOrNull, null)
-    else
-      mapping
-        .input(searchChars)
-        .fold(
-          chars =>
-            if (chars.length == 1) { Strings.indexOfAnyBut(strOrNull, chars.head) }
-            else { Strings.indexOfAnyBut(strOrNull, chars: _*) },
-          ocs =>
-            if (ocs.length == 1) {
-              Strings.indexOfAnyBut(strOrNull, ocs.head.get)
-            } else {
-              Strings.indexOfAnyBut(strOrNull, ocs.filter(_.isDefined).map(_.get): _*)
-            }
-        )
-  }
+  /** <p>Search a CharSequence to find the first index of any character not in the given set of characters.</p>
+    *
+    * <p>A {@code null} CharSequence will return {@code -1}. A {@code null} or empty search string will return {@code -1}.</p>
+    *
+    * {{{
+    * none.ops.indexOfAnyBut(*)            = -1
+    * "".ops.indexOfAnyBut(*)              = -1
+    * *.ops.indexOfAnyBut(null)            = -1
+    * *.ops.indexOfAnyBut("")              = -1
+    * "zzabyycdxx".ops.indexOfAnyBut("za") = 3
+    * "zzabyycdxx".ops.indexOfAnyBut("")   = -1
+    * "aba".ops.indexOfAnyBut("ab")        = -1
+    * }}}
+    *
+    * @param searchChars
+    *   the chars to search for, may be null
+    * @return
+    *   the index of any of the chars, -1 if no match or null input
+    */
+  def indexOfAnyBut(searchChars: String): Int = Strings.indexOfAnyBut(strOrNull, searchChars)
 
-  def indexOfAnyBut(searchChars: String): Int         = Strings.indexOfAnyBut(strOrNull, searchChars)
+  /** <p>Search a CharSequence to find the first index of any character not in the given set of characters.</p>
+    *
+    * <p>A {@code null} CharSequence will return {@code -1}. A {@code null} or empty search string will return {@code -1}.</p>
+    *
+    * {{{
+    * none.ops.indexOfAnyBut(*)            = -1
+    * "".ops.indexOfAnyBut(*)              = -1
+    * *.ops.indexOfAnyBut(null)            = -1
+    * *.ops.indexOfAnyBut("")              = -1
+    * "zzabyycdxx".ops.indexOfAnyBut("za") = 3
+    * "zzabyycdxx".ops.indexOfAnyBut("")   = -1
+    * "aba".ops.indexOfAnyBut("ab")        = -1
+    * }}}
+    *
+    * @param searchChars
+    *   the chars to search for, may be null
+    * @return
+    *   the index of any of the chars, -1 if no match or null input
+    */
   def indexOfAnyBut(searchChars: Option[String]): Int = Strings.indexOfAnyBut(strOrNull, searchChars.orNull)
 
-  def indexOfDifference[S: TypeOptions2[*, String, Option[String]]](cs: S): Int = {
-    val str1 = mapToStrOpt.input(cs).orNull
+  /** <p>Compares all CharSequences in an array and returns the index at which the CharSequences begin to differ.</p>
+    *
+    * <p>For example, {@code indexOfDifference(new String[] {"i am a machine", "i am a robot"}) -> 7}</p>
+    *
+    * {{{
+    *
+    * none.ops.indexOfDifference(null) = -1
+    * "".ops.indexOfDifference("") = -1
+    * "".ops.indexOfDifference("abc") = 0
+    * "abc".ops.indexOfDifference("") = 0
+    * "abc".ops.indexOfDifference("abc") = -1
+    * "ab".ops.indexOfDifference("abxyz") = 2
+    * "abcde".ops.indexOfDifference("abxyz") = 2
+    * "abcde".ops.indexOfDifference("xyz") = 0
+    * }}}
+    *
+    * @param cs
+    *   the second CharSequence, may be null
+    * @tparam S
+    *   CharSequence or Option[CharSequence]
+    * @return
+    *   the index where cs1 and cs2 begin to differ; -1 if they are equal
+    */
+  def indexOfDifference[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](cs: S): Int = {
+    val str1 = mapToCsOpt.input(cs).orNull
     Strings.indexOfDifference(strOrNull, str1)
   }
 
-  def indexOfIgnoreCase[S: TypeOptions2[*, String, Option[String]]](searchStr: S): Int = {
-    val str1 = mapToStrOpt.input(searchStr).orNull
+  /** <p>Case in-sensitive find of the first index within a CharSequence.</p>
+    *
+    * <p>A {@code null} CharSequence will return {@code -1}. A negative start position is treated as zero. An empty ("") search CharSequence
+    * always matches. A start position greater than the string length only matches an empty search CharSequence.</p>
+    *
+    * {{{
+    * null.ops.indexOfIgnoreCase(*)          = -1
+    * *.ops.indexOfIgnoreCase(null)          = -1
+    * "".ops.indexOfIgnoreCase("")           = 0
+    * "aabaabaa".ops.indexOfIgnoreCase("a")  = 0
+    * "aabaabaa".ops.indexOfIgnoreCase("b")  = 2
+    * "aabaabaa".ops.indexOfIgnoreCase("ab") = 1
+    * }}}
+    *
+    * @param searchStr
+    *   the CharSequence to find, may be null
+    * @tparam S
+    *   CharSequence or Option[CharSequence]
+    * @return
+    *   the first index of the search CharSequence,
+    * -1 if no match or {@code null} string input
+    */
+  def indexOfIgnoreCase[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](searchStr: S): Int = {
+    val str1 = mapToCsOpt.input(searchStr).orNull
     Strings.indexOfIgnoreCase(strOrNull, str1)
   }
 
-  def indexOfIgnoreCase[S: TypeOptions2[*, String, Option[String]]](searchStr: S, startPos: Int): Int = {
-    val str1 = mapToStrOpt.input(searchStr).orNull
+  /** <p>Case in-sensitive find of the first index within a CharSequence from the specified position.</p>
+    *
+    * <p>A {@code null} CharSequence will return {@code -1}. A negative start position is treated as zero. An empty ("") search CharSequence
+    * always matches. A start position greater than the string length only matches an empty search CharSequence.</p>
+    *
+    * {{{
+    * none.ops.indexOfIgnoreCase(*, *)          = -1
+    * *.ops.indexOfIgnoreCase(null, *)          = -1
+    * "".ops.indexOfIgnoreCase("", 0)           = 0
+    * "aabaabaa".ops.indexOfIgnoreCase("A", 0)  = 0
+    * "aabaabaa".ops.indexOfIgnoreCase("B", 0)  = 2
+    * "aabaabaa".ops.indexOfIgnoreCase("AB", 0) = 1
+    * "aabaabaa".ops.indexOfIgnoreCase("B", 3)  = 5
+    * "aabaabaa".ops.indexOfIgnoreCase("B", 9)  = -1
+    * "aabaabaa".ops.indexOfIgnoreCase("B", -1) = 2
+    * "aabaabaa".ops.indexOfIgnoreCase("", 2)   = 2
+    * "abc".ops.indexOfIgnoreCase("", 9)        = -1
+    * }}}
+    *
+    * @param searchStr
+    *   the CharSequence to find, may be null
+    * @param startPos
+    *   the start position, negative treated as zero
+    * @tparam S
+    *   CharSequence or Option[CharSequence]
+    * @return
+    *   the first index of the search CharSequence (always &ge; startPos),
+    * -1 if no match or {@code null} string input
+    */
+  def indexOfIgnoreCase[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](searchStr: S, startPos: Int): Int = {
+    val str1 = mapToCsOpt.input(searchStr).orNull
     Strings.indexOfIgnoreCase(strOrNull, str1, startPos)
   }
 
@@ -1682,7 +2280,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     Option(Strings.stripStart(strOrNull, chars))
   }
 
-  def stripToEmpty: String = Strings.stripToEmpty(strOrNull)
+  def stripToEmpty: Option[String] = Option(Strings.stripToEmpty(strOrNull))
 
   def stripToNone: Option[String] = Option(Strings.stripToNull(strOrNull))
 
@@ -1748,7 +2346,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
 
   def trim: Option[String] = Option(Strings.trim(strOrNull))
 
-  def trimToEmpty: String = Strings.trimToEmpty(strOrNull)
+  def trimToEmpty: Option[String] = Option(Strings.trimToEmpty(strOrNull))
 
   def trimToNone: Option[String] = Option(Strings.trimToNull(strOrNull))
 
