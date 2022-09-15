@@ -54,7 +54,7 @@ object CommonSettings {
   val supportedScalaVersions = Seq(scalaVersions.v213, scalaVersions.v212, scalaVersions.v211, scalaVersions.v320)
 
   val pushSettings = Seq(
-    version              := "0.0.1",
+    version              := "0.1.0",
     organization         := "net.scalax",
     organizationName     := "Scala Workers",
     organizationHomepage := Some(url("https://github.com/scala-workers")),
