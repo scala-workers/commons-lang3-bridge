@@ -1,6 +1,7 @@
 package commons.lang3.bridge
 
 import commons.lang3.bridge.TypeMapping.alias._
+import commons.lang3.bridge.impl.FetchMappingAply
 import org.apache.commons.lang3.{StringUtils => Strings}
 
 import java.nio.charset.Charset
@@ -1886,36 +1887,309 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     Strings.indexOfIgnoreCase(strOrNull, str1, startPos)
   }
 
+  /** * <p>Checks if the CharSequence contains only lowercase characters.</p>
+    *
+    * <p>{@code null} will return {@code false}. An empty CharSequence (length()=0) will return {@code false}.</p>
+    *
+    * {{{
+    * none.ops.isAllLowerCase   = false
+    * "".ops.isAllLowerCase     = false
+    * "  ".ops.isAllLowerCase   = false
+    * "abc".ops.isAllLowerCase  = true
+    * "abC".ops.isAllLowerCase  = false
+    * "ab c".ops.isAllLowerCase = false
+    * "ab1c".ops.isAllLowerCase = false
+    * "ab/c".ops.isAllLowerCase = false
+    * }}}
+    *
+    * @return
+    *   {@code true} if only contains lowercase characters, and is non-null
+    */
   def isAllLowerCase: Boolean = Strings.isAllLowerCase(strOrNull)
 
+  /** <p>Checks if the CharSequence contains only uppercase characters.</p>
+    *
+    * <p>{@code null} will return {@code false}. An empty String (length()=0) will return {@code false}.</p>
+    *
+    * {{{
+    * none.ops.isAllUpperCase   = false
+    * "".ops.isAllUpperCase     = false
+    * "  ".ops.isAllUpperCase   = false
+    * "ABC".ops.isAllUpperCase  = true
+    * "aBC".ops.isAllUpperCase  = false
+    * "A C".ops.isAllUpperCase  = false
+    * "A1C".ops.isAllUpperCase  = false
+    * "A/C".ops.isAllUpperCase  = false
+    * }}}
+    *
+    * @return
+    */
   def isAllUpperCase: Boolean = Strings.isAllUpperCase(strOrNull)
 
+  /** <p>Checks if the CharSequence contains only Unicode letters.</p>
+    *
+    * <p>{@code null} will return {@code false}. An empty CharSequence (length()=0) will return {@code false}.</p>
+    *
+    * {{{
+    * none.ops.isAlpha   = false
+    * "".ops.isAlpha     = false
+    * "  ".ops.isAlpha   = false
+    * "abc".ops.isAlpha  = true
+    * "ab2c".ops.isAlpha = false
+    * "ab-c".ops.isAlpha = false
+    * }}}
+    *
+    * @return
+    *   {@code true} if only contains letters, and is non-null
+    */
   def isAlpha: Boolean = Strings.isAlpha(strOrNull)
 
+  /** <p>Checks if the CharSequence contains only Unicode letters or digits.</p>
+    *
+    * <p>{@code null} will return {@code false}. An empty CharSequence (length()=0) will return {@code false}.</p>
+    *
+    * <pre> none.ops.isAlphanumeric = false "".ops.isAlphanumeric = false " ".ops.isAlphanumeric = false "abc".ops.isAlphanumeric = true "ab
+    * c".ops.isAlphanumeric = false "ab2c".ops.isAlphanumeric = true "ab-c".ops.isAlphanumeric = false </pre>
+    *
+    * @return
+    *   {@code true} if only contains letters or digits, and is non-null
+    */
   def isAlphanumeric: Boolean = Strings.isAlphanumeric(strOrNull)
 
+  /** <p>Checks if the CharSequence contains only Unicode letters, digits or space ({@code ' '}).</p>
+    *
+    * <p>{@code null} will return {@code false}. An empty CharSequence (length()=0) will return {@code true}.</p>
+    *
+    * {{{
+    * StringUtils.ops.isAlphanumericSpace(null)   = false
+    * StringUtils.ops.isAlphanumericSpace("")     = true
+    * StringUtils.ops.isAlphanumericSpace("  ")   = true
+    * StringUtils.ops.isAlphanumericSpace("abc")  = true
+    * StringUtils.ops.isAlphanumericSpace("ab c") = true
+    * StringUtils.ops.isAlphanumericSpace("ab2c") = true
+    * StringUtils.ops.isAlphanumericSpace("ab-c") = false
+    * }}}
+    *
+    * @return
+    *   {@code true} if only contains letters, digits or space, and is non-null
+    */
   def isAlphanumericSpace: Boolean = Strings.isAlphanumericSpace(strOrNull)
 
+  /** <p>Checks if the CharSequence contains only Unicode letters and space (' ').</p>
+    *
+    * <p>{@code null} will return {@code false} An empty CharSequence (length()=0) will return {@code true}.</p>
+    *
+    * <pre> none.ops.isAlphaSpace = false "".ops.isAlphaSpace = true " ".ops.isAlphaSpace = true "abc".ops.isAlphaSpace = true "ab
+    * c".ops.isAlphaSpace = true "ab2c".ops.isAlphaSpace = false "ab-c".ops.isAlphaSpace = false </pre>
+    *
+    * @return
+    */
   def isAlphaSpace: Boolean = Strings.isAlphaSpace(strOrNull)
 
+  /** <p>Checks if the CharSequence contains only ASCII printable characters.</p>
+    *
+    * <p>{@code null} will return {@code false}. An empty CharSequence (length()=0) will return {@code true}.</p>
+    *
+    * {{{
+    * none.ops.isAsciiPrintable     = false
+    * "".ops.isAsciiPrintable       = true
+    * " ".ops.isAsciiPrintable      = true
+    * "Ceki".ops.isAsciiPrintable   = true
+    * "ab2c".ops.isAsciiPrintable   = true
+    * "!ab-c~".ops.isAsciiPrintable = true
+    * "\u0020".ops.isAsciiPrintable = true
+    * "\u0021".ops.isAsciiPrintable = true
+    * "\u007e".ops.isAsciiPrintable = true
+    * "\u007f".ops.isAsciiPrintable = false
+    * "Ceki G\u00fclc\u00fc".ops.isAsciiPrintable = false
+    * }}}
+    *
+    * @return
+    */
   def isAsciiPrintable: Boolean = Strings.isAsciiPrintable(strOrNull)
 
+  /** <p>Checks if a CharSequence is empty (""), null or whitespace only.</p>
+    *
+    * <p>Whitespace is defined by {@link Character# isWhitespace ( char )}.</p>
+    *
+    * {{{
+    * null.ops.isBlank      = true
+    * "".ops.isBlank        = true
+    * " ".ops.isBlank       = true
+    * "bob".ops.isBlank     = false
+    * "  bob  ".ops.isBlank = false
+    * }}}
+    *
+    * @return
+    *   {@code true} if the CharSequence is null, empty or whitespace only
+    */
   def isBlank: Boolean = Strings.isBlank(strOrNull)
 
+  /** <p>Checks if a CharSequence is empty ("") or null.</p>
+    *
+    * {{{
+    * StringUtils.isEmpty(null)      = true
+    * StringUtils.isEmpty("")        = true
+    * StringUtils.isEmpty(" ")       = false
+    * StringUtils.isEmpty("bob")     = false
+    * StringUtils.isEmpty("  bob  ") = false
+    * }}}
+    *
+    * <p>NOTE: This method changed in Lang version 2.0. It no longer trims the CharSequence. That functionality is available in
+    * isBlank().</p>
+    *
+    * @return
+    *   {@code true} if the CharSequence is empty or null
+    */
   def isEmpty: Boolean = Strings.isEmpty(strOrNull)
 
+  /** <p>Checks if the CharSequence contains mixed casing of both uppercase and lowercase characters.</p>
+    *
+    * <p>{@code null} will return {@code false}. An empty CharSequence ({@code length()=0}) will return {@code false}.</p>
+    *
+    * {{{
+    * none.ops.isMixedCase    = false
+    * "".ops.isMixedCase      = false
+    * "ABC".ops.isMixedCase   = false
+    * "abc".ops.isMixedCase   = false
+    * "aBc".ops.isMixedCase   = true
+    * "A c".ops.isMixedCase   = true
+    * "A1c".ops.isMixedCase   = true
+    * "a/C".ops.isMixedCase   = true
+    * "aC\t".ops.isMixedCase  = true
+    * }}}
+    *
+    * @return
+    *   `true` if the CharSequence contains both uppercase and lowercase characters
+    */
   def isMixedCase: Boolean = Strings.isMixedCase(strOrNull)
 
+  /** <p>Checks if none of the CharSequences are empty (""), null or whitespace only.</p>
+    *
+    * <p>Whitespace is defined by {@link Character# isWhitespace ( char )}.</p>
+    *
+    * {{{
+    * none.ops.isNotBlank      = false
+    * "".ops.isNotBlank        = false
+    * " ".ops.isNotBlank       = false
+    * "bob".ops.isNotBlank     = true
+    * "  bob  ".ops.isNotBlank = true
+    * }}}
+    *
+    * @return
+    *   {@code true} if the CharSequence is not empty and not null and not whitespace only
+    */
   def isNotBlank: Boolean = Strings.isNotBlank(strOrNull)
 
+  /** <p>Checks if a CharSequence is not empty ("") and not null.</p>
+    *
+    * {{{
+    * none.ops.isNotBlank      = false
+    * "".ops.isNotBlank        = false
+    * " ".ops.isNotBlank       = true
+    * "bob".ops.isNotBlank     = true
+    * "  bob  ".ops.isNotBlank = true
+    * }}}
+    *
+    * @return
+    *   {@code true} if the CharSequence is not empty and not null
+    */
   def isNotEmpty: Boolean = Strings.isNotEmpty(strOrNull)
 
+  /** <p>Checks if the CharSequence contains only Unicode digits. A decimal point is not a Unicode digit and returns false.</p>
+    *
+    * <p>{@code null} will return {@code false}. An empty CharSequence (length()=0) will return {@code false}.</p>
+    *
+    * <p>Note that the method does not allow for a leading sign, either positive or negative. Also, if a String passes the numeric test, it
+    * may still generate a NumberFormatException when parsed by Integer.parseInt or Long.parseLong, e.g. if the value is outside the range
+    * for int or long respectively.</p>
+    *
+    * {{{
+    * none.ops.isNumeric   = false
+    * "".ops.isNumeric     = false
+    * "  ".ops.isNumeric   = false
+    * "123".ops.isNumeric  = true
+    * "\u0967\u0968\u0969".ops.isNumeric  = true
+    * "12 3".ops.isNumeric = false
+    * "ab2c".ops.isNumeric = false
+    * "12-3".ops.isNumeric = false
+    * "12.3".ops.isNumeric = false
+    * "-123".ops.isNumeric = false
+    * "+123".ops.isNumeric = false
+    * }}}
+    *
+    * @return
+    *   {@code true} if only contains digits, and is non-null
+    */
   def isNumeric: Boolean = Strings.isNumeric(strOrNull)
 
+  /** <p>Checks if the CharSequence contains only Unicode digits or space ({@code ' '}). A decimal point is not a Unicode digit and returns
+    * false.</p>
+    *
+    * <p>{@code null} will return {@code false}. An empty CharSequence (length()=0) will return {@code true}.</p>
+    *
+    * {{{
+    * none.ops.isNumericSpace   = false
+    * "".ops.isNumericSpace     = true
+    * "  ".ops.isNumericSpace   = true
+    * "123".ops.isNumericSpace  = true
+    * "12 3".ops.isNumericSpace = true
+    * "\u0967\u0968\u0969".ops.isNumericSpace  = true
+    * "\u0967\u0968 \u0969".ops.isNumericSpace  = true
+    * "ab2c".ops.isNumericSpace = false
+    * "12-3".ops.isNumericSpace = false
+    * "12.3".ops.isNumericSpace = false
+    * }}}
+    *
+    * @return
+    *   {@code true} if only contains digits or space, and is non-null
+    */
   def isNumericSpace: Boolean = Strings.isNumericSpace(strOrNull)
 
+  /** <p>Checks if the CharSequence contains only whitespace.</p>
+    *
+    * <p>Whitespace is defined by {@link Character# isWhitespace ( char )}.</p>
+    *
+    * <p>{@code null} will return {@code false}. An empty CharSequence (length()=0) will return {@code true}.</p>
+    *
+    * {{{
+    * none.ops.isWhitespace   = false
+    * "".ops.isWhitespace     = true
+    * "  ".ops.isWhitespace   = true
+    * "abc".ops.isWhitespace  = false
+    * "ab2c".ops.isWhitespace = false
+    * "ab-c".ops.isWhitespace = false
+    * }}}
+    *
+    * @return
+    *   if only contains whitespace, and is non-null
+    */
   def isWhitespace: Boolean = Strings.isWhitespace(strOrNull)
 
+  /** <p>Finds the last index within a CharSequence, handling {@code null}. This method uses {@link String# lastIndexOf ( String, int)} if
+    * possible.</p>
+    *
+    * <p>A {@code null} CharSequence will return {@code -1}. A negative start position returns {@code -1}. An empty ("") search CharSequence
+    * always matches unless the start position is negative. A start position greater than the string length searches the whole string. The
+    * search starts at the startPos and works backwards; matches starting after the start position are ignored. </p>
+    *
+    * {{{
+    * none.ops.lastIndexOf(*)          = -1
+    * *.ops.lastIndexOf(null)          = -1
+    * "".ops.lastIndexOf("")           = 0
+    * "aabaabaa".ops.lastIndexOf("a")  = 7
+    * "aabaabaa".ops.lastIndexOf("b")  = 5
+    * "aabaabaa".ops.lastIndexOf("ab") = 4
+    * "aabaabaa".ops.lastIndexOf("")   = 8
+    * }}}
+    *
+    * @param searchArg
+    *   the CharSequence to find, may be null
+    * @tparam S
+    *   Char or CharSequence or Option[CharSequence]
+    * @return
+    *   the last index of the search String,
+    */
   def lastIndexOf[S: TypeOptions4[*, Char, Int, CharSequence, Option[CharSequence]]](searchArg: S): Int = {
     val mapping = TypeMapping.getMapping[TypeOptions4[*, Char, Int, CharSequence, Option[CharSequence]]]
     mapping
@@ -1928,6 +2202,38 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
       )
   }
 
+  /** Returns the index within {@code seq} of the last occurrence of the specified character, searching backward starting at the specified
+    * index. For values of {@code searchChar} in the range from 0 to 0xFFFF (inclusive), the index returned is the largest value <i>k</i>
+    * such that: <blockquote><pre> (this.charAt(<i>k</i>) == searchChar) &amp;&amp; (<i>k</i> &lt;= startPos) </pre></blockquote> is true.
+    * For other values of {@code searchChar}, it is the largest value <i>k</i> such that: <blockquote><pre> (this.codePointAt(<i>k</i>) ==
+    * searchChar) &amp;&amp; (<i>k</i> &lt;= startPos) </pre></blockquote> is true. In either case, if no such character occurs in {@code
+    * seq} at or before position {@code startPos}, then {@code -1} is returned. Furthermore, a {@code null} or empty ("") {@code
+    * CharSequence} will return {@code -1}. A start position greater than the string length searches the whole string. The search starts at
+    * the {@code startPos} and works backwards; matches starting after the start position are ignored.
+    *
+    * <p>All indices are specified in {@code char} values (Unicode code units).
+    *
+    * {{{
+    * StringUtils.lastIndexOf(null, *, *)          = -1
+    * StringUtils.lastIndexOf("", *,  *)           = -1
+    * StringUtils.lastIndexOf("aabaabaa", 'b', 8)  = 5
+    * StringUtils.lastIndexOf("aabaabaa", 'b', 4)  = 2
+    * StringUtils.lastIndexOf("aabaabaa", 'b', 0)  = -1
+    * StringUtils.lastIndexOf("aabaabaa", 'b', 9)  = 5
+    * StringUtils.lastIndexOf("aabaabaa", 'b', -1) = -1
+    * StringUtils.lastIndexOf("aabaabaa", 'a', 0)  = 0
+    * }}}
+    *
+    * @param searchArg
+    *   the element to find
+    * @param startPos
+    *   the start position
+    * @tparam S
+    *   Char or CharSequence or Option[CharSequence]
+    * @return
+    *   the last index of the search character (always &le; startPos),
+    * -1 if no match or {@code null} string input
+    */
   def lastIndexOf[S: TypeOptions4[*, Char, Int, CharSequence, Option[CharSequence]]](searchArg: S, startPos: Int): Int = {
     val mapping = TypeMapping.getMapping[TypeOptions4[*, Char, Int, CharSequence, Option[CharSequence]]]
     mapping
@@ -1940,6 +2246,31 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
       )
   }
 
+  /** <p>Find the latest index of any substring in a set of potential substrings.</p>
+    *
+    * <p>A {@code null} CharSequence will return {@code -1}. A {@code null} search array will return {@code -1}. A {@code null} or zero
+    * length search array entry will be ignored, but a search array containing "" will return the length of {@code str} if {@code str} is
+    * not null. This method uses {@link String# indexOf ( String )} if possible</p>
+    *
+    * {{{
+    * none.ops.lastIndexOfAny(*)                    = -1
+    * *.ops.lastIndexOfAny(null)                    = -1
+    * *.ops.lastIndexOfAny([])                      = -1
+    * *.ops.lastIndexOfAny([null])                  = -1
+    * "zzabyycdxx".ops.lastIndexOfAny("ab", "cd") = 6
+    * "zzabyycdxx".ops.lastIndexOfAny("cd", "ab") = 6
+    * "zzabyycdxx".ops.lastIndexOfAny("mn", "op") = -1
+    * "zzabyycdxx".ops.lastIndexOfAny("mn", "op") = -1
+    * "zzabyycdxx".ops.lastIndexOfAny("mn", "")   = 10
+    * }}}
+    *
+    * @param searchArgs
+    *   the CharSequences to search for, may be null
+    * @tparam S
+    *   varargs for CharSequences or Option[CharSequences]
+    * @return
+    *   the last index of any of the CharSequences, -1 if no match
+    */
   def lastIndexOfAny[S: TypeOptions2F[Seq, *, Seq[CharSequence], Seq[Option[CharSequence]]]](searchArgs: S*): Int = {
     def mapping                                     = TypeMapping.getMapping[TypeOptions2[*, Seq[CharSequence], Seq[Option[CharSequence]]]]
     def dealWithCharSeqSeq(strs: Seq[CharSequence]) = Strings.lastIndexOfAny(strOrNull, strs: _*)
@@ -1950,53 +2281,377 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
       mapping.input(searchArgs).fold(dealWithCharSeqSeq, s => dealWithCharSeqSeq(mapTo[Seq[CharSequence]].input(s)))
   }
 
-  def lastIndexOfIgnoreCase[S: TypeOptions2[*, String, Option[String]]](searchStr: S): Int = {
-    val str1 = mapToStrOpt.input(searchStr).orNull
+  /** <p>Case in-sensitive find of the last index within a CharSequence.</p>
+    *
+    * <p>A {@code null} CharSequence will return {@code -1}. A negative start position returns {@code -1}. An empty ("") search CharSequence
+    * always matches unless the start position is negative. A start position greater than the string length searches the whole string.</p>
+    *
+    * {{{
+    * none.ops.lastIndexOfIgnoreCase(*)          = -1
+    * *.ops.lastIndexOfIgnoreCase(null)          = -1
+    * "aabaabaa".ops.lastIndexOfIgnoreCase("A")  = 7
+    * "aabaabaa".ops.lastIndexOfIgnoreCase("B")  = 5
+    * "aabaabaa".ops.lastIndexOfIgnoreCase("AB") = 4
+    * }}}
+    *
+    * @param searchStr
+    *   the CharSequence to find, may be null
+    * @tparam S
+    *   varargs of CharSequence or Option[CharSequence]
+    * @return
+    *   the first index of the search CharSequence,
+    */
+  def lastIndexOfIgnoreCase[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](searchStr: S): Int = {
+    val str1 = mapToCsOpt.input(searchStr).orNull
     Strings.lastIndexOfIgnoreCase(strOrNull, str1)
   }
 
-  def lastIndexOfIgnoreCase[S: TypeOptions2[*, String, Option[String]]](searchStr: S, startPos: Int): Int = {
-    val str1 = mapToStrOpt.input(searchStr).orNull
+  /** <p>Case in-sensitive find of the last index within a CharSequence from the specified position.</p>
+    *
+    * <p>A {@code null} CharSequence will return {@code -1}. A negative start position returns {@code -1}. An empty ("") search CharSequence
+    * always matches unless the start position is negative. A start position greater than the string length searches the whole string. The
+    * search starts at the startPos and works backwards; matches starting after the start position are ignored. </p>
+    *
+    * <pre> none.ops.lastIndexOfIgnoreCase(*, *) = -1 *.ops.lastIndexOfIgnoreCase(null, *) = -1 "aabaabaa".ops.lastIndexOfIgnoreCase("A", 8)
+    * \= 7 "aabaabaa".ops.lastIndexOfIgnoreCase("B", 8) = 5 "aabaabaa".ops.lastIndexOfIgnoreCase("AB", 8) = 4
+    * "aabaabaa".ops.lastIndexOfIgnoreCase("B", 9) = 5 "aabaabaa".ops.lastIndexOfIgnoreCase("B", -1) = -1
+    * "aabaabaa".ops.lastIndexOfIgnoreCase("A", 0) = 0 "aabaabaa".ops.lastIndexOfIgnoreCase("B", 0) = -1 </pre>
+    *
+    * @param searchStr
+    *   the CharSequence to find, may be null
+    * @param startPos
+    *   the start position
+    * @tparam S
+    *   CharSequence or Option[CharSequence]
+    * @return
+    *   the last index of the search CharSequence (always &le; startPos),
+    * -1 if no match or {@code null} input
+    */
+  def lastIndexOfIgnoreCase[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](searchStr: S, startPos: Int): Int = {
+    val str1 = mapToCsOpt.input(searchStr).orNull
     Strings.lastIndexOfIgnoreCase(strOrNull, str1, startPos)
   }
 
-  def lastOrdinalIndexOf[S: TypeOptions2[*, String, Option[String]]](searchStr: S, ordinal: Int): Int = {
-    val str1 = mapToStrOpt.input(searchStr).orNull
+  /** <p>Finds the n-th last index within a String, handling {@code null}. This method uses {@link String# lastIndexOf ( String )}.</p>
+    *
+    * <p>A {@code null} String will return {@code -1}.</p>
+    *
+    * {{{
+    * none.ops.lastIndexOf(*, *)          = -1
+    * *.ops.lastIndexOf(null, *)          = -1
+    * "".ops.lastIndexOf("", *)           = 0
+    * "aabaabaa".ops.lastIndexOf("a", 1)  = 7
+    * "aabaabaa".ops.lastIndexOf("a", 2)  = 6
+    * "aabaabaa".ops.lastIndexOf("b", 1)  = 5
+    * "aabaabaa".ops.lastIndexOf("b", 2)  = 2
+    * "aabaabaa".ops.lastIndexOf("ab", 1) = 4
+    * "aabaabaa".ops.lastIndexOf("ab", 2) = 1
+    * "aabaabaa".ops.lastIndexOf("", 1)   = 8
+    * "aabaabaa".ops.lastIndexOf("", 2)   = 8
+    * }}}
+    *
+    * <p>Note that 'tail(CharSequence str, int n)' may be implemented as: </p>
+    *
+    * <pre> str.substring(lastOrdinalIndexOf(str, "\n", n) + 1) </pre>
+    *
+    * @param searchStr
+    *   the CharSequence to find, may be null
+    * @param ordinal
+    *   the n-th last {@code searchStr} to find
+    * @tparam S
+    *   CharSequence or Option[CharSequence]
+    * @return
+    *   the n-th last index of the search CharSequence, {@code -1} ({@code INDEX_NOT_FOUND}) if no match or {@code null} string input
+    */
+  def lastOrdinalIndexOf[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](searchStr: S, ordinal: Int): Int = {
+    val str1 = mapToCsOpt.input(searchStr).orNull
     Strings.lastOrdinalIndexOf(strOrNull, str1, ordinal)
   }
 
+  /** <p>Gets the leftmost {@code len} characters of a String.</p>
+    *
+    * <p>If {@code len} characters are not available, or the String is {@code null}, the String will be returned without an exception. An
+    * empty String is returned if len is negative.</p>
+    *
+    * {{{
+    * none.ops.left(*)    = null
+    * *.ops.left(-ve)     = ""
+    * "".ops.left(*)      = ""
+    * "abc".ops.left( 0)   = ""
+    * "abc".ops.left(2)   = "ab"
+    * "abc".ops.left(4)   = "abc"
+    * }}}
+    *
+    * @param len
+    *   the length of the required String
+    * @return
+    *   the leftmost characters, {@code null} if null String input
+    */
   def left(len: Int): Option[String] = Option(Strings.left(strOrNull, len))
 
+  /** <p>Left pad a String with spaces (' ').</p>
+    *
+    * <p>The String is padded to the size of {@code size}.</p>
+    *
+    * {{{
+    * none.ops.leftPad(*)   = null
+    * "".ops.leftPad(3)     = "   "
+    * "bat".ops.leftPad(3)  = "bat"
+    * "bat".ops.leftPad(5)  = "  bat"
+    * "bat".ops.leftPad(1)  = "bat"
+    * "bat".ops.leftPad(-1) = "bat"
+    * }}}
+    *
+    * @param size
+    *   the size to pad to
+    * @return
+    *   left padded String or original String if no padding is necessary, {@code null} if null String input
+    */
   def leftPad(size: Int): Option[String] = Option(Strings.leftPad(strOrNull, size))
 
+  /** <p>Left pad a String with a specified character.</p>
+    *
+    * <p>Pad to a size of {@code size}.</p>
+    *
+    * {{{
+    * StringUtils.leftPad(null, *, *)     = null
+    * StringUtils.leftPad("", 3, 'z')     = "zzz"
+    * StringUtils.leftPad("bat", 3, 'z')  = "bat"
+    * StringUtils.leftPad("bat", 5, 'z')  = "zzbat"
+    * StringUtils.leftPad("bat", 1, 'z')  = "bat"
+    * StringUtils.leftPad("bat", -1, 'z') = "bat"
+    * }}}
+    *
+    * @param size
+    *   the size to pad to
+    * @param padChar
+    *   the character to pad with
+    * @return
+    *   left padded String or original String if no padding is necessary, {@code null} if null String input
+    */
   def leftPad(size: Int, padChar: Char): Option[String] = Option(Strings.leftPad(strOrNull, size, padChar))
 
+  /** <p>Left pad a String with a specified String.</p>
+    *
+    * <p>Pad to a size of {@code size}.</p>
+    *
+    * <pre> StringUtils.leftPad(null, *, *) = null StringUtils.leftPad("", 3, "z") = "zzz" StringUtils.leftPad("bat", 3, "yz") = "bat"
+    * StringUtils.leftPad("bat", 5, "yz") = "yzbat" StringUtils.leftPad("bat", 8, "yz") = "yzyzybat" StringUtils.leftPad("bat", 1, "yz") =
+    * "bat" StringUtils.leftPad("bat", -1, "yz") = "bat" StringUtils.leftPad("bat", 5, null) = " bat" StringUtils.leftPad("bat", 5, "") = "
+    * bat" </pre>
+    *
+    * @param size
+    *   the size to pad to
+    * @param padStr
+    *   the String to pad with, null or empty treated as single space
+    * @tparam P
+    *   String or Option[String]
+    * @return
+    *   left padded String or original String if no padding is necessary, {@code null} if null String input
+    */
   def leftPad[P: TypeOptions2[*, String, Option[String]]](size: Int, padStr: P): Option[String] = {
     val ps = mapToStrOpt.input(padStr).orNull
     Option(Strings.leftPad(strOrNull, size, ps))
   }
 
+  /** * Gets a CharSequence length or {@code 0} if the CharSequence is {@code null}.
+    *
+    * @return
+    *   CharSequence length or {@code 0} if the CharSequence is {@code null}.
+    */
   def length: Int = Strings.length(strOrNull)
 
+  /** <p>Converts a String to lower case as per {@link String# toLowerCase ( )}.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}.</p>
+    *
+    * {{{
+    * null.ops.lowerCase  = null
+    * "".ops.lowerCase    = ""
+    * "aBc".ops.lowerCase = "abc"
+    * }}}
+    *
+    * <p><strong>Note:</strong> As described in the documentation for {@link String# toLowerCase ( )}, the result of this method is affected
+    * by the current locale. For platform-independent case transformations, the method {@link # lowerCase ( String, Locale)} should be used
+    * with a specific locale (e.g. {@link Locale# ENGLISH}).</p>
+    *
+    * @return
+    *   the lower cased String, {@code null} if null String input
+    */
   def lowerCase: Option[String] = Option(Strings.lowerCase(strOrNull))
 
+  /** <p>Converts a String to lower case as per {@link String# toLowerCase ( Locale )}.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}.</p>
+    *
+    * {{{
+    * none.ops.lowerCase(Locale.ENGLISH)  = null
+    * "".ops.lowerCase(Locale.ENGLISH)    = ""
+    * "aBc".opw.lowerCase(Locale.ENGLISH) = "abc"
+    * }}}
+    *
+    * @param locale
+    *   the locale that defines the case transformation rules, must not be null
+    * @return
+    *   the lower cased String, {@code null} if null String input
+    */
   def lowerCase(locale: Locale): Option[String] = Option(Strings.lowerCase(strOrNull, locale))
 
+  /** <p>Gets {@code len} characters from the middle of a String.</p>
+    *
+    * <p>If {@code len} characters are not available, the remainder of the String will be returned without an exception. If the String is
+    * {@code null}, {@code null} will be returned. An empty String is returned if len is negative or exceeds the length of {@code str}.</p>
+    *
+    * {{{}}} none.ops.mid(*, *) = null *.ops.mid(*, -ve) = "" "".ops.mid(0, *) = "" "abc".ops.mid(0, 2) = "ab" "abc".ops.mid(0, 4) = "abc"
+    * "abc".ops.mid(2, 4) = "c" "abc".ops.mid(4, 2) = "" "abc".ops.mid(-2, 2) = "ab" }}}
+    *
+    * @param pos
+    *   the position to start from, negative treated as zero
+    * @param len
+    *   the length of the required String
+    * @return
+    *   the middle characters, {@code null} if null String input
+    */
   def mid(pos: Int, len: Int): Option[String] = Option(Strings.mid(strOrNull, pos, len))
 
+  /** <p> Similar to <a href="http://www.w3.org/TR/xpath/#function-normalize-space">http://www.w3.org/TR/xpath/#function-normalize
+    * -space</a> </p> <p> The function returns the argument string with whitespace normalized by using {@code {@link #trim(String)}} to
+    * remove leading and trailing whitespace and then replacing sequences of whitespace characters by a single space. </p> In XML Whitespace
+    * characters are the same as those allowed by the <a href="http://www.w3.org/TR/REC-xml/#NT-S">S</a> production, which is S ::= (#x20 |
+    * #x9 | #xD | #xA)+ <p> Java's regexp pattern \s defines whitespace as [ \t\n\x0B\f\r]
+    *
+    * <p>For reference:</p> <ul> <li>\x0B = vertical tab</li> <li>\f = #xC = form feed</li> <li>#x20 = space</li> <li>#x9 = \t</li> <li>#xA
+    * \= \n</li> <li>#xD = \r</li> </ul>
+    *
+    * <p> The difference is that Java's whitespace includes vertical tab and form feed, which this functional will also normalize.
+    * Additionally {@code {@link #trim(String)}} removes control characters (char &lt;= 32) from both ends of this String. </p>
+    *
+    * @return
+    *   the modified string with whitespace normalized, {@code null} if null String input
+    */
   def normalizeSpace: Option[String] = Option(Strings.normalizeSpace(strOrNull))
 
-  def ordinalIndexOf[S: TypeOptions2[*, String, Option[String]]](searchStr: S, ordinal: Int): Int = {
-    val str1 = mapToStrOpt.input(searchStr).orNull
+  /** <p>Finds the n-th index within a CharSequence, handling {@code null}. This method uses {@link String# indexOf ( String )} if
+    * possible.</p> <p><b>Note:</b> The code starts looking for a match at the start of the target, incrementing the starting index by one
+    * after each successful match (unless {@code searchStr} is an empty string in which case the position is never incremented and {@code 0}
+    * is returned immediately). This means that matches may overlap.</p> <p>A {@code null} CharSequence will return {@code -1}.</p>
+    *
+    * {{{
+    * none.ops.ordinalIndexOf(*, *)          = -1
+    * *.ops.ordinalIndexOf(null, *)          = -1
+    * "".ops.ordinalIndexOf("", *)           = 0
+    * "aabaabaa".ops.ordinalIndexOf("a", 1)  = 0
+    * "aabaabaa".ops.ordinalIndexOf("a", 2)  = 1
+    * "aabaabaa".ops.ordinalIndexOf("b", 1)  = 2
+    * "aabaabaa".ops.ordinalIndexOf("b", 2)  = 5
+    * "aabaabaa".ops.ordinalIndexOf("ab", 1) = 1
+    * "aabaabaa".ops.ordinalIndexOf("ab", 2) = 4
+    * "aabaabaa".ops.ordinalIndexOf("", 1)   = 0
+    * "aabaabaa".ops.ordinalIndexOf("", 2)   = 0
+    * }}}
+    *
+    * <p>Matches may overlap:</p>
+    * {{{
+    * "ababab".ops.ordinalIndexOf("aba", 1)   = 0
+    * "ababab".ops.ordinalIndexOf("aba", 2)   = 2
+    * "ababab".ops.ordinalIndexOf("aba", 3)   = -1
+    *
+    * "abababab".ops.ordinalIndexOf("abab", 1) = 0
+    * "abababab".ops.ordinalIndexOf("abab", 2) = 2
+    * "abababab".ops.ordinalIndexOf("abab", 3) = 4
+    * "abababab".ops.ordinalIndexOf("abab", 4) = -1
+    * }}}
+    *
+    * <p>Note that 'head(CharSequence str, int n)' may be implemented as: </p>
+    *
+    * {{{
+    * str.substring(0, lastOrdinalIndexOf(str, "\n", n))
+    * }}}
+    *
+    * @param searchStr
+    *   the CharSequence to find, may be null
+    * @param ordinal
+    *   the n-th {@code searchStr} to find
+    * @tparam S
+    * @return
+    *   the n-th index of the search CharSequence, {@code -1} ({@code INDEX_NOT_FOUND}) if no match or {@code null} string input
+    */
+  def ordinalIndexOf[S: TypeOptions2[*, CharSequence, Option[CharSequence]]](searchStr: S, ordinal: Int): Int = {
+    val str1 = mapToCsOpt.input(searchStr).orNull
     Strings.ordinalIndexOf(strOrNull, str1, ordinal)
   }
 
+  /** <p>Overlays part of a String with another String.</p>
+    *
+    * <p>A {@code null} string input returns {@code null}. A negative index is treated as zero. An index greater than the string length is
+    * treated as the string length. The start index is always the smaller of the two indices.</p>
+    *
+    * {{{
+    * none.ops.overlay(*, *, *)            = null
+    * "".ops.overlay("abc", 0, 0)          = "abc"
+    * "abcdef".ops.overlay(none, 2, 4)     = "abef"
+    * "abcdef".ops.overlay("", 2, 4)       = "abef"
+    * "abcdef".ops.overlay("", 4, 2)       = "abef"
+    * "abcdef".ops.overlay("zzzz", 2, 4)   = "abzzzzef"
+    * "abcdef".ops.overlay("zzzz", 4, 2)   = "abzzzzef"
+    * "abcdef".ops.overlay("zzzz", -1, 4)  = "zzzzef"
+    * "abcdef".ops.overlay("zzzz", 2, 8)   = "abzzzz"
+    * "abcdef".ops.overlay("zzzz", -2, -3) = "zzzzabcdef"
+    * "abcdef".ops.overlay("zzzz", 8, 10)  = "abcdefzzzz"
+    * }}}
+    *
+    * @param overlay
+    *   the String to overlay, may be null
+    * @param start
+    *   the position to start overlaying at
+    * @param end
+    *   the position to stop overlaying before
+    * @tparam O
+    *   String or Option[String]
+    * @return
+    *   overlayed String, {@code null} if null String input
+    */
   def overlay[O: TypeOptions2[*, String, Option[String]]](overlay: O, start: Int, end: Int): Option[String] = {
     val str1    = mapToStrOpt.input(overlay).orNull
     val result2 = Strings.overlay(strOrNull, str1, start, end)
     Option(result2)
   }
 
+  /** Prepends the prefix to the start of the string if the string does not already start with any of the prefixes.
+    *
+    * {{{
+    * none.ops.prependIfMissing(none) = null
+    * "abc".ops.prependIfMissing(null) = "abc"
+    * "".ops.prependIfMissing("xyz") = "xyz"
+    * "abc".ops.prependIfMissing("xyz") = "xyzabc"
+    * "xyzabc".ops.prependIfMissing("xyz") = "xyzabc"
+    * "XYZabc".ops.prependIfMissing("xyz") = "xyzXYZabc"
+    * }}}
+    * <p>With additional prefixes,</p>
+    * {{{
+    * none..ops.prependIfMissing(none, none) = None
+    * "abc".ops.prependIfMissing(none, none) = "abc"
+    * "".ops.prependIfMissing("xyz", none) = "xyz"
+    * "abc".ops.prependIfMissing("xyz", none) = "xyzabc"
+    * "abc".ops.prependIfMissing("xyz", "") = "abc"
+    * "abc".ops.prependIfMissing("xyz", "mno") = "xyzabc"
+    * "xyzabc".ops.prependIfMissing("xyz", "mno") = "xyzabc"
+    * "mnoabc".ops.prependIfMissing("xyz", "mno") = "mnoabc"
+    * "XYZabc".ops.prependIfMissing("xyz", "mno") = "xyzXYZabc"
+    * "MNOabc".ops.prependIfMissing("xyz", "mno") = "xyzMNOabc"
+    * }}}
+    *
+    * @param prefix
+    *   The prefix to prepend to the start of the string.
+    * @param prefixes
+    *   Additional prefixes that are valid.
+    * @tparam P
+    *   CharSequence or Option[CharSequence]
+    * @tparam Ps
+    *   CharSequence or Option[CharSequence]
+    * @return
+    *   A new String if prefix was prepended, the same string otherwise.
+    */
   def prependIfMissing[P: TypeOptions2[*, CharSequence, Option[CharSequence]], Ps: TypeOptions2F[Seq, *, Seq[CharSequence], Seq[
     Option[CharSequence]
   ]]](
@@ -2004,7 +2659,7 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     prefixes: Ps*
   ): Option[String] = {
 
-    def prefixStr = mapTo[Option[CharSequence]].input(prefix).orNull
+    def prefixStr: CharSequence = mapTo[Option[CharSequence]].input(prefix).orNull
 
     def prefixesMapping                             = TypeMapping.getMapping[TypeOptions2[*, Seq[CharSequence], Seq[Option[CharSequence]]]]
     def dealWithCharSeqSeq(strs: Seq[CharSequence]) = Strings.prependIfMissing(strOrNull, prefixStr, strs: _*)
@@ -2017,11 +2672,105 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
       Option(result)
   }
 
+  /** Prepends the prefix to the start of the string if the string does not already start with any of the prefixes.
+    *
+    * {{{
+    * none.ops.prependIfMissing(none) = null
+    * "abc".ops.prependIfMissing(null) = "abc"
+    * "".ops.prependIfMissing("xyz") = "xyz"
+    * "abc".ops.prependIfMissing("xyz") = "xyzabc"
+    * "xyzabc".ops.prependIfMissing("xyz") = "xyzabc"
+    * "XYZabc".ops.prependIfMissing("xyz") = "xyzXYZabc"
+    * }}}
+    * <p>With additional prefixes,</p>
+    * {{{
+    * none..ops.prependIfMissing(none, none) = None
+    * "abc".ops.prependIfMissing(none, none) = "abc"
+    * "".ops.prependIfMissing("xyz", none) = "xyz"
+    * "abc".ops.prependIfMissing("xyz", none) = "xyzabc"
+    * "abc".ops.prependIfMissing("xyz", "") = "abc"
+    * "abc".ops.prependIfMissing("xyz", "mno") = "xyzabc"
+    * "xyzabc".ops.prependIfMissing("xyz", "mno") = "xyzabc"
+    * "mnoabc".ops.prependIfMissing("xyz", "mno") = "mnoabc"
+    * "XYZabc".ops.prependIfMissing("xyz", "mno") = "xyzXYZabc"
+    * "MNOabc".ops.prependIfMissing("xyz", "mno") = "xyzMNOabc"
+    * }}}
+    *
+    * @param prefix
+    *   The prefix to prepend to the start of the string.
+    * @return
+    *   A new String if prefix was prepended, the same string otherwise.
+    */
   def prependIfMissing(prefix: CharSequence): Option[String] =
     Option(Strings.prependIfMissing(strOrNull, prefix))
+
+  /** Prepends the prefix to the start of the string if the string does not already start with any of the prefixes.
+    *
+    * {{{
+    * none.ops.prependIfMissing(none) = null
+    * "abc".ops.prependIfMissing(null) = "abc"
+    * "".ops.prependIfMissing("xyz") = "xyz"
+    * "abc".ops.prependIfMissing("xyz") = "xyzabc"
+    * "xyzabc".ops.prependIfMissing("xyz") = "xyzabc"
+    * "XYZabc".ops.prependIfMissing("xyz") = "xyzXYZabc"
+    * }}}
+    * <p>With additional prefixes,</p>
+    * {{{
+    * none..ops.prependIfMissing(none, none) = None
+    * "abc".ops.prependIfMissing(none, none) = "abc"
+    * "".ops.prependIfMissing("xyz", none) = "xyz"
+    * "abc".ops.prependIfMissing("xyz", none) = "xyzabc"
+    * "abc".ops.prependIfMissing("xyz", "") = "abc"
+    * "abc".ops.prependIfMissing("xyz", "mno") = "xyzabc"
+    * "xyzabc".ops.prependIfMissing("xyz", "mno") = "xyzabc"
+    * "mnoabc".ops.prependIfMissing("xyz", "mno") = "mnoabc"
+    * "XYZabc".ops.prependIfMissing("xyz", "mno") = "xyzXYZabc"
+    * "MNOabc".ops.prependIfMissing("xyz", "mno") = "xyzMNOabc"
+    * }}}
+    *
+    * @param prefix
+    *   The prefix to prepend to the start of the string.
+    * @return
+    *   A new String if prefix was prepended, the same string otherwise.
+    */
   def prependIfMissing(prefix: Option[CharSequence]): Option[String] =
     Option(Strings.prependIfMissing(strOrNull, prefix.orNull))
 
+  /** Prepends the prefix to the start of the string if the string does not already start, case insensitive, with any of the prefixes.
+    *
+    * {{{
+    * StringUtils.prependIfMissingIgnoreCase(null, null) = null
+    * StringUtils.prependIfMissingIgnoreCase("abc", null) = "abc"
+    * StringUtils.prependIfMissingIgnoreCase("", "xyz") = "xyz"
+    * StringUtils.prependIfMissingIgnoreCase("abc", "xyz") = "xyzabc"
+    * StringUtils.prependIfMissingIgnoreCase("xyzabc", "xyz") = "xyzabc"
+    * StringUtils.prependIfMissingIgnoreCase("XYZabc", "xyz") = "XYZabc"
+    * }}}
+    * <p>With additional prefixes,</p>
+    * {{{
+    * StringUtils.prependIfMissingIgnoreCase(null, null, null) = null
+    * StringUtils.prependIfMissingIgnoreCase("abc", null, null) = "abc"
+    * StringUtils.prependIfMissingIgnoreCase("", "xyz", null) = "xyz"
+    * StringUtils.prependIfMissingIgnoreCase("abc", "xyz", new CharSequence[]{null}) = "xyzabc"
+    * StringUtils.prependIfMissingIgnoreCase("abc", "xyz", "") = "abc"
+    * StringUtils.prependIfMissingIgnoreCase("abc", "xyz", "mno") = "xyzabc"
+    * StringUtils.prependIfMissingIgnoreCase("xyzabc", "xyz", "mno") = "xyzabc"
+    * StringUtils.prependIfMissingIgnoreCase("mnoabc", "xyz", "mno") = "mnoabc"
+    * StringUtils.prependIfMissingIgnoreCase("XYZabc", "xyz", "mno") = "XYZabc"
+    * StringUtils.prependIfMissingIgnoreCase("MNOabc", "xyz", "mno") = "MNOabc"
+    * }}}
+    *
+    * @param prefix
+    *   The prefix to prepend to the start of the string.
+    * @param prefixes
+    *   Additional prefixes that are valid (optional).
+    * @tparam P
+    *   String or Option[String]
+    * @tparam Ps
+    *   CharSequence or Option[CharSequence]
+    * @return
+    *   A new String if prefix was prepended, the same string otherwise.
+    */
   def prependIfMissingIgnoreCase[P: TypeOptions2[*, String, Option[String]], Ps: TypeOptions2F[Seq, *, Seq[CharSequence], Seq[
     Option[CharSequence]
   ]]](
@@ -2040,51 +2789,304 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
       Option(result)
   }
 
+  /** Prepends the prefix to the start of the string if the string does not already start, case insensitive, with any of the prefixes.
+    *
+    * {{{
+    * StringUtils.prependIfMissingIgnoreCase(null, null) = null
+    * StringUtils.prependIfMissingIgnoreCase("abc", null) = "abc"
+    * StringUtils.prependIfMissingIgnoreCase("", "xyz") = "xyz"
+    * StringUtils.prependIfMissingIgnoreCase("abc", "xyz") = "xyzabc"
+    * StringUtils.prependIfMissingIgnoreCase("xyzabc", "xyz") = "xyzabc"
+    * StringUtils.prependIfMissingIgnoreCase("XYZabc", "xyz") = "XYZabc"
+    * }}}
+    * <p>With additional prefixes,</p>
+    * {{{
+    * StringUtils.prependIfMissingIgnoreCase(null, null, null) = null
+    * StringUtils.prependIfMissingIgnoreCase("abc", null, null) = "abc"
+    * StringUtils.prependIfMissingIgnoreCase("", "xyz", null) = "xyz"
+    * StringUtils.prependIfMissingIgnoreCase("abc", "xyz", new CharSequence[]{null}) = "xyzabc"
+    * StringUtils.prependIfMissingIgnoreCase("abc", "xyz", "") = "abc"
+    * StringUtils.prependIfMissingIgnoreCase("abc", "xyz", "mno") = "xyzabc"
+    * StringUtils.prependIfMissingIgnoreCase("xyzabc", "xyz", "mno") = "xyzabc"
+    * StringUtils.prependIfMissingIgnoreCase("mnoabc", "xyz", "mno") = "mnoabc"
+    * StringUtils.prependIfMissingIgnoreCase("XYZabc", "xyz", "mno") = "XYZabc"
+    * StringUtils.prependIfMissingIgnoreCase("MNOabc", "xyz", "mno") = "MNOabc"
+    * }}}
+    *
+    * @param prefix
+    *   The prefix to prepend to the start of the string.
+    * @return
+    *   A new String if prefix was prepended, the same string otherwise.
+    */
   def prependIfMissingIgnoreCase(prefix: CharSequence): Option[String] =
     Option(Strings.prependIfMissingIgnoreCase(strOrNull, prefix))
 
+  /** Prepends the prefix to the start of the string if the string does not already start, case insensitive, with any of the prefixes.
+    *
+    * {{{
+    * StringUtils.prependIfMissingIgnoreCase(null, null) = null
+    * StringUtils.prependIfMissingIgnoreCase("abc", null) = "abc"
+    * StringUtils.prependIfMissingIgnoreCase("", "xyz") = "xyz"
+    * StringUtils.prependIfMissingIgnoreCase("abc", "xyz") = "xyzabc"
+    * StringUtils.prependIfMissingIgnoreCase("xyzabc", "xyz") = "xyzabc"
+    * StringUtils.prependIfMissingIgnoreCase("XYZabc", "xyz") = "XYZabc"
+    * }}}
+    * <p>With additional prefixes,</p>
+    * {{{
+    * StringUtils.prependIfMissingIgnoreCase(null, null, null) = null
+    * StringUtils.prependIfMissingIgnoreCase("abc", null, null) = "abc"
+    * StringUtils.prependIfMissingIgnoreCase("", "xyz", null) = "xyz"
+    * StringUtils.prependIfMissingIgnoreCase("abc", "xyz", new CharSequence[]{null}) = "xyzabc"
+    * StringUtils.prependIfMissingIgnoreCase("abc", "xyz", "") = "abc"
+    * StringUtils.prependIfMissingIgnoreCase("abc", "xyz", "mno") = "xyzabc"
+    * StringUtils.prependIfMissingIgnoreCase("xyzabc", "xyz", "mno") = "xyzabc"
+    * StringUtils.prependIfMissingIgnoreCase("mnoabc", "xyz", "mno") = "mnoabc"
+    * StringUtils.prependIfMissingIgnoreCase("XYZabc", "xyz", "mno") = "XYZabc"
+    * StringUtils.prependIfMissingIgnoreCase("MNOabc", "xyz", "mno") = "MNOabc"
+    * }}}
+    *
+    * @param prefix
+    *   The prefix to prepend to the start of the string.
+    * @return
+    *   A new String if prefix was prepended, the same string otherwise.
+    */
   def prependIfMissingIgnoreCase(prefix: Option[CharSequence]): Option[String] =
     Option(Strings.prependIfMissingIgnoreCase(strOrNull, prefix.orNull))
 
+  /** <p>Removes all occurrences of a character from within the source string.</p>
+    *
+    * <p>A {@code null} source string will return {@code null}. An empty ("") source string will return the empty string.</p>
+    *
+    * <pre> none.ops.remove(*) = null "".ops.remove(*) = "" "queued".ops.remove('u') = "qeed" "queued".ops.remove('z') = "queued" </pre>
+    *
+    * @param rmv
+    *   the char to search for and remove, may be null
+    * @return
+    *   the substring with the char removed if found, {@code None} if null String input
+    */
   def remove(rmv: Char): Option[String] = Option(Strings.remove(strOrNull, rmv))
 
+  /** <p>Removes all occurrences of a substring from within the source string.</p>
+    *
+    * <p>A {@code null} source string will return {@code null}. An empty ("") source string will return the empty string. A {@code null}
+    * remove string will return the source string. An empty ("") remove string will return the source string.</p>
+    *
+    * {{{
+    * none.ops.remove(*)        = None
+    * "".ops.remove(*)          = ""
+    * *.ops.remove(null)        = *
+    * *.ops.remove("")          = *
+    * "queued".ops.remove("ue") = "qd"
+    * "queued".ops.remove("zz") = "queued"
+    * }}}
+    *
+    * @param rmv
+    *   the String to search for and remove, may be null
+    * @tparam R
+    *   String or Option[String]
+    * @return
+    *   the substring with the string removed if found, {@code None} if null String input
+    */
   def remove[R: TypeOptions2[*, String, Option[String]]](rmv: R): Option[String] = {
     val rmvStr = mapToStrOpt.input(rmv).orNull
     Option(Strings.remove(strOrNull, rmvStr))
   }
 
+  /** <p>Removes a substring only if it is at the end of a source string, otherwise returns the source string.</p>
+    *
+    * <p>A {@code null} source string will return {@code null}. An empty ("") source string will return the empty string. A {@code null}
+    * search string will return the source string.</p>
+    *
+    * {{{
+    * none.ops., *)      = null
+    * StringUtils.removeEnd("", *)        = ""
+    * StringUtils.removeEnd(*, null)      = *
+    * StringUtils.removeEnd("www.domain.com", ".com.")  = "www.domain.com"
+    * StringUtils.removeEnd("www.domain.com", ".com")   = "www.domain"
+    * StringUtils.removeEnd("www.domain.com", "domain") = "www.domain.com"
+    * StringUtils.removeEnd("abc", "")    = "abc"
+    * }}}
+    *
+    * @param rmv
+    *   the String to search for and remove, may be null
+    * @tparam R
+    *   String or Option[String]
+    * @return
+    *   the substring with the string removed if found, {@code null} if null String input
+    */
   def removeEnd[R: TypeOptions2[*, String, Option[String]]](rmv: R): Option[String] = {
     val rmvStr = mapToStrOpt.input(rmv).orNull
     Option(Strings.removeEnd(strOrNull, rmvStr))
   }
 
+  /** <p>Case insensitive removal of a substring if it is at the end of a source string, otherwise returns the source string.</p>
+    *
+    * <p>A {@code null} source string will return {@code null}. An empty ("") source string will return the empty string. A {@code null}
+    * search string will return the source string.</p>
+    *
+    * {{{
+    * StringUtils.removeEndIgnoreCase(null, *)      = null
+    * StringUtils.removeEndIgnoreCase("", *)        = ""
+    * StringUtils.removeEndIgnoreCase(*, null)      = *
+    * StringUtils.removeEndIgnoreCase("www.domain.com", ".com.")  = "www.domain.com"
+    * StringUtils.removeEndIgnoreCase("www.domain.com", ".com")   = "www.domain"
+    * StringUtils.removeEndIgnoreCase("www.domain.com", "domain") = "www.domain.com"
+    * StringUtils.removeEndIgnoreCase("abc", "")    = "abc"
+    * StringUtils.removeEndIgnoreCase("www.domain.com", ".COM") = "www.domain")
+    * StringUtils.removeEndIgnoreCase("www.domain.COM", ".com") = "www.domain")
+    * }}}
+    *
+    * @param rmv
+    *   the String to search for (case insensitive) and remove, may be null
+    * @tparam R
+    *   String or Option[String]
+    * @return
+    *   the substring with the string removed if found, {@code null} if null String input
+    */
   def removeEndIgnoreCase[R: TypeOptions2[*, String, Option[String]]](rmv: R): Option[String] = {
     val rmvStr = mapToStrOpt.input(rmv).orNull
     Option(Strings.removeEndIgnoreCase(strOrNull, rmvStr))
   }
 
+  /** * <p> Case insensitive removal of all occurrences of a substring from within the source string. </p>
+    *
+    * <p> A {@code null} source string will return {@code null}. An empty ("") source string will return the empty string. A {@code null}
+    * remove string will return the source string. An empty ("") remove string will return the source string. </p>
+    *
+    * {{{
+    * none.ops.removeIgnoreCase(*)        = null
+    * "".ops.removeIgnoreCase(*)          = ""
+    * *.ops.removeIgnoreCase(null)        = *
+    * *.ops.removeIgnoreCase("")          = *
+    * "queued".ops.removeIgnoreCase("ue") = "qd"
+    * "queued".ops.removeIgnoreCase("zz") = "queued"
+    * "quEUed".ops.removeIgnoreCase("UE") = "qd"
+    * "queued".ops.removeIgnoreCase("zZ") = "queued"
+    * }}}
+    *
+    * @param rmv
+    *   the String to search for (case insensitive) and remove, may be null
+    * @tparam R
+    *   String or Option[String]
+    * @return
+    *   the substring with the string removed if found, {@code null} if null String input
+    */
   def removeIgnoreCase[R: TypeOptions2[*, String, Option[String]]](rmv: R): Option[String] = {
     val rmvStr = mapToStrOpt.input(rmv).orNull
     Option(Strings.removeIgnoreCase(strOrNull, rmvStr))
   }
 
+  /** * <p>Removes a substring only if it is at the beginning of a source string, otherwise returns the source string.</p>
+    *
+    * <p>A {@code null} source string will return {@code null}. An empty ("") source string will return the empty string. A {@code null}
+    * search string will return the source string.</p>
+    *
+    * {{{
+    * none.ops.removeStart(*)      = null
+    * "".ops.removeStart(*)        = ""
+    * *.ops.removeStart(null)      = *
+    * "www.domain.com".ops.removeStart("www.")   = "domain.com"
+    * "domain.com".ops.removeStart("www.")       = "domain.com"
+    * "www.domain.com".ops.removeStart("domain") = "www.domain.com"
+    * "abc".ops.removeStart("")    = "abc"
+    * }}}
+    *
+    * @param rmv
+    *   the String to search for and remove, may be null
+    * @tparam R
+    *   String or Option[String]
+    * @return
+    *   the substring with the string removed if found, {@code null} if null String input
+    */
   def removeStart[R: TypeOptions2[*, String, Option[String]]](rmv: R): Option[String] = {
     val rmvStr = mapToStrOpt.input(rmv).orNull
     Option(Strings.removeStart(strOrNull, rmvStr))
   }
 
+  /** <p>Case insensitive removal of a substring if it is at the beginning of a source string, otherwise returns the source string.</p>
+    *
+    * <p>A {@code null} source string will return {@code null}. An empty ("") source string will return the empty string. A {@code null}
+    * search string will return the source string.</p>
+    *
+    * {{{
+    * none.ops.removeStartIgnoreCase(*)      = None
+    * "".ops.removeStartIgnoreCase(*)        = ""
+    * *.ops.removeStartIgnoreCase(null)      = *
+    * "www.domain.com".ops.removeStartIgnoreCase("www.")   = "domain.com"
+    * "www.domain.com".ops.removeStartIgnoreCase("WWW.")   = "domain.com"
+    * "domain.com".ops.removeStartIgnoreCase("www.")       = "domain.com"
+    * "www.domain.com".ops.removeStartIgnoreCase("domain") = "www.domain.com"
+    * "abc".ops.removeStartIgnoreCase("")    = "abc"
+    * }}}
+    *
+    * @param rmv
+    *   the String to search for (case insensitive) and remove, may be null
+    * @tparam R
+    *   String or Option[String]
+    * @return
+    *   the substring with the string removed if found, {@code null} if null String input
+    */
   def removeStartIgnoreCase[R: TypeOptions2[*, String, Option[String]]](rmv: R): Option[String] = {
     val rmvStr = mapToStrOpt.input(rmv).orNull
     Option(Strings.removeStartIgnoreCase(strOrNull, rmvStr))
   }
 
+  /** <p>Repeat a String {@code repeat} times to form a new String.</p>
+    *
+    * {{{
+    * none.ops.repeat(2) = null
+    * "".ops.repeat(0)   = ""
+    * "".ops.repeat(2)   = ""
+    * "a".ops.repeat(3)  = "aaa"
+    * "ab".ops.repeat(2) = "abab"
+    * "a".ops.repeat(-2) = ""
+    * }}}
+    *
+    * @param rep
+    *   number of times to repeat str, negative treated as zero
+    * @return
+    *   a new String consisting of the original String repeated, {@code null} if null String input
+    */
   def repeat(rep: Int): Option[String] = Option(Strings.repeat(strOrNull, rep))
 
+  /** <p>Repeat a String {@code repeat} times to form a new String, with a String separator injected each time. </p>
+    *
+    * <pre> StringUtils.repeat(null, null, 2) = null StringUtils.repeat(null, "x", 2) = null StringUtils.repeat("", null, 0) = ""
+    * StringUtils.repeat("", "", 2) = "" StringUtils.repeat("", "x", 3) = "xxx" StringUtils.repeat("?", ", ", 3) = "?, ?, ?" </pre>
+    *
+    * @param separator
+    *   the String to inject, may be null
+    * @param repeat
+    *   number of times to repeat str, negative treated as zero
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   a new String consisting of the original String repeated, {@code null} if null String input
+    */
   def repeat[S: TypeOptions2[*, String, Option[String]]](separator: S, repeat: Int): Option[String] = {
     val sep = mapToStrOpt.input(separator).orNull
     Option(Strings.repeat(strOrNull, sep, repeat))
   }
 
+  /** <p>Replaces all occurrences of a String within another String.</p>
+    *
+    * <p>A {@code null} reference passed to this method is a no-op.</p>
+    *
+    * <pre> none.ops.replace(*, *) = None "".ops.replace*, *) = "" "any".ops.replace, *) = "any" "any".ops.replace(*, null) = "any"
+    * "any".ops.replace("", *) = "any" "aba".ops.replace("a", null) = "aba" "aba".ops.replace("a", "") = "b" "aba".ops.replace("a", "z") =
+    * "zbz" </pre>
+    *
+    * @param searchString
+    *   the String to search for, may be null
+    * @param replacement
+    *   the String to replace it with, may be null
+    * @tparam S
+    *   String or Option[String]
+    * @tparam R
+    *   String or Option[String]
+    * @return
+    *   the text with any replacements processed,
+    */
   def replace[S: TypeOptions2[*, String, Option[String]], R: TypeOptions2[*, String, Option[String]]](
     searchString: S,
     replacement: R
@@ -2095,6 +3097,28 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     Option(Strings.replace(strOrNull, sstr, rstr))
   }
 
+  /** <p>Replaces a String with another String inside a larger String, for the first {@code max} values of the search String.</p>
+    *
+    * <p>A {@code null} reference passed to this method is a no-op.</p>
+    *
+    * <pre> none.ops.replace(*, *, *) = None "".ops.replace(*, *, *) = "" "any".ops.replace(none, *, *) = "any" "any".ops.replace(*, null,
+    * *) = "any" "any".ops.replace("", *, *) = "any" "any".ops.replace(*, *, 0) = "any" "abaa".ops.replace("a", null, -1) = "abaa"
+    * "abaa".ops.replace("a", "", -1) = "b" "abaa".ops.replace("a", "z", 0) = "abaa" "abaa".ops.replace("a", "z", 1) = "zbaa"
+    * "abaa".ops.replace("a", "z", 2) = "zbza" "abaa".ops.replace("a", "z", -1) = "zbzz" </pre>
+    *
+    * @param searchString
+    *   the String to search for, may be null
+    * @param replacement
+    *   the String to replace it with, may be null
+    * @param max
+    *   maximum number of values to replace, or {@code -1} if no maximum
+    * @tparam S
+    *   String or Option[String]
+    * @tparam R
+    *   String or Option[String]
+    * @return
+    *   the text with any replacements processed, {@code null} if null String input
+    */
   def replace[S: TypeOptions2[*, String, Option[String]], R: TypeOptions2[*, String, Option[String]]](
     searchString: S,
     replacement: R,
@@ -2106,9 +3130,57 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     Option(Strings.replace(strOrNull, sstr, rstr, max))
   }
 
+  /** <p>Replaces all occurrences of a character in a String with another. This is a null-safe version of {@link String# replace ( char,
+    * char)}.</p>
+    *
+    * <p>A {@code null} string input returns {@code null}. An empty ("") string input returns an empty string.</p>
+    *
+    * <pre> StringUtils.replaceChars(null, *, *) = null StringUtils.replaceChars("", *, *) = "" StringUtils.replaceChars("abcba", 'b', 'y')
+    * \= "aycya" StringUtils.replaceChars("abcba", 'z', 'y') = "abcba" </pre>
+    *
+    * @param searchChar
+    *   the character to search for, may be null
+    * @param replaceChar
+    *   the character to replace, may be null
+    * @return
+    *   modified String, {@code null} if null string input
+    */
   def replaceChars(searchChar: Char, replaceChar: Char): Option[String] =
     Option(Strings.replaceChars(strOrNull, searchChar, replaceChar))
 
+  /** <p>Replaces multiple characters in a String in one go. This method can also be used to delete characters.</p>
+    *
+    * <p>For example:<br> {@code replaceChars(&quot;hello&quot;, &quot;ho&quot;, &quot;jy&quot;) = jelly}.</p>
+    *
+    * <p>A {@code null} string input returns {@code null}. An empty ("") string input returns an empty string. A null or empty set of search
+    * characters returns the input string.</p>
+    *
+    * <p>The length of the search characters should normally equal the length of the replace characters. If the search characters is longer,
+    * then the extra search characters are deleted. If the search characters is shorter, then the extra replace characters are ignored.</p>
+    *
+    * {{{
+    * none.ops.replaceChars(*, *)           = null
+    * "".ops.replaceChars(*, *)             = ""
+    * "abc".ops.replaceChars(null, *)       = "abc"
+    * "abc".ops.replaceChars("", *)         = "abc"
+    * "abc".ops.replaceChars("b", null)     = "ac"
+    * "abc".ops.replaceChars("b", "")       = "ac"
+    * "abcba".ops.replaceChars("bc", "yz")  = "ayzya"
+    * "abcba".ops.replaceChars("bc", "y")   = "ayya"
+    * "abcba".ops.replaceChars("bc", "yzx") = "ayzya"
+    * }}}
+    *
+    * @param searchChars
+    *   a set of characters to search for, may be null
+    * @param replaceChars
+    *   a set of characters to replace, may be null
+    * @tparam S
+    *   String or Option[String]
+    * @tparam R
+    *   String or Option[String]
+    * @return
+    *   modified String, {@code null} if null string input
+    */
   def replaceChars[S: TypeOptions2[*, String, Option[String]], R: TypeOptions2[*, String, Option[String]]](
     searchChars: S,
     replaceChars: R
@@ -2119,12 +3191,91 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     Option(Strings.replaceChars(strOrNull, sstr, rstr))
   }
 
+  /** <p> Replaces all occurrences of Strings within another String. </p>
+    *
+    * <p> A {@code null} reference passed to this method is a no-op, or if any "search string" or "string to replace" is null, that replace
+    * will be ignored. This will not repeat. For repeating replaces, call the overloaded method. </p>
+    *
+    * {{{
+    * none.ops.replaceEach(*, *)        = null
+    * "".ops.replaceEach(*, *)          = ""
+    * "aba".ops.replaceEach(null, null) = "aba"
+    * "aba".ops.replaceEach(new String[0], null) = "aba"
+    * "aba".ops.replaceEach(null, new String[0]) = "aba"
+    * "aba".ops.replaceEach(new String[]{"a"}, null)  = "aba"
+    * "aba".ops.replaceEach(new String[]{"a"}, new String[]{""})  = "b"
+    * "aba".ops.replaceEach(new String[]{null}, new String[]{"a"})  = "aba"
+    * "abcde".ops.replaceEach(new String[]{"ab", "d"}, new String[]{"w", "t"})  = "wcte"
+    * (example of how it does not repeat)
+    * StringUtils.replaceEach("abcde", new String[]{"ab", "d"}, new String[]{"d", "t"})  = "dcte"
+    * }}}
+    *
+    * @param searchList
+    *   the Strings to search for, no-op if null
+    * @param replacementList
+    *   the Strings to replace them with, no-op if null
+    * @return
+    *   the text with any replacements processed, {@code null} if null String input
+    * @throws IllegalArgumentException
+    *   if the lengths of the arrays are not the same (null is ok, and/or size 0)
+    */
   def replaceEach(searchList: Array[String], replacementList: Array[String]): Option[String] =
     Option(Strings.replaceEach(strOrNull, searchList, replacementList))
 
+  /** * <p> Replaces all occurrences of Strings within another String. </p>
+    *
+    * <p> A {@code null} reference passed to this method is a no-op, or if any "search string" or "string to replace" is null, that replace
+    * will be ignored. </p>
+    *
+    * <pre> none.ops.replaceEachRepeatedly(*, *) = null "".ops.replaceEachRepeatedly(*, *) = "" "aba".ops.replaceEachRepeatedly(null, null)
+    * \= "aba" "aba".ops.replaceEachRepeatedly(new String[0], null) = "aba" "aba".ops.replaceEachRepeatedly(null, new String[0]) = "aba"
+    * "aba".ops.replaceEachRepeatedly(new String[]{"a"}, null) = "aba" "aba".ops.replaceEachRepeatedly(new String[]{"a"}, new String[]{""})
+    * \= "b" "aba".ops.replaceEachRepeatedly(new String[]{null}, new String[]{"a"}) = "aba" "abcde".ops.replaceEachRepeatedly(new
+    * String[]{"ab", "d"}, new String[]{"w", "t"}) = "wcte" (example of how it repeats) "abcde".ops.replaceEachRepeatedly(new String[]{"ab",
+    * "d"}, new String[]{"d", "t"}) = "tcte" "abcde".ops.replaceEachRepeatedly(new String[]{"ab", "d"}, new String[]{"d", "ab"}) =
+    * IllegalStateException </pre>
+    *
+    * @param searchList
+    *   the Strings to search for, no-op if null
+    * @param replacementList
+    *   the Strings to replace them with, no-op if null
+    * @return
+    *   the text with any replacements processed, {@code null} if null String input
+    */
   def replaceEachRepeatedly(searchList: Array[String], replacementList: Array[String]): Option[String] =
     Option(Strings.replaceEachRepeatedly(strOrNull, searchList, replacementList))
 
+  /** <p>Case insensitively replaces a String with another String inside a larger String, for the first {@code max} values of the search
+    * String.</p>
+    *
+    * <p>A {@code null} reference passed to this method is a no-op.</p>
+    *
+    * {{{
+    * none.ops.replaceIgnoreCase(*, *, *)         = null
+    * "".ops.replaceIgnoreCase(*, *, *)           = ""
+    * "any".ops.replaceIgnoreCase(null, *, *)     = "any"
+    * "any".ops.replaceIgnoreCase(*, null, *)     = "any"
+    * "any".ops.replaceIgnoreCase("", *, *)       = "any"
+    * "any".ops.replaceIgnoreCase(*, *, 0)        = "any"
+    * "abaa".ops.replaceIgnoreCase("a", null, -1) = "abaa"
+    * "abaa".ops.replaceIgnoreCase("a", "", -1)   = "b"
+    * "abaa".ops.replaceIgnoreCase("a", "z", 0)   = "abaa"
+    * "abaa".ops.replaceIgnoreCase("A", "z", 1)   = "zbaa"
+    * "abAa".ops.replaceIgnoreCase("a", "z", 2)   = "zbza"
+    * "abAa".ops.replaceIgnoreCase("a", "z", -1)  = "zbzz"
+    * }}}
+    *
+    * @param searchString
+    *   the String to search for (case insensitive), may be null
+    * @param replacement
+    *   the String to replace it with, may be null
+    * @tparam S
+    *   String or Option[String]
+    * @tparam R
+    *   String or Option[String]
+    * @return
+    *   the text with any replacements processed, {@code null} if null String input
+    */
   def replaceIgnoreCase[S: TypeOptions2[*, String, Option[String]], R: TypeOptions2[*, String, Option[String]]](
     searchString: S,
     replacement: R
@@ -2135,6 +3286,30 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     Option(Strings.replaceIgnoreCase(strOrNull, sstr, rstr))
   }
 
+  /** <p>Case insensitively replaces a String with another String inside a larger String, for the first {@code max} values of the search
+    * String.</p>
+    *
+    * <p>A {@code null} reference passed to this method is a no-op.</p>
+    *
+    * <pre> none.ops.replaceIgnoreCase(*, *, *) = null "".ops.replaceIgnoreCase(*, *, *) = "" "any".ops.replaceIgnoreCase(null, *, *) =
+    * "any" "any".ops.replaceIgnoreCase(*, null, *) = "any" "any".ops.replaceIgnoreCase("", *, *) = "any" "any".ops.replaceIgnoreCase(*, *,
+    * 0) = "any" "abaa".ops.replaceIgnoreCase("a", null, -1) = "abaa" "abaa".ops.replaceIgnoreCase("a", "", -1) = "b"
+    * "abaa".ops.replaceIgnoreCase("a", "z", 0) = "abaa" "abaa".ops.replaceIgnoreCase("A", "z", 1) = "zbaa"
+    * "abAa".ops.replaceIgnoreCase("a", "z", 2) = "zbza" "abAa".ops.replaceIgnoreCase("a", "z", -1) = "zbzz"
+    *
+    * @param searchString
+    *   the String to search for, may be null
+    * @param replacement
+    *   the String to replace with, may be null
+    * @param max
+    *   maximum number of values to replace, or {@code -1} if no maximum
+    * @tparam S
+    *   String or Option[String]
+    * @tparam R
+    *   String or Option[String]
+    * @return
+    *   the text with any replacements processed, {@code null} if null String input
+    */
   def replaceIgnoreCase[S: TypeOptions2[*, String, Option[String]], R: TypeOptions2[*, String, Option[String]]](
     searchString: S,
     replacement: R,
@@ -2146,6 +3321,32 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     Option(Strings.replaceIgnoreCase(strOrNull, sstr, rstr, max))
   }
 
+  /** <p>Replaces a String with another String inside a larger String, once.</p>
+    *
+    * <p>A {@code null} reference passed to this method is a no-op.</p>
+    *
+    * {{{
+    * none.ops.replaceOnce(*, *)        = null
+    * "".ops.replaceOnce(*, *)          = ""
+    * "any".ops.replaceOnce(null, *)    = "any"
+    * "any".ops.replaceOnce(*, null)    = "any"
+    * "any".ops.replaceOnce("", *)      = "any"
+    * "aba".ops.replaceOnce("a", null)  = "aba"
+    * "aba".ops.replaceOnce("a", "")    = "ba"
+    * "aba".ops.replaceOnce("a", "z")   = "zba"
+    * }}}
+    *
+    * @param searchString
+    *   the String to search for, may be null
+    * @param replacement
+    *   the String to replace with, may be null
+    * @tparam S
+    *   String or Option[String]
+    * @tparam R
+    *   String or Option[String]
+    * @return
+    *   the text with any replacements processed, {@code null} if null String input
+    */
   def replaceOnce[S: TypeOptions2[*, String, Option[String]], R: TypeOptions2[*, String, Option[String]]](
     searchString: S,
     replacement: R
@@ -2156,6 +3357,33 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     Option(Strings.replaceOnce(strOrNull, sstr, rstr))
   }
 
+  /** <p>Case insensitively replaces a String with another String inside a larger String, once.</p>
+    *
+    * <p>A {@code null} reference passed to this method is a no-op.</p>
+    *
+    * {{{
+    * none.ops.replaceOnceIgnoreCase(*, *)        = null
+    * "".ops.replaceOnceIgnoreCase(*, *)          = ""
+    * "any".ops.replaceOnceIgnoreCase(null, *)    = "any"
+    * "any".ops.replaceOnceIgnoreCase(*, null)    = "any"
+    * "any".ops.replaceOnceIgnoreCase("", *)      = "any"
+    * "aba".ops.replaceOnceIgnoreCase("a", null)  = "aba"
+    * "aba".ops.replaceOnceIgnoreCase("a", "")    = "ba"
+    * "aba".ops.replaceOnceIgnoreCase("a", "z")   = "zba"
+    * "FoOFoofoo".ops.replaceOnceIgnoreCase("foo", "") = "Foofoo"
+    * }}}
+    *
+    * @param searchString
+    *   the String to search for (case insensitive), may be null
+    * @param replacement
+    *   the String to replace with, may be null
+    * @tparam S
+    *   String or Option[String]
+    * @tparam R
+    *   String or Option[String]
+    * @return
+    *   the text with any replacements processed, {@code null} if null String input
+    */
   def replaceOnceIgnoreCase[S: TypeOptions2[*, String, Option[String]], R: TypeOptions2[*, String, Option[String]]](
     searchString: S,
     replacement: R
@@ -2166,58 +3394,397 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     Option(Strings.replaceOnceIgnoreCase(strOrNull, sstr, rstr))
   }
 
+  /** <p>Reverses a String as per {@link StringBuilder# reverse ( )}.</p>
+    *
+    * <p>A {@code null} String returns {@code null}.</p>
+    *
+    * {{{
+    * none.ops.reverse  = None
+    * "".ops.reverse    = ""
+    * "bat".ops.reverse = "tab"
+    * }}}
+    *
+    * @return
+    *   the reversed String, {@code null} if null String input
+    */
   def reverse: Option[String] = Option(Strings.reverse(strOrNull))
 
+  /** <p>Reverses a String that is delimited by a specific character.</p>
+    *
+    * <p>The Strings between the delimiters are not reversed. Thus java.lang.String becomes String.lang.java (if the delimiter is {@code
+    * '.'}).</p>
+    *
+    * {{{
+    * none.ops.reverseDelimited(*)      = null
+    * "".ops.reverseDelimited(*)        = ""
+    * "a.b.c", 'x') = "a.b.c"
+    * "a.b.c", ".") = "c.b.a"
+    * }}}
+    *
+    * @param separatorChar
+    *   the separator character to use
+    * @return
+    *   the reversed String, {@code null} if null String input
+    */
   def reverseDelimited(separatorChar: Char): Option[String] =
     Option(Strings.reverseDelimited(strOrNull, separatorChar))
 
+  /** <p>Gets the rightmost {@code len} characters of a String.</p>
+    *
+    * <p>If {@code len} characters are not available, or the String is {@code null}, the String will be returned without an an exception. An
+    * empty String is returned if len is negative.</p>
+    *
+    * {{{
+    * none.ops.right(*)    = null
+    * *.ops.right(-ve)     = ""
+    * "".ops.right(*)      = ""
+    * "abc".ops.right(0)   = ""
+    * "abc".ops.right(2)   = "bc"
+    * "abc".ops.right(4)   = "abc"
+    * }}}
+    *
+    * @param len
+    *   the length of the required String
+    * @return
+    *   the rightmost characters, {@code null} if null String input
+    */
   def right(len: Int): Option[String] = Option(Strings.right(strOrNull, len))
 
+  /** <p>Right pad a String with spaces (' ').</p>
+    *
+    * <p>The String is padded to the size of {@code size}.</p>
+    *
+    * {{{
+    * none.ops.rightPad(*)   = null
+    * "".ops.rightPad(3)     = "   "
+    * "bat".ops.rightPad(3)  = "bat"
+    * "bat".ops.rightPad(5)  = "bat  "
+    * "bat".ops.rightPad(1)  = "bat"
+    * "bat".ops.rightPad(-1) = "bat"
+    * }}}
+    *
+    * @param size
+    *   the size to pad to
+    * @return
+    *   right padded String or original String if no padding is necessary, {@code null} if null String input
+    */
   def rightPad(size: Int): Option[String] = Option(Strings.rightPad(strOrNull, size))
 
+  /** * <p>Right pad a String with a specified character.</p>
+    *
+    * <p>The String is padded to the size of {@code size}.</p>
+    *
+    * {{{
+    * none.ops.rightPad(*, *)     = null
+    * "".ops.rightPad(3, 'z')     = "zzz"
+    * "bat".ops.rightPad(3, 'z')  = "bat"
+    * "bat".ops.rightPad(5, 'z')  = "batzz"
+    * "bat".ops.rightPad(1, 'z')  = "bat"
+    * "bat".ops.rightPad(-1, 'z') = "bat"
+    * }}}
+    *
+    * @param size
+    *   the size to pad to
+    * @param padChar
+    *   the character to pad with
+    * @return
+    *   right padded String or original String if no padding is necessary, {@code null} if null String input
+    */
   def rightPad(size: Int, padChar: Char): Option[String] = Option(Strings.rightPad(strOrNull, size, padChar))
 
+  /** <p>Right pad a String with a specified String.</p>
+    *
+    * <p>The String is padded to the size of {@code size}.</p>
+    *
+    * {{{}}} none.ops.rightPad(*, *) = null "".ops.rightPad(3, "z") = "zzz" "bat".ops.rightPad(3, "yz") = "bat" "bat".ops.rightPad(5, "yz")
+    * \= "batyz" "bat".ops.rightPad(8, "yz") = "batyzyzy" "bat".ops.rightPad(1, "yz") = "bat" "bat".ops.rightPad(-1, "yz") = "bat"
+    * "bat".ops.rightPad(5, null) = "bat " "bat".ops.rightPad(5, "") = "bat " }}}
+    *
+    * @param size
+    *   the size to pad to
+    * @param padStr
+    *   the String to pad with, null or empty treated as single spacethe String to pad with, null or empty treated as single space
+    * @tparam P
+    *   String or Option[String]
+    * @return
+    *   right padded String or original String if no padding is necessary, {@code null} if null String input
+    */
   def rightPad[P: TypeOptions2[*, String, Option[String]]](size: Int, padStr: P): Option[String] = {
     val ps = mapToStrOpt.input(padStr).orNull
     Option(Strings.rightPad(strOrNull, size, ps))
   }
 
+  /** <p>Rotate (circular shift) a String of {@code shift} characters.</p> <ul> <li>If {@code shift > 0}, right circular shift (ex : ABCDEF
+    * \=&gt; FABCDE)</li> <li>If {@code shift < 0}, left circular shift (ex : ABCDEF =&gt; BCDEFA)</li> </ul>
+    *
+    * {{{
+    * none.ops.rotate(*)        = null
+    * "".ops.rotate(*)          = ""
+    * "abcdefg".ops.rotate(0)   = "abcdefg"
+    * "abcdefg".ops.rotate(2)   = "fgabcde"
+    * "abcdefg".ops.rotate(-2)  = "cdefgab"
+    * "abcdefg".ops.rotate(7)   = "abcdefg"
+    * "abcdefg".ops.rotate(-7)  = "abcdefg"
+    * "abcdefg".ops.rotate(9)   = "fgabcde"
+    * "abcdefg".ops.rotate(-9)  = "cdefgab"
+    * }}}
+    *
+    * @param shift
+    *   number of time to shift (positive : right shift, negative : left shift)
+    * @return
+    *   the rotated String, or the original String if {@code shift == 0}, or {@code null} if null String input
+    */
   def rotate(shift: Int): Option[String] = Option(Strings.rotate(strOrNull, shift))
 
+  /** <p>Splits the provided text into an array, using whitespace as the separator. Whitespace is defined by {@link Character# isWhitespace
+    * ( char )}.</p>
+    *
+    * <p>The separator is not included in the returned String array. Adjacent separators are treated as one separator. For more control over
+    * the split use the StrTokenizer class.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}.</p>
+    *
+    * {{{
+    * none.ops.split       = null
+    * "".ops.split         = []
+    * "abc def".ops.split  = ["abc", "def"]
+    * "abc  def".ops.split = ["abc", "def"]
+    * " abc ".ops.split    = ["abc"]
+    * }}}
+    *
+    * @return
+    *   an array of parsed Strings, {@code null} if null String input
+    */
   def split: Option[Array[String]] = Option(Strings.split(strOrNull))
 
+  /** <p>Splits the provided text into an array, separators specified. This is an alternative to using StringTokenizer.</p>
+    *
+    * <p>The separator is not included in the returned String array. Adjacent separators are treated as one separator. For more control over
+    * the split use the StrTokenizer class.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. A {@code null} separatorChars splits on whitespace.</p>
+    *
+    * <pre> none.ops.split(*) = None "".ops.split(*) = [] "abc def".ops.split(none) = ["abc", "def"] "abc def".ops.split(" ") = ["abc",
+    * "def"] "abc def".ops.split(" ") = ["abc", "def"] "ab:cd:ef".ops.split(":") = ["ab", "cd", "ef"] </pre>
+    *
+    * @param separatorChar
+    *   the characters used as the delimiters, {@code null} splits on whitespace
+    * @return
+    */
   def split(separatorChar: Char): Option[Array[String]] = Option(Strings.split(strOrNull, separatorChar))
 
+  /** <p>Splits the provided text into an array, separators specified. This is an alternative to using StringTokenizer.</p>
+    *
+    * <p>The separator is not included in the returned String array. Adjacent separators are treated as one separator. For more control over
+    * the split use the StrTokenizer class.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. A {@code null} separatorChars splits on whitespace.</p>
+    *
+    * {{{
+    * none.ops.split(*)         = null
+    * "".ops.split(*)           = []
+    * "abc def".ops.split(null) = ["abc", "def"]
+    * "abc def".ops.split(" ")  = ["abc", "def"]
+    * "abc  def".ops.split(" ") = ["abc", "def"]
+    * "ab:cd:ef".ops.split(":") = ["ab", "cd", "ef"]
+    * }}}
+    *
+    * @param separatorChars
+    *   the characters used as the delimiters, {@code null} splits on whitespace
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   an array of parsed Strings, {@code null} if null String input
+    */
   def split[S: TypeOptions2[*, String, Option[String]]](separatorChars: S): Option[Array[String]] = {
     val sep = mapToStrOpt.input(separatorChars).orNull
     Option(Strings.split(strOrNull, sep))
   }
 
+  /** <p>Splits the provided text into an array with a maximum length, separators specified.</p>
+    *
+    * <p>The separator is not included in the returned String array. Adjacent separators are treated as one separator.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. A {@code null} separatorChars splits on whitespace.</p>
+    *
+    * <p>If more than {@code max} delimited substrings are found, the last returned string includes all characters after the first {@code
+    * max - 1} returned strings (including separator characters).</p>
+    *
+    * {{{
+    * none.ops.split(*, *)            = null
+    * "".ops.split(*, *)              = []
+    * "ab cd ef".ops.split(null, 0)   = ["ab", "cd", "ef"]
+    * "ab   cd ef".ops.split(null, 0) = ["ab", "cd", "ef"]
+    * "ab:cd:ef".ops.split(":", 0)    = ["ab", "cd", "ef"]
+    * "ab:cd:ef".ops.split(":", 2)    = ["ab", "cd:ef"]
+    * }}}
+    *
+    * @param separatorCharsthe
+    *   characters used as the delimiters, {@code null} splits on whitespace
+    * @param max
+    *   the maximum number of elements to include in the array. A zero or negative value implies no limit
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   an array of parsed Strings, {@code null} if null String input
+    */
   def split[S: TypeOptions2[*, String, Option[String]]](separatorChars: S, max: Int): Option[Array[String]] = {
     val sep = mapToStrOpt.input(separatorChars).orNull
     Option(Strings.split(strOrNull, sep, max))
   }
 
+  /** <p>Splits a String by Character type as returned by {@code java.lang.Character.getType(char)}. Groups of contiguous characters of the
+    * same type are returned as complete tokens.
+    * {{{
+    * none.ops.splitByCharacterType         = null
+    * "".ops.splitByCharacterType           = []
+    * "ab de fg".ops.splitByCharacterType   = ["ab", " ", "de", " ", "fg"]
+    * "ab   de fg".ops.splitByCharacterType = ["ab", "   ", "de", " ", "fg"]
+    * "ab:cd:ef".ops.splitByCharacterType   = ["ab", ":", "cd", ":", "ef"]
+    * "number5".ops.splitByCharacterType    = ["number", "5"]
+    * "fooBar".ops.splitByCharacterType     = ["foo", "B", "ar"]
+    * "foo200Bar".ops.splitByCharacterType  = ["foo", "200", "B", "ar"]
+    * "ASFRules".ops.splitByCharacterType   = ["ASFR", "ules"]
+    * }}}
+    *
+    * @return
+    *   an array of parsed Strings, {@code null} if null String input
+    */
   def splitByCharacterType: Option[Array[String]] = Option(Strings.splitByCharacterType(strOrNull))
 
+  /** * <p>Splits a String by Character type as returned by {@code java.lang.Character.getType(char)}. Groups of contiguous characters of
+    * the same type are returned as complete tokens, with the following exception: the character of type {@code Character.UPPERCASE_LETTER},
+    * if any, immediately preceding a token of type {@code Character.LOWERCASE_LETTER} will belong to the following token rather than to the
+    * preceding, if any, {@code Character.UPPERCASE_LETTER} token.
+    * {{{
+    * none.ops.splitByCharacterTypeCamelCase         = null
+    * "".ops.splitByCharacterTypeCamelCase           = []
+    * "ab de fg".ops.splitByCharacterTypeCamelCase   = ["ab", " ", "de", " ", "fg"]
+    * "ab   de fg".ops.splitByCharacterTypeCamelCase = ["ab", "   ", "de", " ", "fg"]
+    * "ab:cd:ef".ops.splitByCharacterTypeCamelCase   = ["ab", ":", "cd", ":", "ef"]
+    * "number5".ops.splitByCharacterTypeCamelCase    = ["number", "5"]
+    * "fooBar".ops.splitByCharacterTypeCamelCase     = ["foo", "Bar"]
+    * "foo200Bar".ops.splitByCharacterTypeCamelCase  = ["foo", "200", "Bar"]
+    * "ASFRules".ops.splitByCharacterTypeCamelCase   = ["ASF", "Rules"]
+    * }}}
+    *
+    * @return
+    *   an array of parsed Strings, {@code null} if null String input
+    */
   def splitByCharacterTypeCamelCase: Option[Array[String]] =
     Option(Strings.splitByCharacterTypeCamelCase(strOrNull))
 
+  /** <p>Splits the provided text into an array, separator string specified. Returns a maximum of {@code max} substrings.</p>
+    *
+    * <p>The separator(s) will not be included in the returned String array. Adjacent separators are treated as one separator.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. A {@code null} separator splits on whitespace.</p>
+    *
+    * {{{
+    * StringUtils.splitByWholeSeparator(null, *, *)               = null
+    * StringUtils.splitByWholeSeparator("", *, *)                 = []
+    * StringUtils.splitByWholeSeparator("ab de fg", null, 0)      = ["ab", "de", "fg"]
+    * StringUtils.splitByWholeSeparator("ab   de fg", null, 0)    = ["ab", "de", "fg"]
+    * StringUtils.splitByWholeSeparator("ab:cd:ef", ":", 2)       = ["ab", "cd:ef"]
+    * StringUtils.splitByWholeSeparator("ab-!-cd-!-ef", "-!-", 5) = ["ab", "cd", "ef"]
+    * StringUtils.splitByWholeSeparator("ab-!-cd-!-ef", "-!-", 2) = ["ab", "cd-!-ef"]
+    * }}}
+    *
+    * @param separatorChars
+    *   String containing the String to be used as a delimiter, {@code null} splits on whitespace
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   an array of parsed Strings, {@code null} if null String was input
+    */
   def splitByWholeSeparator[S: TypeOptions2[*, String, Option[String]]](separatorChars: S): Option[Array[String]] = {
     val sep = mapToStrOpt.input(separatorChars).orNull
     Option(Strings.splitByWholeSeparator(strOrNull, sep))
   }
 
+  /** <p>Splits the provided text into an array, separator string specified. Returns a maximum of {@code max} substrings.</p>
+    *
+    * <p>The separator(s) will not be included in the returned String array. Adjacent separators are treated as one separator.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. A {@code null} separator splits on whitespace.</p>
+    *
+    * {{{
+    * null.ops.splitByWholeSeparator(*, *)               = null
+    * "".ops.splitByWholeSeparator(*, *)                 = []
+    * "ab de fg".ops.splitByWholeSeparator(none, 0)      = ["ab", "de", "fg"]
+    * "ab   de fg".ops.splitByWholeSeparator(null, 0)    = ["ab", "de", "fg"]
+    * "ab:cd:ef".ops.splitByWholeSeparator(":", 2)       = ["ab", "cd:ef"]
+    * "ab-!-cd-!-ef".ops.splitByWholeSeparator("-!-", 5) = ["ab", "cd", "ef"]
+    * "ab-!-cd-!-ef".ops.splitByWholeSeparator("-!-", 2) = ["ab", "cd-!-ef"]
+    * }}}
+    *
+    * @param separatorChars
+    *   String containing the String to be used as a delimiter, {@code null} splits on whitespace
+    * @param max
+    *   the maximum number of elements to include in the returned array. A zero or negative value implies no limit.
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   an array of parsed Strings, {@code null} if null String was input
+    */
   def splitByWholeSeparator[S: TypeOptions2[*, String, Option[String]]](separatorChars: S, max: Int): Option[Array[String]] = {
     val sep = mapToStrOpt.input(separatorChars).orNull
     Option(Strings.splitByWholeSeparator(strOrNull, sep, max))
   }
 
+  /** <p>Splits the provided text into an array, separator string specified. </p>
+    *
+    * <p>The separator is not included in the returned String array. Adjacent separators are treated as separators for empty tokens. For
+    * more control over the split use the StrTokenizer class.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. A {@code null} separator splits on whitespace.</p>
+    *
+    * {{{
+    * none.ops.splitByWholeSeparatorPreserveAllTokens(*)               = null
+    * "".ops.splitByWholeSeparatorPreserveAllTokens(*)                 = []
+    * "ab de fg".ops.splitByWholeSeparatorPreserveAllTokens(null)      = ["ab", "de", "fg"]
+    * "ab   de fg".ops.splitByWholeSeparatorPreserveAllTokens(null)    = ["ab", "", "", "de", "fg"]
+    * "ab:cd:ef".ops.splitByWholeSeparatorPreserveAllTokens(":")       = ["ab", "cd", "ef"]
+    * "ab-!-cd-!-ef".ops.splitByWholeSeparatorPreserveAllTokens("-!-") = ["ab", "cd", "ef"]
+    * }}}
+    *
+    * @param separatorChars
+    * @tparam S
+    *   String containing the String to be used as a delimiter, {@code null} splits on whitespace
+    * @return
+    *   an array of parsed Strings, {@code null} if null String was input
+    */
   def splitByWholeSeparatorPreserveAllTokens[S: TypeOptions2[*, String, Option[String]]](separatorChars: S): Option[Array[String]] = {
     val sep = mapToStrOpt.input(separatorChars).orNull
     Option(Strings.splitByWholeSeparatorPreserveAllTokens(strOrNull, sep))
   }
 
+  /** <p>Splits the provided text into an array, separator string specified. Returns a maximum of {@code max} substrings.</p>
+    *
+    * <p>The separator is not included in the returned String array. Adjacent separators are treated as separators for empty tokens. For
+    * more control over the split use the StrTokenizer class.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. A {@code null} separator splits on whitespace.</p>
+    *
+    * {{{
+    * none.ops.splitByWholeSeparatorPreserveAllTokens(*, *)               = null
+    * "".ops.splitByWholeSeparatorPreserveAllTokens(*, *)                 = []
+    * "ab de fg".ops.splitByWholeSeparatorPreserveAllTokens(null, 0)      = ["ab", "de", "fg"]
+    * "ab   de fg".ops.splitByWholeSeparatorPreserveAllTokens(null, 0)    = ["ab", "", "", "de", "fg"]
+    * "ab:cd:ef".ops.splitByWholeSeparatorPreserveAllTokens(":", 2)       = ["ab", "cd:ef"]
+    * "ab-!-cd-!-ef".ops.splitByWholeSeparatorPreserveAllTokens("-!-", 5) = ["ab", "cd", "ef"]
+    * "ab-!-cd-!-ef".ops.splitByWholeSeparatorPreserveAllTokens("-!-", 2) = ["ab", "cd-!-ef"]
+    * }}}
+    *
+    * @param separatorChars
+    *   String containing the String to be used as a delimiter, {@code null} splits on whitespace
+    * @param max
+    *   the maximum number of elements to include in the returned array. A zero or negative value implies no limit.
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   an array of parsed Strings, {@code null} if null String was input
+    */
   def splitByWholeSeparatorPreserveAllTokens[S: TypeOptions2[*, String, Option[String]]](
     separatorChars: S,
     max: Int
@@ -2226,28 +3793,175 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     Option(Strings.splitByWholeSeparatorPreserveAllTokens(strOrNull, sep, max))
   }
 
+  /** <p>Splits the provided text into an array, using whitespace as the separator, preserving all tokens, including empty tokens created by
+    * adjacent separators. This is an alternative to using StringTokenizer. Whitespace is defined by {@link Character# isWhitespace ( char
+    * )}.</p>
+    *
+    * <p>The separator is not included in the returned String array. Adjacent separators are treated as separators for empty tokens. For
+    * more control over the split use the StrTokenizer class.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}.</p>
+    *
+    * {{{
+    * none.ops.splitPreserveAllTokens       = null
+    * "".ops.splitPreserveAllTokens         = []
+    * "abc def".ops.splitPreserveAllTokens  = ["abc", "def"]
+    * "abc  def".ops.splitPreserveAllTokens = ["abc", "", "def"]
+    * " abc ".ops.splitPreserveAllTokens    = ["", "abc", ""]
+    * }}}
+    * @return
+    *   an array of parsed Strings, {@code null} if null String input
+    */
   def splitPreserveAllTokens: Option[Array[String]] = Option(Strings.splitPreserveAllTokens(strOrNull))
 
+  /** <p>Splits the provided text into an array, separator specified, preserving all tokens, including empty tokens created by adjacent
+    * separators. This is an alternative to using StringTokenizer.</p>
+    *
+    * <p>The separator is not included in the returned String array. Adjacent separators are treated as separators for empty tokens. For
+    * more control over the split use the StrTokenizer class.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}.</p>
+    *
+    * {{{
+    * none.ops.splitPreserveAllTokens(*)         = null
+    * "".ops.splitPreserveAllTokens(*)           = []
+    * "a.b.c".ops.splitPreserveAllTokens('.')    = ["a", "b", "c"]
+    * "a..b.c".ops.splitPreserveAllTokens('.')   = ["a", "", "b", "c"]
+    * "a:b:c".ops.splitPreserveAllTokens('.')    = ["a:b:c"]
+    * "a\tb\nc".ops.splitPreserveAllTokens(null) = ["a", "b", "c"]
+    * "a b c".ops.splitPreserveAllTokens(' ')    = ["a", "b", "c"]
+    * "a b c ".ops.splitPreserveAllTokens(' ')   = ["a", "b", "c", ""]
+    * "a b c  ".ops.splitPreserveAllTokens(' ')   = ["a", "b", "c", "", ""]
+    * " a b c".ops.splitPreserveAllTokens(' ')   = ["", a", "b", "c"]
+    * "  a b c".ops.splitPreserveAllTokens(' ')  = ["", "", a", "b", "c"]
+    * " a b c ".ops.splitPreserveAllTokens(' ')  = ["", a", "b", "c", ""]
+    * }}}
+    *
+    * @param separatorChar
+    *   the character used as the delimiter, {@code null} splits on whitespace
+    * @return
+    *   an array of parsed Strings, {@code null} if null String input
+    */
   def splitPreserveAllTokens(separatorChar: Char): Option[Array[String]] =
     Option(Strings.splitPreserveAllTokens(strOrNull, separatorChar))
 
+  /** <p>Splits the provided text into an array, separators specified, preserving all tokens, including empty tokens created by adjacent
+    * separators. This is an alternative to using StringTokenizer.</p>
+    *
+    * <p>The separator is not included in the returned String array. Adjacent separators are treated as separators for empty tokens. For
+    * more control over the split use the StrTokenizer class.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. A {@code null} separatorChars splits on whitespace.</p>
+    *
+    * {{{
+    * StringUtils.splitPreserveAllTokens(null, *)           = null
+    * StringUtils.splitPreserveAllTokens("", *)             = []
+    * StringUtils.splitPreserveAllTokens("abc def", null)   = ["abc", "def"]
+    * StringUtils.splitPreserveAllTokens("abc def", " ")    = ["abc", "def"]
+    * StringUtils.splitPreserveAllTokens("abc  def", " ")   = ["abc", "", def"]
+    * StringUtils.splitPreserveAllTokens("ab:cd:ef", ":")   = ["ab", "cd", "ef"]
+    * StringUtils.splitPreserveAllTokens("ab:cd:ef:", ":")  = ["ab", "cd", "ef", ""]
+    * StringUtils.splitPreserveAllTokens("ab:cd:ef::", ":") = ["ab", "cd", "ef", "", ""]
+    * StringUtils.splitPreserveAllTokens("ab::cd:ef", ":")  = ["ab", "", cd", "ef"]
+    * StringUtils.splitPreserveAllTokens(":cd:ef", ":")     = ["", cd", "ef"]
+    * StringUtils.splitPreserveAllTokens("::cd:ef", ":")    = ["", "", cd", "ef"]
+    * StringUtils.splitPreserveAllTokens(":cd:ef:", ":")    = ["", cd", "ef", ""]
+    * }}}
+    *
+    * @param separatorChars
+    *   the characters used as the delimiters, {@code null} splits on whitespace
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   an array of parsed Strings, {@code null} if null String input
+    */
   def splitPreserveAllTokens[S: TypeOptions2[*, String, Option[String]]](separatorChars: S): Option[Array[String]] = {
     val sep = mapToStrOpt.input(separatorChars).orNull
     Option(Strings.splitPreserveAllTokens(strOrNull, sep))
   }
 
+  /** <p>Splits the provided text into an array with a maximum length, separators specified, preserving all tokens, including empty tokens
+    * created by adjacent separators.</p>
+    *
+    * <p>The separator is not included in the returned String array. Adjacent separators are treated as separators for empty tokens.
+    * Adjacent separators are treated as one separator.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. A {@code null} separatorChars splits on whitespace.</p>
+    *
+    * <p>If more than {@code max} delimited substrings are found, the last returned string includes all characters after the first {@code
+    * max - 1} returned strings (including separator characters).</p>
+    *
+    * {{{
+    * none.ops.splitPreserveAllTokens(*, *)            = null
+    * "".ops.splitPreserveAllTokens(*, *)              = []
+    * "ab de fg".ops.splitPreserveAllTokens(null, 0)   = ["ab", "de", "fg"]
+    * "ab   de fg".ops.splitPreserveAllTokens(null, 0) = ["ab", "", "", "de", "fg"]
+    * "ab:cd:ef".ops.splitPreserveAllTokens(":", 0)    = ["ab", "cd", "ef"]
+    * "ab:cd:ef".ops.splitPreserveAllTokens(":", 2)    = ["ab", "cd:ef"]
+    * "ab   de fg".ops.splitPreserveAllTokens(null, 2) = ["ab", "  de fg"]
+    * "ab   de fg".ops.splitPreserveAllTokens(null, 3) = ["ab", "", " de fg"]
+    * "ab   de fg".ops.splitPreserveAllTokens(null, 4) = ["ab", "", "", "de fg"]
+    * }}}
+    *
+    * @param separatorChars
+    *   the characters used as the delimiters, {@code null} splits on whitespace
+    * @param max
+    *   the maximum number of elements to include in the array. A zero or negative value implies no limit
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   an array of parsed Strings, {@code null} if null String input
+    */
   def splitPreserveAllTokens[S: TypeOptions2[*, String, Option[String]]](separatorChars: S, max: Int): Option[Array[String]] = {
     val sep = mapToStrOpt.input(separatorChars).orNull
     Option(Strings.splitPreserveAllTokens(strOrNull, sep, max))
   }
 
+  /** <p>Check if a CharSequence starts with a specified prefix.</p>
+    *
+    * <p>{@code null}s are handled without exceptions. Two {@code null} references are considered to be equal. The comparison is case
+    * sensitive.</p>
+    *
+    * {{{
+    * none.ops.startWith(null)      = true
+    * none.ops.startWith("abc")     = false
+    * "abcdef".ops.startWith(null)  = false
+    * "abcdef".ops.startWith("abc") = true
+    * "ABCDEF".ops.startWith("abc") = false
+    * }}}
+    *
+    * @param prefix
+    *   the prefix to find, may be null
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   {@code true} if the CharSequence starts with the prefix, case sensitive, or both {@code null}
+    */
   def startsWith[S: TypeOptions2[*, String, Option[String]]](prefix: S): Boolean = {
     val pre = mapToStrOpt.input(prefix).orNull
     Strings.startsWith(strOrNull, pre)
   }
 
+  /** <p>Case insensitive check if a CharSequence starts with a specified prefix.</p>
+    *
+    * <p>{@code null}s are handled without exceptions. Two {@code null} references are considered to be equal. The comparison is case
+    * insensitive.</p>
+    *
+    * <pre> StringUtils.startsWithIgnoreCase(null, null) = true StringUtils.startsWithIgnoreCase(null, "abc") = false
+    * StringUtils.startsWithIgnoreCase("abcdef", null) = false StringUtils.startsWithIgnoreCase("abcdef", "abc") = true
+    * StringUtils.startsWithIgnoreCase("ABCDEF", "abc") = true </pre>
+    *
+    * @param searchStrings
+    *   the case-sensitive CharSequence prefixes, may be empty or contain {@code null}
+    * @tparam CS
+    *   CharSequence or Option[CharSequence]
+    * @return
+    *   {@code true} if the input {@code sequence} is {@code null} AND no {@code searchStrings} are provided, or the input {@code sequence}
+    *   begins with any of the provided case-sensitive {@code searchStrings}.
+    */
   def startsWithAny[CS: TypeOptions2F[Seq, *, Seq[CharSequence], Seq[Option[CharSequence]]]](searchStrings: CS*): Boolean = {
-    def mapping = TypeMapping.getMapping[TypeOptions2[*, Seq[CharSequence], Seq[Option[CharSequence]]]]
+    def mapping: FetchMappingAply[TypeOptions2[*, Seq[CharSequence], Seq[Option[CharSequence]]]] =
+      TypeMapping.getMapping[TypeOptions2[*, Seq[CharSequence], Seq[Option[CharSequence]]]]
 
     if (searchStrings == null) Strings.startsWithAny(strOrNull)
     else {
@@ -2256,128 +3970,958 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     }
   }
 
+  /** <p>Case insensitive check if a CharSequence starts with a specified prefix.</p>
+    *
+    * <p>{@code null}s are handled without exceptions. Two {@code null} references are considered to be equal. The comparison is case
+    * insensitive.</p>
+    *
+    * {{{
+    * none.ops.startsWithIgnoreCase(null)      = true
+    * none.ops.startsWithIgnoreCase("abc")     = false
+    * "abcdef".ops.startsWithIgnoreCase(none)  = false
+    * "abcdef".ops.startsWithIgnoreCase("abc") = true
+    * "ABCDEF".ops.startsWithIgnoreCase("abc") = true
+    * }}}
+    *
+    * @param prefix
+    *   the prefix to find, may be null
+    * @tparam P
+    *   String or Option[String]
+    * @return
+    *   {@code true} if the CharSequence starts with the prefix, case insensitive, or both {@code null}
+    */
   def startsWithIgnoreCase[P: TypeOptions2[*, String, Option[String]]](prefix: P): Boolean = {
     val str = mapToStrOpt.input(prefix).orNull
     Strings.startsWithIgnoreCase(strOrNull, str)
   }
 
+  /** <p>Strips whitespace from the start and end of a String.</p>
+    *
+    * <p>This is similar to {@link # trim ( String )} but removes whitespace. Whitespace is defined by {@link Character# isWhitespace ( char
+    * )}.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}.</p>
+    *
+    * {{{
+    * none.ops.strip     = null
+    * "".ops.strip       = ""
+    * "   ".ops.strip    = ""
+    * "abc".ops.strip    = "abc"
+    * "  abc".ops.strip  = "abc"
+    * "abc  ".ops.strip  = "abc"
+    * " abc ".ops.strip  = "abc"
+    * " ab c ".ops.strip = "ab c"
+    * }}}
+    *
+    * @return
+    *   the stripped String, {@code null} if null String input
+    */
   def strip: Option[String] = Option(Strings.strip(strOrNull))
 
+  /** <p>Strips any of a set of characters from the start and end of a String. This is similar to {@link String# trim ( )} but allows the
+    * characters to be stripped to be controlled.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. An empty string ("") input returns the empty string.</p>
+    *
+    * <p>If the stripChars String is {@code null}, whitespace is stripped as defined by {@link Character# isWhitespace ( char )}.
+    * Alternatively use {@link # strip ( String )}.</p>
+    *
+    * {{{
+    * none.ops.strip(*)          = null
+    * "".ops.strip(*)            = ""
+    * "abc".ops.strip(null)      = "abc"
+    * "  abc".ops.strip(null)    = "abc"
+    * "abc  ".ops.strip(null)    = "abc"
+    * " abc ".ops.strip(null)    = "abc"
+    * "  abcyx".ops.strip("xyz") = "  abc"
+    * }}}
+    *
+    * @param stripChars
+    *   the characters to remove, null treated as whitespace
+    *
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   the stripped String, {@code null} if null String input
+    */
   def strip[S: TypeOptions2[*, String, Option[String]]](stripChars: S): Option[String] = {
     val chars = mapToStrOpt.input(stripChars).orNull
     Option(Strings.strip(strOrNull, chars))
   }
 
+  /** <p>Removes diacritics (~= accents) from a string. The case will not be altered.</p> <p>For instance, '&agrave;' will be replaced by
+    * 'a'.</p> <p>Note that ligatures will be left as is.</p>
+    *
+    * {{{
+    * none.ops.stripAccents                = null
+    * "".ops.stripAccents)                  = ""
+    * "control".ops.stripAccents           = "control"
+    * "&eacute;clair".ops.stripAccents     = "eclair"
+    * }}}
+    *
+    * @return
+    *   input text with diacritics removed
+    */
   def stripAccents: Option[String] = Option(Strings.stripAccents(strOrNull))
 
+  /** <p>Strips any of a set of characters from the end of a String.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. An empty string ("") input returns the empty string.</p>
+    *
+    * <p>If the stripChars String is {@code null}, whitespace is stripped as defined by {@link Character# isWhitespace ( char )}.</p>
+    *
+    * {{{
+    * none.ops.stripEnd(*)          = null
+    * "".ops.stripEnd(*)            = ""
+    * "abc".ops.stripEnd("")        = "abc"
+    * "abc".ops.stripEnd(null)      = "abc"
+    * "  abc".ops.stripEnd(null)    = "  abc"
+    * "abc  ".ops.stripEnd(null)    = "abc"
+    * " abc ".ops.stripEnd(null)    = " abc"
+    * "  abcyx".ops.stripEnd("xyz") = "  abc"
+    * "120.00".ops.stripEnd(".0")   = "12"
+    * }}}
+    *
+    * @param stripChars
+    *   the set of characters to remove, null treated as whitespace
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   the stripped String, {@code null} if null String input
+    */
   def stripEnd[S: TypeOptions2[*, String, Option[String]]](stripChars: S): Option[String] = {
     val chars = mapToStrOpt.input(stripChars).orNull
     Option(Strings.stripEnd(strOrNull, chars))
   }
 
+  /** <p>Strips any of a set of characters from the end of a String.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. An empty string ("") input returns the empty string.</p>
+    *
+    * <p>If the stripChars String is {@code null}, whitespace is stripped as defined by {@link Character# isWhitespace ( char )}.</p>
+    *
+    * {{{
+    * none.ops.stripStart(*)          = null
+    * "".ops.stripStart( *)            = ""
+    * "abc".ops.stripStart( "")        = "abc"
+    * "abc".ops.stripStart( null)      = "abc"
+    * "  abc".ops.stripStart( null)    = "  abc"
+    * "abc  ".ops.stripStart( null)    = "abc"
+    * " abc ".ops.stripStart( null)    = " abc"
+    * "  abcyx".ops.stripStart( "xyz") = "  abc"
+    * "120.00".ops.stripStart( ".0")   = "12"
+    * }}}
+    *
+    * @param stripChars
+    *   the set of characters to remove, null treated as whitespace
+    * @tparam S
+    *   String or Option string
+    * @return
+    *   the stripped String, {@code null} if null String input
+    */
   def stripStart[S: TypeOptions2[*, String, Option[String]]](stripChars: S): Option[String] = {
     val chars = mapToStrOpt.input(stripChars).orNull
     Option(Strings.stripStart(strOrNull, chars))
   }
 
+  /** <p>Strips whitespace from the start and end of a String returning an empty String if {@code null} input.</p>
+    *
+    * <p>This is similar to {@link # trimToEmpty ( String )} but removes whitespace. Whitespace is defined by {@link Character# isWhitespace
+    * ( char )}.</p>
+    *
+    * <pre> none.ops.stripToEmpty = "" "".ops.stripToEmpty = "" " ".ops.stripToEmpty = "" "abc".ops.stripToEmpty = "abc" "
+    * abc".ops.stripToEmpty = "abc" "abc ".ops.stripToEmpty = "abc" " abc ".ops.stripToEmpty = "abc" " ab c ".ops.stripToEmpty = "ab c"
+    * </pre>
+    *
+    * @return
+    *   the trimmed String, or an empty String if {@code null} input
+    */
   def stripToEmpty: Option[String] = Option(Strings.stripToEmpty(strOrNull))
 
+  /** <p>Strips whitespace from the start and end of a String returning {@code null} if the String is empty ("") after the strip.</p>
+    *
+    * <p>This is similar to {@link # trimToNull ( String )} but removes whitespace. Whitespace is defined by {@link Character# isWhitespace
+    * ( char )}.</p>
+    *
+    * {{{
+    * none.ops.stripToNone     = null
+    * "".ops.stripToNone       = null
+    * "   ".ops.stripToNone    = null
+    * "abc".ops.stripToNone    = "abc"
+    * "  abc".ops.stripToNone  = "abc"
+    * "abc  ".ops.stripToNone  = "abc"
+    * " abc ".ops.stripToNone  = "abc"
+    * " ab c ".ops.stripToNone = "ab c"
+    * }}}
+    *
+    * @return
+    *   the stripped String, {@code null} if whitespace, empty or null String input
+    */
   def stripToNone: Option[String] = Option(Strings.stripToNull(strOrNull))
 
+  /** <p>Gets a substring from the specified String avoiding exceptions.</p>
+    *
+    * <p>A negative start position can be used to start {@code n} characters from the end of the String.</p>
+    *
+    * <p>A {@code null} String will return {@code null}. An empty ("") String will return "".</p>
+    *
+    * <pre> none.ops.substring(*) = null "".ops.substring(*) = "" "abc".ops.substring(0) = "abc" "abc".ops.substring(2) = "c"
+    * "abc".ops.substring(4) = "" "abc".ops.substring(-2) = "bc" "abc".ops.substring(-4) = "abc" </pre>
+    *
+    * @param start
+    *   the position to start from, negative means count back from the end of the String by this many characters
+    * @return
+    *   substring from start position, {@code null} if null String input
+    */
   def substring(start: Int): Option[String] = Option(Strings.substring(strOrNull, start))
 
+  /** <p>Gets a substring from the specified String avoiding exceptions.</p>
+    *
+    * <p>A negative start position can be used to start/end {@code n} characters from the end of the String.</p>
+    *
+    * <p>The returned substring starts with the character in the {@code start} position and ends before the {@code end} position. All
+    * position counting is zero-based -- i.e., to start at the beginning of the string use {@code start = 0}. Negative start and end
+    * positions can be used to specify offsets relative to the end of the String.</p>
+    *
+    * <p>If {@code start} is not strictly to the left of {@code end}, "" is returned.</p>
+    *
+    * <pre> StringUtils.substring(null, *, *) = null StringUtils.substring("", * , *) = ""; StringUtils.substring("abc", 0, 2) = "ab"
+    * StringUtils.substring("abc", 2, 0) = "" StringUtils.substring("abc", 2, 4) = "c" StringUtils.substring("abc", 4, 6) = ""
+    * StringUtils.substring("abc", 2, 2) = "" StringUtils.substring("abc", -2, -1) = "b" StringUtils.substring("abc", -4, 2) = "ab" </pre>
+    *
+    * @param start
+    *   the position to start from, negative means count back from the end of the String by this many characters
+    * @param end
+    *   the position to end at (exclusive), negative means count back from the end of the String by this many characters
+    * @return
+    *   substring from start position to end position, {@code null} if null String input
+    */
   def substring(start: Int, end: Int): Option[String] = Option(Strings.substring(strOrNull, start, end))
 
+  /** <p>Gets the substring after the first occurrence of a separator. The separator is not returned.</p>
+    *
+    * <p>A {@code null} string input will return {@code null}. An empty ("") string input will return the empty string.
+    *
+    * <p>If nothing is found, the empty string is returned.</p>
+    *
+    * <pre> none.ops.substringAfter(*) = null "".ops.substringAfter(*) = "" "abc".ops.substringAfter('a') = "bc"
+    * "abcba".ops.substringAfter('b') = "cba" "abc".ops.substringAfter('c') = "" "abc".ops.substringAfter('d') = "" "
+    * abc".ops.substringAfter(32) = "abc" </pre>
+    *
+    * @param separator
+    *   the character to search.
+    * @return
+    *   the substring after the first occurrence of the separator, {@code null} if null String input
+    */
   def substringAfter(separator: Char): Option[String] = Option(Strings.substringAfter(strOrNull, separator))
 
+  /** <p>Gets the substring after the first occurrence of a separator. The separator is not returned.</p>
+    *
+    * <p>A {@code null} string input will return {@code null}. An empty ("") string input will return the empty string.
+    *
+    * <p>If nothing is found, the empty string is returned.</p>
+    *
+    * <pre> none.ops.substringAfter(*) = null "".ops.substringAfter(*) = "" "abc".ops.substringAfter('a') = "bc"
+    * "abcba".ops.substringAfter('b') = "cba" "abc".ops.substringAfter('c') = "" "abc".ops.substringAfter('d') = "" "
+    * abc".ops.substringAfter(32) = "abc" </pre>
+    *
+    * @param separator
+    *   the character to search.
+    * @return
+    *   the substring after the first occurrence of the separator, {@code null} if null String input
+    */
   def substringAfter(separator: Int): Option[String] = Option(Strings.substringAfter(strOrNull, separator))
 
+  /** <p>Gets the substring after the first occurrence of a separator. The separator is not returned.</p>
+    *
+    * <p>A {@code null} string input will return {@code null}. An empty ("") string input will return the empty string. A {@code null}
+    * separator will return the empty string if the input string is not {@code null}.</p>
+    *
+    * <p>If nothing is found, the empty string is returned.</p>
+    *
+    * {{{
+    * none.ops.substringAfter(*)      = null
+    * "".ops.substringAfter(*)        = ""
+    * *.ops.substringAfter(null)      = ""
+    * "abc".ops.substringAfter("a")   = "bc"
+    * "abcba".ops.substringAfter("b") = "cba"
+    * "abc".ops.substringAfter("c")   = ""
+    * "abc".ops.substringAfter("d")   = ""
+    * "abc".ops.substringAfter("")    = "abc"
+    * }}}
+    *
+    * @param separator
+    *   the String to search for, may be null
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   the substring after the first occurrence of the separator, {@code null} if null String input
+    */
   def substringAfter[S: TypeOptions2[*, String, Option[String]]](separator: S): Option[String] = {
     val sep = mapToStrOpt.input(separator).orNull
     Option(Strings.substringAfter(strOrNull, sep))
   }
 
+  /** <p>Gets the substring after the last occurrence of a separator. The separator is not returned.</p>
+    *
+    * <p>A {@code null} string input will return {@code null}. An empty ("") string input will return the empty string.
+    *
+    * <p>If nothing is found, the empty string is returned.</p>
+    *
+    * {{{
+    * none.ops.substringAfterLast(*)      = null
+    * "".ops.substringAfterLast(*)        = ""
+    * "abc".ops.substringAfterLast('a')   = "bc"
+    * " bc".ops.substringAfterLast(32)    = "bc"
+    * "abcba".ops.substringAfterLast('b') = "a"
+    * "abc".ops.substringAfterLast('c')   = ""
+    * "a".ops.substringAfterLast('a')     = ""
+    * "a".ops.substringAfterLast('z')     = ""
+    * }}}
+    *
+    * @param separator
+    *   the String to search for, may be null
+    * @return
+    *   the substring after the last occurrence of the separator, {@code null} if null String input
+    */
   def substringAfterLast(separator: Char): Option[String] = Option(Strings.substringAfterLast(strOrNull, separator))
 
+  /** <p>Gets the substring after the last occurrence of a separator. The separator is not returned.</p>
+    *
+    * <p>A {@code null} string input will return {@code null}. An empty ("") string input will return the empty string.
+    *
+    * <p>If nothing is found, the empty string is returned.</p>
+    *
+    * {{{
+    * none.ops.substringAfterLast(*)      = null
+    * "".ops.substringAfterLast(*)        = ""
+    * "abc".ops.substringAfterLast('a')   = "bc"
+    * " bc".ops.substringAfterLast(32)    = "bc"
+    * "abcba".ops.substringAfterLast('b') = "a"
+    * "abc".ops.substringAfterLast('c')   = ""
+    * "a".ops.substringAfterLast('a')     = ""
+    * "a".ops.substringAfterLast('z')     = ""
+    * }}}
+    *
+    * @param separator
+    *   the String to search for, may be null
+    * @return
+    *   the substring after the last occurrence of the separator, {@code null} if null String input
+    */
   def substringAfterLast(separator: Int): Option[String] = Option(Strings.substringAfterLast(strOrNull, separator))
 
+  /** <p>Gets the substring after the last occurrence of a separator. The separator is not returned.</p>
+    *
+    * <p>A {@code null} string input will return {@code null}. An empty ("") string input will return the empty string. An empty or {@code
+    * null} separator will return the empty string if the input string is not {@code null}.</p>
+    *
+    * <p>If nothing is found, the empty string is returned.</p>
+    *
+    * {{{
+    * none.ops.substringAfterLast(*)      = null
+    * "".ops.substringAfterLast(*)        = ""
+    * *.ops.substringAfterLast("")        = ""
+    * *.ops.substringAfterLast(null)      = ""
+    * "abc".ops.substringAfterLast("a")   = "bc"
+    * "abcba".ops.substringAfterLast("b") = "a"
+    * "abc".ops.substringAfterLast("c")   = ""
+    * "a".ops.substringAfterLast("a")     = ""
+    * "a".ops.substringAfterLast("z")     = ""
+    * }}}
+    *
+    * @param separator
+    *   the String to search for, may be null
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   the substring after the last occurrence of the separator, {@code null} if null String input
+    */
   def substringAfterLast[S: TypeOptions2[*, String, Option[String]]](separator: S): Option[String] = {
     val sep = mapToStrOpt.input(separator).orNull
     Option(Strings.substringAfterLast(strOrNull, sep))
   }
 
+  /** <p> Gets the substring before the first occurrence of a separator. The separator is not returned. </p>
+    *
+    * <p> A {@code null} string input will return {@code null}. An empty ("") string input will return the empty string. </p>
+    *
+    * <p> If nothing is found, the string input is returned. </p>
+    *
+    * {{{
+    * none.ops.substringBefore(*)      = null
+    * "".ops.substringBefore(*)        = ""
+    * "abc".ops.substringBefore('a')   = ""
+    * "abcba".ops.substringBefore('b') = "a"
+    * "abc".ops.substringBefore('c')   = "ab"
+    * "abc".ops.substringBefore('d')   = "abc"
+    * }}}
+    *
+    * @param separator
+    *   the String to search for, may be null
+    * @return
+    *   the substring before the first occurrence of the separator, {@code null} if null String input
+    */
   def substringBefore(separator: Char): Option[String] = Option(Strings.substringBefore(strOrNull, separator))
-  def substringBefore(separator: Int): Option[String]  = Option(Strings.substringBefore(strOrNull, separator))
 
+  /** <p> Gets the substring before the first occurrence of a separator. The separator is not returned. </p>
+    *
+    * <p> A {@code null} string input will return {@code null}. An empty ("") string input will return the empty string. </p>
+    *
+    * <p> If nothing is found, the string input is returned. </p>
+    *
+    * {{{
+    * none.ops.substringBefore(*)      = null
+    * "".ops.substringBefore(*)        = ""
+    * "abc".ops.substringBefore('a')   = ""
+    * "abcba".ops.substringBefore('b') = "a"
+    * "abc".ops.substringBefore('c')   = "ab"
+    * "abc".ops.substringBefore('d')   = "abc"
+    * }}}
+    *
+    * @param separator
+    *   the String to search for, may be null
+    * @return
+    *   the substring before the first occurrence of the separator, {@code null} if null String input
+    */
+  def substringBefore(separator: Int): Option[String] = Option(Strings.substringBefore(strOrNull, separator))
+
+  /** <p>Gets the substring before the first occurrence of a separator. The separator is not returned.</p>
+    *
+    * <p>A {@code null} string input will return {@code null}. An empty ("") string input will return the empty string. A {@code null}
+    * separator will return the input string.</p>
+    *
+    * <p>If nothing is found, the string input is returned.</p>
+    *
+    * {{{
+    * none.ops.substringBefore(*)      = null
+    * "".ops.substringBefore(*)        = ""
+    * "abc".ops.substringBefore("a")   = ""
+    * "abcba".ops.substringBefore("b") = "a"
+    * "abc".ops.substringBefore("c")   = "ab"
+    * "abc".ops.substringBefore("d")   = "abc"
+    * "abc".ops.substringBefore("")    = ""
+    * "abc".ops.substringBefore(null)  = "abc"
+    * }}}
+    *
+    * @param separator
+    *   the String to search for, may be null
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   the substring before the first occurrence of the separator, {@code null} if null String input
+    */
   def substringBefore[S: TypeOptions2[*, String, Option[String]]](separator: S): Option[String] = {
     val sep = mapToStrOpt.input(separator).orNull
     Option(Strings.substringBefore(strOrNull, sep))
   }
 
+  /** <p>Gets the substring before the last occurrence of a separator. The separator is not returned.</p>
+    *
+    * <p>A {@code null} string input will return {@code null}. An empty ("") string input will return the empty string. An empty or {@code
+    * null} separator will return the input string.</p>
+    *
+    * <p>If nothing is found, the string input is returned.</p>
+    *
+    * {{{
+    * none.ops.substringBeforeLast(*)      = null
+    * "".ops.substringBeforeLast(*)        = ""
+    * "abcba".ops.substringBeforeLast("b") = "abc"
+    * "abc".ops.substringBeforeLast("c")   = "ab"
+    * "a".ops.substringBeforeLast("a")     = ""
+    * "a".ops.substringBeforeLast("z")     = "a"
+    * "a".ops.substringBeforeLast(null)    = "a"
+    * "a".ops.substringBeforeLast("")      = "a"
+    * }}}
+    *
+    * @param separator
+    *   the String to search for, may be null
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   the substring before the last occurrence of the separator, {@code null} if null String input
+    */
   def substringBeforeLast[S: TypeOptions2[*, String, Option[String]]](separator: S): Option[String] = {
     val sep = mapToStrOpt.input(separator).orNull
     Option(Strings.substringBeforeLast(strOrNull, sep))
   }
 
+  /** <p>Gets the String that is nested in between two instances of the same String.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. A {@code null} tag returns {@code null}.</p>
+    *
+    * {{{
+    * none.ops.substringsBetween(*)            = null
+    * "".ops.substringsBetween("")             = ""
+    * "".ops.substringsBetween("tag")          = null
+    * "tagabctag".ops.substringsBetween(null)  = null
+    * "tagabctag".ops.substringsBetween("")    = ""
+    * "tagabctag".ops.substringsBetween("tag") = "abc"
+    * }}}
+    *
+    * @param tag
+    *   the String before and after the substring, may be null
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   the substring, {@code null} if no match
+    */
   def substringBetween[S: TypeOptions2[*, String, Option[String]]](tag: S): Option[String] = {
     val t = mapToStrOpt.input(tag).orNull
     Option(Strings.substringBetween(strOrNull, t))
   }
 
+  /** <p>Gets the String that is nested in between two Strings. Only the first match is returned.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. A {@code null} open/close returns {@code null} (no match). An empty ("") open and
+    * close returns an empty string.</p>
+    *
+    * {{{
+    * "wx[b]yz".ops.substringBetween("[", "]") = "b"
+    * none.ops.substringBetween(*, *)          = null
+    * *.ops.substringBetween(null, *)          = null
+    * *.ops.substringBetween(*, null)          = null
+    * "".ops.substringBetween("", "")          = ""
+    * "".ops.substringBetween("", "]")         = null
+    * "".ops.substringBetween("[", "]")        = null
+    * "yabcz".ops.substringBetween("", "")     = ""
+    * "yabcz".ops.substringBetween("y", "z")   = "abc"
+    * "yabczyabcz".ops.substringBetween("y", "z")   = "abc"
+    * }}}
+    *
+    * @param open
+    *   the String before the substring, may be null
+    * @param close
+    *   the String after the substring, may be null
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   the substring, {@code null} if no match
+    */
   def substringBetween[S: TypeOptions2[*, String, Option[String]]](open: S, close: S): Option[String] = {
     val o = mapToStrOpt.input(open).orNull
     val c = mapToStrOpt.input(close).orNull
     Option(Strings.substringBetween(strOrNull, o, c))
   }
 
+  /** <p>Searches a String for substrings delimited by a start and end tag, returning all matching substrings in an array.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}. A {@code null} open/close returns {@code null} (no match). An empty ("")
+    * open/close returns {@code null} (no match).</p>
+    *
+    * {{{
+    * "[a][b][c]".ops.substringsBetween("[", "]") = ["a","b","c"]
+    * none..ops.substringsBetween(*, *)            = null
+    * *.ops.substringsBetween(null, *)            = null
+    * *.ops.substringsBetween(*, null)            = null
+    * "".ops.substringsBetween("[", "]")          = []
+    * }}}
+    *
+    * @param open
+    *   the String identifying the start of the substring, empty returns null
+    * @param close
+    *   the String identifying the end of the substring, empty returns null
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   a String Array of substrings, or {@code null} if no match
+    */
   def substringsBetween[S: TypeOptions2[*, String, Option[String]]](open: S, close: S): Option[Array[String]] = {
     val o = mapToStrOpt.input(open).orNull
     val c = mapToStrOpt.input(close).orNull
     Option(Strings.substringsBetween(strOrNull, o, c))
   }
 
+  /** * <p>Swaps the case of a String changing upper and title case to lower case, and lower case to upper case.</p>
+    *
+    * <ul> <li>Upper case character converts to Lower case</li> <li>Title case character converts to Lower case</li> <li>Lower case
+    * character converts to Upper case</li> </ul>
+    *
+    * <p>For a word based algorithm, see {@link org.apache.commons.lang3.text.WordUtils# swapCase ( String )}. A {@code null} input String
+    * returns {@code null}.</p>
+    *
+    * {{{
+    * none.ops.swapCase                 = null
+    * "".ops.swapCase                   = ""
+    * "The dog has a BONE".ops.swapCase = "tHE DOG HAS A bone"
+    * }}}
+    *
+    * <p>NOTE: This method changed in Lang version 2.0. It no longer performs a word based algorithm. If you only use ASCII, you will notice
+    * no change. That functionality is available in org.apache.commons.lang3.text.WordUtils.</p>
+    *
+    * @return
+    *   the changed String, {@code null} if null String input
+    */
   def swapCase: Option[String] = Option(Strings.swapCase(strOrNull))
 
+  /** <p>Converts a {@code CharSequence} into an array of code points.</p>
+    *
+    * <p>Valid pairs of surrogate code units will be converted into a single supplementary code point. Isolated surrogate code units (i.e. a
+    * high surrogate not followed by a low surrogate or a low surrogate not preceded by a high surrogate) will be returned as-is.</p>
+    *
+    * <pre> none.ops.toCodePoints = null "".ops.toCodePoints = [] // empty array </pre>
+    *
+    * @return
+    *   an array of code points
+    */
   def toCodePoints: Option[Array[Int]] = Option(Strings.toCodePoints(strOrNull))
 
+  /** Converts the given source String as a lower-case using the {@link Locale#ROOT} locale in a null-safe manner.
+    *
+    * @return
+    *   the given source String as a lower-case using the {@link Locale# ROOT} locale or null.
+    */
   def toRootLowerCase: Option[String] = Option(Strings.toRootLowerCase(strOrNull))
 
+  /** Converts the given source String as a upper-case using the {@link Locale#ROOT} locale in a null-safe manner.
+    *
+    * @return
+    *   the given source String as a upper-case using the {@link Locale# ROOT} locale or null.
+    */
   def toRootUpperCase: Option[String] = Option(Strings.toRootUpperCase(strOrNull))
 
+  /** <p>Removes control characters (char &lt;= 32) from both ends of this String, handling {@code null} by returning {@code null}.</p>
+    *
+    * <p>The String is trimmed using {@link String# trim ( )}. Trim removes start and end characters &lt;= 32. To strip whitespace use
+    * {@link # strip ( String )}.</p>
+    *
+    * <p>To trim your choice of characters, use the {@link # strip ( String, String)} methods.</p>
+    *
+    * {{{
+    * none.ops.trim          = null
+    * "".ops.trim            = ""
+    * "     ".ops.trim       = ""
+    * "abc".ops.trim         = "abc"
+    * "    abc    ".ops.trim = "abc"
+    * }}}
+    *
+    * @return
+    *   the trimmed string, {@code null} if null String input
+    */
   def trim: Option[String] = Option(Strings.trim(strOrNull))
 
+  /** <p>Removes control characters (char &lt;= 32) from both ends of this String returning {@code null} if the String is empty ("") after
+    * the trim or if it is {@code null}.
+    *
+    * <p>The String is trimmed using {@link String# trim ( )}. Trim removes start and end characters &lt;= 32. To strip whitespace use
+    * {@link # stripToNull ( String )}.</p>
+    *
+    * {{{
+    * none.ops.trimToEmpty          = null
+    * "".ops.trimToEmpty            = null
+    * "     ".ops.trimToEmpty       = null
+    * "abc".ops.trimToEmpty         = "abc"
+    * "    abc    ".ops.trimToEmpty = "abc"
+    * }}}
+    *
+    * @return
+    *   the trimmed String, {@code null} if only chars &lt;= 32, empty or null String input
+    */
   def trimToEmpty: Option[String] = Option(Strings.trimToEmpty(strOrNull))
 
+  /** <p>Removes control characters (char &lt;= 32) from both ends of this String returning {@code null} if the String is empty ("") after
+    * the trim or if it is {@code null}.
+    *
+    * <p>The String is trimmed using {@link String# trim ( )}. Trim removes start and end characters &lt;= 32. To strip whitespace use
+    * {@link # stripToNull ( String )}.</p>
+    *
+    * {{{
+    * none.ops.trimToNone          = null
+    * "".ops.trimToNone            = null
+    * "     ".ops.trimToNone       = null
+    * "abc".ops.trimToNone         = "abc"
+    * "    abc    ".ops.trimToNone = "abc"
+    * }}}
+    *
+    * @return
+    *   the trimmed String, {@code null} if only chars &lt;= 32, empty or null String input
+    */
   def trimToNone: Option[String] = Option(Strings.trimToNull(strOrNull))
 
+  /** * <p>Truncates a String. This will turn "Now is the time for all good men" into "Now is the time for".</p>
+    *
+    * <p>Specifically:</p> <ul> <li>If {@code str} is less than {@code maxWidth} characters long, return it.</li> <li>Else truncate it to
+    * {@code substring(str, 0, maxWidth)}.</li> <li>If {@code maxWidth} is less than {@code 0}, throw an {@code
+    * IllegalArgumentException}.</li> <li>In no case will it return a String of length greater than {@code maxWidth}.</li> </ul>
+    *
+    * {{{
+    * none.ops.truncate(0)       = null
+    * none.ops.truncate( 2)       = null
+    * "".ops.truncate(4)         = ""
+    * "abcdefg".ops.truncate(4)  = "abcd"
+    * "abcdefg".ops.truncate(6)  = "abcdef"
+    * "abcdefg".ops.truncate(7)  = "abcdefg"
+    * "abcdefg".ops.truncate(8)  = "abcdefg"
+    * "abcdefg".ops.truncate(-1) = throws an IllegalArgumentException
+    * }}}
+    *
+    * @param maxWidth
+    *   maximum length of result String, must be positive
+    * @return
+    *   truncated String, {@code null} if null String input
+    * @throws IllegalArgumentException
+    *   If {@code maxWidth} is less than {@code 0}
+    */
   def truncate(maxWidth: Int): Option[String] = Option(Strings.truncate(strOrNull, maxWidth))
 
+  /** <p>Truncates a String. This will turn "Now is the time for all good men" into "is the time for all".</p>
+    *
+    * <p>Works like {@code truncate(String, int)}, but allows you to specify a "left edge" offset.
+    *
+    * <p>Specifically:</p> <ul> <li>If {@code str} is less than {@code maxWidth} characters long, return it.</li> <li>Else truncate it to
+    * {@code substring(str, offset, maxWidth)}.</li> <li>If {@code maxWidth} is less than {@code 0}, throw an {@code
+    * IllegalArgumentException}.</li> <li>If {@code offset} is less than {@code 0}, throw an {@code IllegalArgumentException}.</li> <li>In
+    * no case will it return a String of length greater than {@code maxWidth}.</li> </ul>
+    *
+    * {{{
+    * none.ops.truncate(0, 0) = null
+    * none.ops.truncate(2, 4) = null
+    * "".ops.truncate(0, 10) = ""
+    * "".ops.truncate(2, 10) = ""
+    * "abcdefghij".ops.truncate(0, 3) = "abc"
+    * "abcdefghij".ops.truncate(5, 6) = "fghij"
+    * "raspberry peach".ops.truncate(10, 15) = "peach"
+    * "abcdefghijklmno".ops.truncate(0, 10) = "abcdefghij"
+    * "abcdefghijklmno".ops.truncate(-1, 10) = throws an IllegalArgumentException
+    * "abcdefghijklmno".ops.truncate(Integer.MIN_VALUE, 10) = throws an IllegalArgumentException
+    * "abcdefghijklmno".ops.truncate(Integer.MIN_VALUE, Integer.MAX_VALUE) = throws an IllegalArgumentException
+    * "abcdefghijklmno".ops.truncate(0, Integer.MAX_VALUE) = "abcdefghijklmno"
+    * "abcdefghijklmno".ops.truncate(1, 10) = "bcdefghijk"
+    * "abcdefghijklmno".ops.truncate(2, 10) = "cdefghijkl"
+    * "abcdefghijklmno".ops.truncate(3, 10) = "defghijklm"
+    * "abcdefghijklmno".ops.truncate(4, 10) = "efghijklmn"
+    * "abcdefghijklmno".ops.truncate(5, 10) = "fghijklmno"
+    * "abcdefghijklmno".ops.truncate(5, 5) = "fghij"
+    * "abcdefghijklmno".ops.truncate(5, 3) = "fgh"
+    * "abcdefghijklmno".ops.truncate(10, 3) = "klm"
+    * "abcdefghijklmno".ops.truncate(10, Integer.MAX_VALUE) = "klmno"
+    * "abcdefghijklmno".ops.truncate(13, 1) = "n"
+    * "abcdefghijklmno".ops.truncate(13, Integer.MAX_VALUE) = "no"
+    * "abcdefghijklmno".ops.truncate(14, 1) = "o"
+    * "abcdefghijklmno".ops.truncate(14, Integer.MAX_VALUE) = "o"
+    * "abcdefghijklmno".ops.truncate(15, 1) = ""
+    * "abcdefghijklmno".ops.truncate(15, Integer.MAX_VALUE) = ""
+    * "abcdefghijklmno".ops.truncate(Integer.MAX_VALUE, Integer.MAX_VALUE) = ""
+    * "abcdefghij".ops.truncate(3, -1) = throws an IllegalArgumentException
+    * "abcdefghij".ops.truncate(-2, 4) = throws an IllegalArgumentException
+    * }}}
+    *
+    * @param offset
+    *   left edge of source String
+    * @param maxWidth
+    *   maximum length of result String, must be positive
+    * @return
+    *   truncated String, {@code null} if null String input
+    * @throws IllegalArgumentException
+    *   If {@code offset} or {@code maxWidth} is less than {@code 0}
+    */
   def truncate(offset: Int, maxWidth: Int): Option[String] = Option(Strings.truncate(strOrNull, offset, maxWidth))
 
+  /** <p>Uncapitalizes a String, changing the first character to lower case as per {@link Character# toLowerCase ( int )}. No other
+    * characters are changed.</p>
+    *
+    * <p>For a word based algorithm, see {@link org.apache.commons.lang3.text.WordUtils# uncapitalize ( String )}. A {@code null} input
+    * String returns {@code null}.</p>
+    *
+    * {{{
+    * none.ops.uncapitalize  = null
+    * "".ops.uncapitalize    = ""
+    * "cat".ops.uncapitalize = "cat"
+    * "Cat".ops.uncapitalize = "cat"
+    * "CAT".ops.uncapitalize = "cAT"
+    * }}}
+    *
+    * @return
+    *   the uncapitalized String, {@code null} if null String input
+    */
   def uncapitalize: Option[String] = Option(Strings.uncapitalize(strOrNull))
 
+  /** <p> Unwraps a given string from a character. </p>
+    *
+    * {{{
+    * none.ops.unwrap(null)         = null
+    * none.ops.unwrap('\0')         = null
+    * none.ops.unwrap('1')          = null
+    * "a".ops.unwrap('a')           = "a"
+    * "aa".ops.unwrap('a')           = ""
+    * "\'abc\'".ops.unwrap('\'')    = "abc"
+    * "AABabcBAA".ops.unwrap('A')   = "ABabcBA"
+    * "A".ops.unwrap('#')           = "A"
+    * "#A".ops.unwrap('#')          = "#A"
+    * "A#".ops.unwrap('#')          = "A#"
+    * }}}
+    *
+    * @param wrapChar
+    *   the character used to unwrap
+    * @return
+    *   unwrapped String or the original string if it is not quoted properly with the wrapChar
+    */
   def unwrap(wrapChar: Char): Option[String] = Option(Strings.unwrap(strOrNull, wrapChar))
 
+  /** <p> Unwraps a given string from anther string. </p>
+    *
+    * {{{
+    * StringUtils.unwrap(null, null)         = null
+    * StringUtils.unwrap(null, "")           = null
+    * StringUtils.unwrap(null, "1")          = null
+    * StringUtils.unwrap("a", "a")           = "a"
+    * StringUtils.unwrap("aa", "a")          = ""
+    * StringUtils.unwrap("\'abc\'", "\'")    = "abc"
+    * StringUtils.unwrap("\"abc\"", "\"")    = "abc"
+    * StringUtils.unwrap("AABabcBAA", "AA")  = "BabcB"
+    * StringUtils.unwrap("A", "#")           = "A"
+    * StringUtils.unwrap("#A", "#")          = "#A"
+    * StringUtils.unwrap("A#", "#")          = "A#"
+    * }}}
+    *
+    * @param wrapToken
+    *   the String used to unwrap
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   unwrapped String or the original string if it is not quoted properly with the wrapToken
+    */
   def unwrap[S: TypeOptions2[*, String, Option[String]]](wrapToken: S): Option[String] = {
     val token = mapToStrOpt.input(wrapToken).orNull
     Option(Strings.unwrap(strOrNull, token))
   }
 
+  /** <p>Converts a String to upper case as per {@link String# toUpperCase ( )}.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}.</p>
+    *
+    * {{{
+    * none.ops.upperCase  = null
+    * "".ops.upperCase    = ""
+    * "aBc".ops.upperCase = "ABC"
+    * }}}
+    *
+    * <p><strong>Note:</strong> As described in the documentation for {@link String# toUpperCase ( )}, the result of this method is affected
+    * by the current locale. For platform-independent case transformations, the method {@link # lowerCase ( String, Locale)} should be used
+    * with a specific locale (e.g. {@link Locale# ENGLISH}).</p>
+    *
+    * @return
+    *   the upper cased String, {@code null} if null String input
+    */
   def upperCase: Option[String] = Option(Strings.upperCase(strOrNull))
 
+  /** <p>Converts a String to upper case as per {@link String# toUpperCase ( Locale )}.</p>
+    *
+    * <p>A {@code null} input String returns {@code null}.</p>
+    *
+    * {{{
+    * none.ops.upperCase(Locale.ENGLISH)  = null
+    * "".ops.upperCase(Locale.ENGLISH)    = ""
+    * "aBc".ops.upperCase(Locale.ENGLISH) = "ABC"
+    * }}}
+    *
+    * @param locale
+    *   the locale that defines the case transformation rules, must not be null
+    * @return
+    *   the upper cased String, {@code null} if null String input
+    */
   def upperCase(locale: Locale): Option[String] = Option(Strings.upperCase(strOrNull, locale))
 
+  /** <p> Wraps a string with a char. </p>
+    *
+    * {{{
+    * none.ops.wrap(*)        = null
+    * "".ops.wrap(*)          = ""
+    * "ab".ops.wrap('\0')     = "ab"
+    * "ab".ops.wrap('x')      = "xabx"
+    * "ab".ops.wrap('\'')     = "'ab'"
+    * "\"ab\"".ops.wrap('\"') = "\"\"ab\"\""
+    * }}}
+    *
+    * @param wrapChar
+    *   the char that will wrap {@code str}
+    * @return
+    *   the wrapped string, or {@code null} if {@code str==null}
+    */
   def wrap(wrapChar: Char): Option[String] = Option(Strings.wrap(strOrNull, wrapChar))
 
-  def wrap[S: TypeOptions2[*, String, Option[String]]](wrapToken: S): Option[String] = {
-    val token = mapToStrOpt.input(wrapToken).orNull
+  /** <p> Wraps a String with another String. </p>
+    *
+    * <p> A {@code null} input String returns {@code null}. </p>
+    *
+    * {{{
+    * none.ops.wrap(*)         = null
+    * "".ops.wrap(*)           = ""
+    * "ab".ops.wrap(null)      = "ab"
+    * "ab".ops.wrap("x")       = "xabx"
+    * "ab".ops.wrap("\"")      = "\"ab\""
+    * "\"ab\"".ops.wrap("\"")  = "\"\"ab\"\""
+    * "ab".ops.wrap("'")       = "'ab'"
+    * "'abcd'".ops.wrap("'")   = "''abcd''"
+    * "\"abcd\"".ops.wrap("'") = "'\"abcd\"'"
+    * "'abcd'".ops.wrap("\"")  = "\"'abcd'\""
+    * }}}
+    *
+    * @param wrapWith
+    *   the String that will wrap str
+    * @tparam S
+    *   String or Option[String]
+    * @returnw
+    *   rapped String, {@code null} if null String input
+    */
+  def wrap[S: TypeOptions2[*, String, Option[String]]](wrapWith: S): Option[String] = {
+    val token = mapToStrOpt.input(wrapWith).orNull
     Option(Strings.wrap(strOrNull, token))
   }
 
+  /** <p> Wraps a string with a char if that char is missing from the start or end of the given string. </p>
+    *
+    * <p>A new {@code String} will not be created if {@code str} is already wrapped.</p>
+    *
+    * {{{
+    * none.ops.wrapIfMissing(*)        = null
+    * "".ops.wrapIfMissing(*)          = ""
+    * "ab".ops.wrapIfMissing('\0')     = "ab"
+    * "ab".ops.wrapIfMissing('x')      = "xabx"
+    * "ab".ops.wrapIfMissing('\'')     = "'ab'"
+    * "\"ab\"".ops.wrapIfMissing('\"') = "\"ab\""
+    * "/".ops.wrapIfMissing('/')  = "/"
+    * "a/b/c".ops.wrapIfMissing('/')  = "/a/b/c/"
+    * "/a/b/c".ops.wrapIfMissing('/')  = "/a/b/c/"
+    * "a/b/c/".ops.wrapIfMissing('/')  = "/a/b/c/"
+    * }}}
+    *
+    * @param wrapChar
+    *   the char that will wrap {@code str}
+    * @return
+    *   the wrapped string, or {@code null} if {@code str==null}
+    */
   def wrapIfMissing(wrapChar: Char): Option[String] = Option(Strings.wrapIfMissing(strOrNull, wrapChar))
 
-  def wrapIfMissing[S: TypeOptions2[*, String, Option[String]]](wrapToken: S): Option[String] = {
-    val token = mapToStrOpt.input(wrapToken).orNull
+  /** <p> Wraps a string with a string if that string is missing from the start or end of the given string. </p>
+    *
+    * <p>A new {@code String} will not be created if {@code str} is already wrapped.</p>
+    *
+    * {{{
+    * none.ops.wrapIfMissing(*)         = null
+    * "".ops.wrapIfMissing(*)           = ""
+    * "ab".ops.wrapIfMissing(none)      = "ab"
+    * "ab".ops.wrapIfMissing("x")       = "xabx"
+    * "ab".ops.wrapIfMissing("\"")      = "\"ab\""
+    * "\"ab\"".ops.wrapIfMissing("\"")  = "\"ab\""
+    * "ab".ops.wrapIfMissing("'")       = "'ab'"
+    * "'abcd'".ops.wrapIfMissing("'")   = "'abcd'"
+    * "\"abcd\"".ops.wrapIfMissing("'") = "'\"abcd\"'"
+    * "'abcd'".ops.wrapIfMissing("\"")  = "\"'abcd'\""
+    * "/".ops.wrapIfMissing("/")  = "/"
+    * "a/b/c".ops.wrapIfMissing("/")  = "/a/b/c/"
+    * "/a/b/c".ops.wrapIfMissing("/")  = "/a/b/c/"
+    * "a/b/c/".ops.wrapIfMissing("/")  = "/a/b/c/"
+    * }}}
+    *
+    * @param wrapWith
+    *   the string that will wrap {@code str}
+    * @tparam S
+    *   String or Option[String]
+    * @return
+    *   the wrapped string, or {@code null} if {@code str==null}
+    */
+  def wrapIfMissing[S: TypeOptions2[*, String, Option[String]]](wrapWith: S): Option[String] = {
+    val token = mapToStrOpt.input(wrapWith).orNull
     Option(Strings.wrapIfMissing(strOrNull, token))
   }
 }

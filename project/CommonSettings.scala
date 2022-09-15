@@ -79,12 +79,12 @@ object CommonSettings {
       )
     ),
     description := "Scala Bridge For Apache Commons Lang3 Library",
-    licenses    := List("MIT" -> new URL("https://github.com/scala-workers/commons-lang3-bridge/blob/master/LICENSE")),
-    homepage    := Some(url("https://github.com/scala-workers/commons-lang3-brdge")),
+    licenses    := List("Apache" -> new URL("https://github.com/scala-workers/commons-lang3-bridge/blob/master/LICENSE")),
+    homepage    := Some(url("https://github.com/scala-workers/commons-lang3-bridge")),
     // Remove all additional repository other than Maven Central from POM
     pomIncludeRepository := { _ => false },
     publishTo := {
-      val nexus = "https://oss.sonatype.org/"
+      val nexus = "https://s01.oss.sonatype.org/"
       if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
       else Some("releases" at nexus + "service/local/staging/deploy/maven2")
     },
@@ -112,5 +112,4 @@ object CommonSettings {
   val commonProjectSettings  = pushSettings ++ commonSetting ++ Seq(crossScalaVersions := supportedScalaVersions)
   val codegenProjectSettings = commonSetting
 
-  val versionSchema = Some("pvp")
 }
