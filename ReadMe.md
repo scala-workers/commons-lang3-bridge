@@ -6,7 +6,7 @@ A scala bridge library from apache commons lang3 to scala.
 
 ## Usage
 
-Add dependence into maven like:
+Add dependence into sbt like:
 
 ```scala
 libraryDependencies += "net.scalax" % "commons-lang3-bridge_3" % "0.1.0"
