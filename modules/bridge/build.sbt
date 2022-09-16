@@ -1,5 +1,7 @@
 import ProjectKeys._
 
+name := "commons-lang3-bridge"
+
 libraryDependencies += Dependencies.commonsLang3 % Provided
 libraryDependencies += Dependencies.scalactic
 libraryDependencies += Dependencies.scalatest % Test
