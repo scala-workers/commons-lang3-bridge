@@ -2955,13 +2955,13 @@ class StringCommons[T: TypeOptions2[*, String, Option[String]]](value: T) {
     * return the source string.</p>
     *
     * {{{
-    * none.ops., *)      = null
-    * StringUtils.removeEnd("", *)        = ""
-    * StringUtils.removeEnd(*, null)      = *
-    * StringUtils.removeEnd("www.domain.com", ".com.")  = "www.domain.com"
-    * StringUtils.removeEnd("www.domain.com", ".com")   = "www.domain"
-    * StringUtils.removeEnd("www.domain.com", "domain") = "www.domain.com"
-    * StringUtils.removeEnd("abc", "")    = "abc"
+    * none.ops.removeEnd(*)                    = null
+    * "".ops.removeEnd(*)                      = ""
+    * *.ops.removeEnd(none)                    = *
+    * "www.domain.com".ops.removeEnd(".com.")  = "www.domain.com"
+    * "www.domain.com".ops.removeEnd(".com")   = "www.domain"
+    * "www.domain.com".ops.removeEnd("domain") = "www.domain.com"
+    * "abc".ops.removeEnd("")                  = "abc"
     * }}}
     *
     * @param rmv
