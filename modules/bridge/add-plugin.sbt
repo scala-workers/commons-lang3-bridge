@@ -1,0 +1,1 @@
+enablePlugins(`depts-plugin`)
