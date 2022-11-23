@@ -40,15 +40,15 @@ class StringUtilsTrimStripSpec extends AnyFunSuite {
   }
 
   test("test string trim to empty") {
-    assert(FOO == (FOO + "  ").ops.trimToEmpty)
-    assert(FOO == (" " + FOO + "  ").ops.trimToEmpty)
-    assert(FOO == Some(" " + FOO).ops.trimToEmpty)
-    assert(FOO == (FOO + "").ops.trimToEmpty)
-    assert("" == " \t\r\n\b ".ops.trimToEmpty)
-    assert("" == TRIMMABLE.ops.trimToEmpty)
-    assert(NON_TRIMMABLE == NON_TRIMMABLE.ops.trimToEmpty)
-    assert("" == "".ops.trimToEmpty)
-    assert("" == noneString.ops.trimToEmpty)
+    assert(FOO == (FOO + "  ").ops.trimToEmpty.get)
+    assert(FOO == (" " + FOO + "  ").ops.trimToEmpty.get)
+    assert(FOO == Some(" " + FOO).ops.trimToEmpty.get)
+    assert(FOO == (FOO + "").ops.trimToEmpty.get)
+    assert("" == " \t\r\n\b ".ops.trimToEmpty.get)
+    assert("" == TRIMMABLE.ops.trimToEmpty.get)
+    assert(NON_TRIMMABLE == NON_TRIMMABLE.ops.trimToEmpty.get)
+    assert("" == "".ops.trimToEmpty.get)
+    assert("" == noneString.ops.trimToEmpty.get)
   }
 
   test("test string strip") {
@@ -69,9 +69,9 @@ class StringUtilsTrimStripSpec extends AnyFunSuite {
   }
 
   test("test strip to empty") {
-    assert("" == noneString.ops.stripToEmpty)
-    assert("" == Some("").ops.stripToEmpty)
-    assert("" == "        ".ops.stripToEmpty)
+    assert("" == noneString.ops.stripToEmpty.get)
+    assert("" == Some("").ops.stripToEmpty.get)
+    assert("" == "        ".ops.stripToEmpty.get)
     assert(WHITESPACE.ops.stripToEmpty.contains(""))
     assert("  ab c  ".ops.stripToEmpty.contains("ab c"))
     assert((WHITESPACE + NON_WHITESPACE + WHITESPACE).ops.stripToEmpty.contains(NON_WHITESPACE))
