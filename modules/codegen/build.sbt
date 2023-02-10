@@ -1,6 +1,8 @@
 import ProjectKeys._
 
-libraryDependencies += Dependencies.commonsIO
+val depts = Lang3Depts
+
+libraryDependencies += depts.commonsIO
 
 CommonSettings.codegenProjectSettings
 enablePlugins(SbtTwirl)
