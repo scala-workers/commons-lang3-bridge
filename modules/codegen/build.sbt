@@ -12,7 +12,7 @@ commonScalaRunMainInputStr := {
 }
 
 val commonScalaRunGen       = inputKey[Unit]("commonScalaRunGen")
-val commonScalaRunMainClass = "commons.lang3.scala.codegen.CommonScalaCodegenExec"
+val commonScalaRunMainClass = "commons.lang3.bridge.codegen.CommonScalaCodegenExec"
 Compile / commonScalaRunGen := (Compile / runMain).inputTaskValue
   .partialInput(s" $commonScalaRunMainClass")
   .partialInput(s" ${commonScalaRunMainInputStr.value}")
@@ -25,7 +25,7 @@ scala2RunMainInputStr := {
 }
 
 val scala2RunGen       = inputKey[Unit]("scala2RunGen")
-val scala2RunMainClass = "commons.lang3.scala.codegen.Scala2CodegenExec"
+val scala2RunMainClass = "commons.lang3.bridge.codegen.Scala2CodegenExec"
 Compile / scala2RunGen := (Compile / runMain).inputTaskValue
   .partialInput(s" $scala2RunMainClass")
   .partialInput(s" ${scala2RunMainInputStr.value}")
@@ -38,20 +38,22 @@ scala3RunMainInputStr := {
 }
 
 val scala3RunGen       = inputKey[Unit]("scala3RunGen")
-val scala3RunMainClass = "commons.lang3.scala.codegen.Scala3CodegenExec"
+val scala3RunMainClass = "commons.lang3.bridge.codegen.Scala3CodegenExec"
 Compile / scala3RunGen := (Compile / runMain).inputTaskValue
   .partialInput(s" $scala3RunMainClass")
   .partialInput(s" ${scala3RunMainInputStr.value}")
   .evaluated
 
 val preCodegenTask  = inputKey[Unit]("preCodegenTask")
-val preGenMainClass = "commons.lang3.scala.codegen.PreCodegen"
+val preGenMainClass = "commons.lang3.bridge.codegen.PreCodegen"
 Compile / preCodegenTask := (Compile / runMain).inputTaskValue
   .partialInput(s" $preGenMainClass")
   .partialInput(s" ${rootCodegenPath.value.getAbsoluteFile.toString}")
   .evaluated
 
-preGen := (Compile / preCodegenTask).evaluated
+preGen := {
+  (Compile / preCodegenTask).evaluated
+}
 
 runGen := {
   (Compile / commonScalaRunGen).evaluated

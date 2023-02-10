@@ -1,0 +1,17 @@
+@()
+package commons.lang3.bridge.impl
+import commons.lang3.bridge.HelperIO
+
+@paramType(start: Int, i1: Int) = { @for(i2 <- start to i1) { @if(i2 > start){ , } I@{i2} } }
+
+@buildHList(start: Int, i1: Int) = { @if(start < i1) {
+    HlistTypeMappingPositive[I@{start + 1}, @buildHList(start + 1, i1)]
+} else { HlistTypeMappingZero } }
+
+trait HelperIOImplicit {
+    import InnerTypeMappingClass._
+
+    @for(i1 <- 2 to 22) {
+        @@inline implicit def helperIOImplicit@{i1}[A, @paramType(1, i1)]: HelperIO.Aux[@buildHList(0, i1), CusInnerApply@{i1}[@paramType(1, i1)]] = HelperIOImpl@{i1}.asInstanceOf[HelperIO.Aux[@buildHList(0, i1), CusInnerApply@{i1}[@paramType(1, i1)]]]
+    }
+}

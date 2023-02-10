@@ -10,9 +10,11 @@ package commons.lang3.bridge
   */
 object StringUtils {
 
-  object bridge {
+  object ops {
 
-    implicit class StringOptExt[T: StrToOpt](x: T) {
+    import TypeMapping.alias._
+
+    implicit class StringOptExt[T: TypeOptions2[*, String, Option[String]]](x: T) {
       val ops: StringCommons[T] = new StringCommons(x)
     }
 
