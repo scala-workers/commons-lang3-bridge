@@ -10,11 +10,6 @@ package commons.lang3.bridge
   */
 class TypeMapping[Input, Sum](val index: Int) extends AnyVal
 
-object TypeMapping extends TypeMappingImplicitOptsPolyHigher {
-  @inline def apply[Input, Sum](i: Int): TypeMapping[Input, Sum]               = new TypeMapping(i)
-  @inline def getMapping[F[_] <: TypeMapping[_, _], A](implicit f: F[A]): F[A] = f
-}
-
-trait TypeMappingImplicitOptsPoly3 {
-  implicit def typeMappingImplicit1Poly3Identity[I <: I1, I1]: TypeMapping[I, I1] = TypeMapping(1)
+object TypeMapping extends impl.TypeMappingImplicitOptsPolyHigher {
+  object alias extends impl.TypeMappingAlias
 }

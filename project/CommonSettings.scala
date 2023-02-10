@@ -3,10 +3,11 @@ import sbt.Keys._
 import ProjectKeys._
 
 object scalaVersions {
-  val v213    = "2.13.8"
-  val v212    = "2.12.15"
   val v211    = "2.11.12"
-  val v312    = "3.1.2"
+  val v212    = "2.12.15"
+  val v213    = "2.13.8"
+  val v312    = "3.1.3"
+  val v320    = "3.2.0"
   val current = v213
 }
 
@@ -17,14 +18,12 @@ object CommonSettings {
     val common = Seq(
       "-unchecked",
       "-deprecation",
-      "-Xlint",
       // "-Xfatal-warnings",
-      "-Ywarn-dead-code",
       "-encoding",
       "UTF-8"
     )
     val compat = scalaVersion match {
-      case Some((2, scalaMajor)) if scalaMajor == 11 => Seq("-Xexperimental")
+      case Some((2, scalaMajor)) if scalaMajor == 11 => Seq("-Xexperimental", "-Xlint", "-Ywarn-dead-code")
       case Some((3, scalaMajor))                     => Seq("-Ykind-projector")
       case _                                         => Nil
     }
@@ -52,10 +51,10 @@ object CommonSettings {
     common +: compat
   }
 
-  val supportedScalaVersions = Seq(scalaVersions.v213, scalaVersions.v212, scalaVersions.v211, scalaVersions.v312)
+  val supportedScalaVersions = Seq(scalaVersions.v213, scalaVersions.v212, scalaVersions.v211, scalaVersions.v320)
 
   val pushSettings = Seq(
-    version              := "0.0.1",
+    version              := "0.1.0",
     organization         := "net.scalax",
     organizationName     := "Scala Workers",
     organizationHomepage := Some(url("https://github.com/scala-workers")),
@@ -80,12 +79,12 @@ object CommonSettings {
       )
     ),
     description := "Scala Bridge For Apache Commons Lang3 Library",
-    licenses    := List("MIT" -> new URL("https://github.com/scala-workers/commons-lang3-bridge/blob/master/LICENSE")),
-    homepage    := Some(url("https://github.com/scala-workers/commons-lang3-brdge")),
+    licenses    := List("Apache" -> new URL("https://github.com/scala-workers/commons-lang3-bridge/blob/master/LICENSE")),
+    homepage    := Some(url("https://github.com/scala-workers/commons-lang3-bridge")),
     // Remove all additional repository other than Maven Central from POM
     pomIncludeRepository := { _ => false },
     publishTo := {
-      val nexus = "https://oss.sonatype.org/"
+      val nexus = "https://s01.oss.sonatype.org/"
       if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
       else Some("releases" at nexus + "service/local/staging/deploy/maven2")
     },
