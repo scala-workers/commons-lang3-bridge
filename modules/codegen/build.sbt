@@ -1,8 +1,6 @@
 import ProjectKeys._
 
-val depts = Lang3Depts
-
-libraryDependencies += depts.commonsIO
+libraryDependencies ++= libScalax.`commons-io`.value
 
 CommonSettings.codegenProjectSettings
 enablePlugins(SbtTwirl)

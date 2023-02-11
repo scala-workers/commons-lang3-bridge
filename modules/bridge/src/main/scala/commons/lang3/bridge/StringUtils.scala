@@ -12,9 +12,9 @@ object StringUtils {
 
   object ops {
 
-    import TypeMapping.alias._
+    import net.scalax.simple.adt.{TypeAdt => Adt}
 
-    implicit class StringOptExt[T: TypeOptions2[*, String, Option[String]]](x: T) {
+    implicit class StringOptExt[T: Adt.Options2[*, String, Option[String]]](x: T) {
       val ops: StringCommons[T] = new StringCommons(x)
     }
 

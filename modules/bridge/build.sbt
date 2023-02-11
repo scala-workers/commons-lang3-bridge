@@ -1,12 +1,8 @@
-import ProjectKeys._
-
-val depts = Lang3Depts
-
 name := "commons-lang3-bridge"
 
-libraryDependencies += depts.commonsLang3 % Provided
-libraryDependencies += depts.scalactic
-libraryDependencies += depts.scalatest % Test
-libraryDependencies ++= depts.kindProjector.value
+libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.12.0" % Provided
+libraryDependencies ++= libScalax.scalatest.value.map(_ % Test)
+libraryDependencies ++= libScalax.`kind-projector`.value
+libraryDependencies ++= Seq("net.scalax.simple" %% "simple-adt-core" % "0.0.1-M3")
 
 CommonSettings.commonProjectSettings
