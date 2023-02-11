@@ -2,14 +2,7 @@ import sbt._
 import sbt.Keys._
 import ProjectKeys._
 
-object scalaVersions {
-  val v211    = "2.11.12"
-  val v212    = "2.12.15"
-  val v213    = "2.13.8"
-  val v312    = "3.1.3"
-  val v320    = "3.2.0"
-  val current = v213
-}
+import djx.sbt.depts.output.Djx314DeptsPlugin.autoImport.scalaV
 
 object CommonSettings {
 
@@ -51,7 +44,7 @@ object CommonSettings {
     common +: compat
   }
 
-  val supportedScalaVersions = Seq(scalaVersions.v213, scalaVersions.v212, scalaVersions.v211, scalaVersions.v320)
+  val supportedScalaVersions = Seq(scalaV.v211, scalaV.v212, scalaV.v213, scalaV.v3)
 
   val pushSettings = Seq(
     version              := "0.1.0",
@@ -93,7 +86,7 @@ object CommonSettings {
 
   private val commonSetting = Seq(
     parVersion                                                   := CrossVersion.partialVersion(scalaVersion.value),
-    scalaVersion                                                 := scalaVersions.current,
+    scalaVersion                                                 := scalaV.v213,
     scalacOptions                                                := scalacOptionsVersion(parVersion.value),
     org.scalafmt.sbt.ScalafmtPlugin.autoImport.scalafmtOnCompile := true,
     Compile / unmanagedSourceDirectories ++= {
@@ -103,11 +96,6 @@ object CommonSettings {
     },
     Test / unmanagedSourceDirectories ++= genDirectory(sourceDirectory.value, "test", parVersion.value)
   )
-
-  def addCompilerPlugins(v: String, mudules: ModuleID*): Seq[Def.Setting[Seq[ModuleID]]] = CrossVersion.partialVersion(v) match {
-    case Some((2, _)) => mudules.map(addCompilerPlugin)
-    case _            => Seq.empty
-  }
 
   val commonProjectSettings  = pushSettings ++ commonSetting ++ Seq(crossScalaVersions := supportedScalaVersions)
   val codegenProjectSettings = commonSetting

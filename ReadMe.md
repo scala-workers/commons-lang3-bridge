@@ -9,7 +9,7 @@ A scala bridge library from apache commons lang3 to scala.
 Add dependence into sbt like:
 
 ```scala
-libraryDependencies += "net.scalax" % "commons-lang3-bridge_3" % "0.1.0"
+libraryDependencies += "net.scalax" %% "commons-lang3-bridge" % "0.1.0"
 libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.12.0"
 ```
 
@@ -125,12 +125,12 @@ what ever combinators. Because the parameters have independents type definitions
  - Some functions are accepted parameters as `CharSequnces`. By bridged you can pass 
 `CharSequnces` or `Option[CharSequence]` as your wish.
 
-### TypeMapping
+### Adt Type Handle
 
 Many methods in bridge (They have written in `StringCommons.scala` source) with type parameters like:
 
 ```scala
-  def removeEnd[R: TypeOptions2[*, String, Option[String]]](rmv: R): Option[String] = {
+  def removeEnd[R: Adt.Options2[*, String, Option[String]]](rmv: R): Option[String] = {
       val rmvStr = mapToStrOpt.input(rmv).orNull
       Option(Strings.removeEnd(strOrNull, rmvStr))
   }
