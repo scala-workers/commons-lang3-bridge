@@ -1,16 +1,8 @@
-import ProjectKeys._
-
 name := "commons-lang3-bridge"
 
-libraryDependencies += Dependencies.commonsLang3 % Provided
-libraryDependencies += Dependencies.scalactic
-libraryDependencies += Dependencies.scalatest % Test
+libraryDependencies ++= libScalax.`commons-lang3`.value.map(_ % Provided)
+libraryDependencies ++= libScalax.scalatest.value.map(_ % Test)
+libraryDependencies ++= libScalax.`kind-projector`.value
+libraryDependencies ++= libScalax.`simple-adt`.value
 
 CommonSettings.commonProjectSettings
-
-libraryDependencies ++= {
-  val v = CrossVersion.partialVersion(scalaVersion.value).map(_._1)
-  if (v == Some(2))
-    Seq(compilerPlugin(Dependencies.kindProjector))
-  else Seq.empty
-}

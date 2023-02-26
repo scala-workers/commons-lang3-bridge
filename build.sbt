@@ -1,12 +1,7 @@
-import ProjectKeys._
+val `modules/file` = file(".").getCanonicalFile / "modules"
 
-val modulesFile = file(".") / "modules"
-val brigeFile   = modulesFile / "bridge"
+val bridge = project in `modules/file` / "bridge"
 
-val bridge  = project in brigeFile
-val codegen = project in modulesFile / "codegen"
+bridge / name := "commons-lang3-bridge"
 
-codegen / rootCodegenPath := brigeFile / "src" / "codegen"
-
-bridge / name  := "commons-lang3-bridge"
-codegen / name := "commons-lang3-codegen"
+Global / onChangedBuildSource := ReloadOnSourceChanges
