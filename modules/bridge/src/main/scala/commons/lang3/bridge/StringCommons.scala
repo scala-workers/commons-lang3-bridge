@@ -272,7 +272,7 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
 
     if (suffixes == null) Option(Strings.appendIfMissing(strOrNull, suffixOrNull))
     else {
-      val sfs = applyM.fold(identity, oss => oss.map(_.orNull))
+      val sfs: Seq[CharSequence] = applyM.fold(identity, oss => oss.map(_.orNull))
       Option(Strings.appendIfMissing(strOrNull, suffixOrNull, sfs: _*))
     }
   }
@@ -329,7 +329,7 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
 
     if (suffixes == null) Option(Strings.appendIfMissingIgnoreCase(strOrNull, suffixOrNull))
     else {
-      val sfs = applyM.fold(identity, oss => oss.map(_.orNull))
+      val sfs: Seq[CharSequence] = applyM.fold(identity, oss => oss.map(_.orNull))
       Option(Strings.appendIfMissingIgnoreCase(strOrNull, suffixOrNull, sfs: _*))
     }
   }
@@ -2707,7 +2707,7 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
     def prefixesApplyM                              = Adt.Options2[Seq[CharSequence], Seq[Option[CharSequence]]](prefixes)
     def dealWithCharSeqSeq(strs: Seq[CharSequence]) = Strings.prependIfMissing(strOrNull, prefixStr, strs: _*)
 
-    def result = prefixesApplyM.fold(dealWithCharSeqSeq, s => dealWithCharSeqSeq(mapTo[Seq[CharSequence]].input(s)))
+    def result: String = prefixesApplyM.fold(dealWithCharSeqSeq, s => dealWithCharSeqSeq(mapTo[Seq[CharSequence]].input(s)))
 
     if (prefixes == null)
       Option(Strings.prependIfMissing(strOrNull, prefixStr, null))
@@ -2824,7 +2824,7 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
     def prefixesApplyM = Adt.Options2[Seq[CharSequence], Seq[Option[CharSequence]]](prefixes)
 
     def dealWithCharSeqSeq(strs: Seq[CharSequence]) = Strings.prependIfMissingIgnoreCase(strOrNull, prefixStr, strs: _*)
-    def result = prefixesApplyM.fold(dealWithCharSeqSeq, s => dealWithCharSeqSeq(mapTo[Seq[CharSequence]].input(s)))
+    def result: String = prefixesApplyM.fold(dealWithCharSeqSeq, s => dealWithCharSeqSeq(mapTo[Seq[CharSequence]].input(s)))
 
     if (prefixes == null)
       Option(Strings.prependIfMissingIgnoreCase(strOrNull, prefixStr, null))
@@ -4072,7 +4072,7 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
 
     if (searchStrings == null) Strings.startsWithAny(strOrNull)
     else {
-      val strs = applyM.fold(identity, { css => css.map(_.orNull) })
+      val strs: Seq[CharSequence] = applyM.fold(identity, css => for (c <- css) yield c.orNull)
       Strings.startsWithAny(strOrNull, strs: _*)
     }
   }
