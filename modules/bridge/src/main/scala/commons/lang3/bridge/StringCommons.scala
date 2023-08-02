@@ -6,6 +6,7 @@ import org.apache.commons.lang3.{StringUtils => Strings}
 import java.nio.charset.Charset
 import java.util.Locale
 import java.util.function.Supplier
+import java.util.Objects
 
 private object privateUtils {
   trait SingleTypeMapApply[U] {
@@ -1175,9 +1176,8 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
     *   the passed in String, or the default if it was `null`
     */
   def defaultString[S: Adt.Options2[*, String, Option[String]]](defaultStr: S): String = {
-    val str1   = mapToStrOpt.input(defaultStr).orNull
-    val result = Strings.defaultString(strOrNull, str1)
-    result
+    val str1 = mapToStrOpt.input(defaultStr).orNull
+    Objects.toString(strOrNull, str1)
   }
 
   /** <p>Deletes all whitespaces from a String as defined by {@link Character# isWhitespace ( char )}.</p>
