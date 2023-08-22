@@ -1,1 +1,1 @@
-addSbtPlugin("net.scalax.djx314" % "sbt-depts-djx314" % "0.0.1-M728")
+addSbtPlugin("net.scalax.djx314" % "sbt-depts-djx314" % "0.0.1-M730")
