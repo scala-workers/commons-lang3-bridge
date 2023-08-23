@@ -1509,8 +1509,7 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
     * @tparam S
     *   CharSequence or Option[CharSequence]
     * @return
-    *   the first index of the search CharSequence,
-    * -1 if no match or `null` string input
+    *   the first index of the search CharSequence, -1 if no match or `null` string input
     */
   def indexOf[S: Adt.Options2[*, CharSequence, Option[CharSequence]]](searchSeq: S): Int = {
     val str1 = mapToCsOpt.input(searchSeq).orNull
@@ -1544,8 +1543,7 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
     * @tparam S
     *   CharSequence or Option[CharSequence]
     * @return
-    *   the first index of the search CharSequence (always &ge; startPos),
-    * -1 if no match or `null` string input
+    *   the first index of the search CharSequence (always &ge; startPos), -1 if no match or `null` string input
     */
   def indexOf[S: Adt.Options2[*, CharSequence, Option[CharSequence]]](searchSeq: S, startPos: Int): Int = {
     val str1 = mapToCsOpt.input(searchSeq).orNull
@@ -1576,8 +1574,7 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
     * @param searchChar
     *   the character to find
     * @return
-    *   the first index of the search character,
-    * -1 if no match or `null` string input
+    *   the first index of the search character, -1 if no match or `null` string input
     */
   def indexOf(searchChar: Char): Int = Strings.indexOf(strOrNull, searchChar)
 
@@ -1605,8 +1602,7 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
     * @param searchChar
     *   the character to find
     * @return
-    *   the first index of the search character,
-    * -1 if no match or `null` string input
+    *   the first index of the search character, -1 if no match or `null` string input
     */
   def indexOf(searchChar: Int): Int = Strings.indexOf(strOrNull, searchChar)
 
@@ -1643,8 +1639,7 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
     * @param startPos
     *   the start position, negative treated as zero
     * @return
-    *   the first index of the search character (always &ge; startPos),
-    * -1 if no match or `null` string input
+    *   the first index of the search character (always &ge; startPos), -1 if no match or `null` string input
     */
   def indexOf(searchChar: Char, startPos: Int): Int = Strings.indexOf(strOrNull, searchChar, startPos)
 
@@ -1681,8 +1676,7 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
     * @param startPos
     *   the start position, negative treated as zero
     * @return
-    *   the first index of the search character (always &ge; startPos),
-    * -1 if no match or `null` string input
+    *   the first index of the search character (always &ge; startPos), -1 if no match or `null` string input
     */
   def indexOf(searchChar: Int, startPos: Int): Int = Strings.indexOf(strOrNull, searchChar, startPos)
 
@@ -1861,8 +1855,7 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
     * @tparam S
     *   CharSequence or Option[CharSequence]
     * @return
-    *   the first index of the search CharSequence,
-    * -1 if no match or `null` string input
+    *   the first index of the search CharSequence, -1 if no match or `null` string input
     */
   def indexOfIgnoreCase[S: Adt.Options2[*, CharSequence, Option[CharSequence]]](searchStr: S): Int = {
     val str1 = mapToCsOpt.input(searchStr).orNull
@@ -1895,8 +1888,7 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
     * @tparam S
     *   CharSequence or Option[CharSequence]
     * @return
-    *   the first index of the search CharSequence (always &ge; startPos),
-    * -1 if no match or `null` string input
+    *   the first index of the search CharSequence (always &ge; startPos), -1 if no match or `null` string input
     */
   def indexOfIgnoreCase[S: Adt.Options2[*, CharSequence, Option[CharSequence]]](searchStr: S, startPos: Int): Int = {
     val str1 = mapToCsOpt.input(searchStr).orNull
@@ -2259,8 +2251,7 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
     * @tparam S
     *   Char or CharSequence or Option[CharSequence]
     * @return
-    *   the last index of the search character (always &le; startPos),
-    * -1 if no match or `null` string input
+    *   the last index of the search character (always &le; startPos), -1 if no match or `null` string input
     */
   def lastIndexOf[S: Adt.Options4[*, Char, Int, CharSequence, Option[CharSequence]]](searchArg: S, startPos: Int): Int = {
     val applyM = Adt.Options4[Char, Int, CharSequence, Option[CharSequence]](searchArg)
@@ -2357,8 +2348,7 @@ class StringCommons[T: Adt.Options2[*, String, Option[String]]](value: T) {
     * @tparam S
     *   CharSequence or Option[CharSequence]
     * @return
-    *   the last index of the search CharSequence (always &le; startPos),
-    * -1 if no match or `null` input
+    *   the last index of the search CharSequence (always &le; startPos), -1 if no match or `null` input
     */
   def lastIndexOfIgnoreCase[S: Adt.Options2[*, CharSequence, Option[CharSequence]]](searchStr: S, startPos: Int): Int = {
     val str1 = mapToCsOpt.input(searchStr).orNull
