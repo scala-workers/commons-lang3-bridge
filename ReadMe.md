@@ -10,7 +10,7 @@ Add dependence into sbt like:
 
 ```scala
 libraryDependencies += "net.scalax" %% "commons-lang3-bridge" % "0.1.0"
-libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.12.0"
+libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.13.0"
 ```
 
 or maven:
@@ -23,7 +23,7 @@ or maven:
 <dependency>
   <groupId>org.apache.commons</groupId>
   <artifactId>commons-lang3</artifactId>
-  <version>3.12.0</version>
+  <version>3.13.0</version>
 </dependency>
 ```
 
