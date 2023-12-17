@@ -9,18 +9,26 @@ import java.util.function.Supplier
 import java.util.Objects
 
 private object privateUtils {
-  trait SingleTypeMapApply[U] {
+  /*trait SingleTypeMapApply[U] {
     @inline def input[T](t: T)(implicit map: SingleTypeMap[T, U]): U = map.input(t)
   }
   object SingleTypeMapApply {
     private object value extends SingleTypeMapApply[Any]
     @inline def get[U]: SingleTypeMapApply[U] = value.asInstanceOf[SingleTypeMapApply[U]]
   }
-  @inline def mapTo[O]: SingleTypeMapApply[O]                      = SingleTypeMapApply.get
-  @inline val mapToStrOpt: SingleTypeMapApply[Option[String]]      = SingleTypeMapApply.get
-  @inline val mapToCsOpt: SingleTypeMapApply[Option[CharSequence]] = SingleTypeMapApply.get
+  @inline def mapTo[O]: SingleTypeMapApply[O] = SingleTypeMapApply.get*/
+  def mapToStrOpt[T: Adt.CoProducts2[*, String, Option[String]]](t: T): Option[String] = {
+    val applyM = Adt.CoProduct2[String, Option[String]](t)
+    applyM.fold(Option(_), identity)
+  }
+  def mapToCsOpt[T: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](t: T): Option[CharSequence] = {
+    val applyM = Adt.CoProduct2[CharSequence, Option[CharSequence]](t)
+    applyM.fold(Option(_), identity)
+  }
+  def mapToCharSeq(t: Seq[Option[Char]]): Seq[Char]                         = t.collect { case Some(s) => s }
+  def mapToCharSequenceSeq(t: Seq[Option[CharSequence]]): Seq[CharSequence] = for (i <- t) yield i.orNull
 
-  @FunctionalInterface
+  /*@FunctionalInterface
   trait SingleTypeMap[I, O] {
     def input(i: I): O
   }
@@ -37,18 +45,18 @@ private object privateUtils {
   }
 
   private def strToOpt[U: Adt.CoProducts2[*, String, Option[String]]](u: U): Option[String] = {
-    val applyM = Adt.CoProducts2[String, Option[String]](u)
+    val applyM = Adt.CoProduct2[String, Option[String]](u)
     applyM.fold(Option(_), identity)
   }
 
   private def csToOpt[U: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](u: U): Option[CharSequence] = {
-    val applyM = Adt.CoProducts2[CharSequence, Option[CharSequence]](u)
+    val applyM = Adt.CoProduct2[CharSequence, Option[CharSequence]](u)
     applyM.fold(Option(_), identity)
   }
 
   private def tranCharSeqOptFunc(seq: Seq[Option[Char]]): Seq[Char] = seq.filter(_.isDefined).map(_.get)
 
-  private def tranCharSeqSeqOptFunc(seq: Seq[Option[CharSequence]]): Seq[CharSequence] = seq.map(_.orNull)
+  private def tranCharSeqSeqOptFunc(seq: Seq[Option[CharSequence]]): Seq[CharSequence] = seq.map(_.orNull)*/
 }
 
 /** TODO
@@ -66,11 +74,10 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
 
   import privateUtils._
 
-  @inline private def strOpt: Option[String] = mapToStrOpt.input(value)
-  @inline private def strOrNull: String = {
-    val applyM = Adt.CoProducts2[String, Option[String]](value)
-    applyM.fold(identity, _.orNull)
-  }
+  @inline private def strProAdt: Adt.CoProduct2[String, Option[String]] = Adt.CoProduct2[String, Option[String]](value)
+
+  @inline private def strOpt: Option[String] = mapToStrOpt(value)
+  @inline private def strOrNull: String      = strProAdt.fold(identity, _.orNull)
 
   /** * <p>Abbreviates a String using ellipses. This will turn "Now is the time for all good men" into "Now is the time for..."</p>
     *
@@ -172,7 +179,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   if the width is too small
     */
   def abbreviate[Abb: Adt.CoProducts2[*, String, Option[String]]](abbrevMarker: Abb, maxWidth: Int): Option[String] = {
-    val abbrevMarkerOrNull = mapToStrOpt.input(abbrevMarker).orNull
+    val abbrevMarkerOrNull = mapToStrOpt(abbrevMarker).orNull
     Option(Strings.abbreviate(strOrNull, abbrevMarkerOrNull, maxWidth))
   }
 
@@ -218,7 +225,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   if the width is too small
     */
   def abbreviate[Abb: Adt.CoProducts2[*, String, Option[String]]](abbrevMarker: Abb, offset: Int, maxWidth: Int): Option[String] = {
-    val abbrevMarkerOrNull = mapToStrOpt.input(abbrevMarker).orNull
+    val abbrevMarkerOrNull = mapToStrOpt(abbrevMarker).orNull
     Option(Strings.abbreviate(strOrNull, abbrevMarkerOrNull, offset, maxWidth))
   }
 
@@ -250,7 +257,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the abbreviated String if the above criteria is met, or the original String supplied for abbreviation.
     */
   def abbreviateMiddle[M: Adt.CoProducts2[*, String, Option[String]]](middle: M, length: Int): Option[String] = {
-    val middleOrNull = mapToStrOpt.input(middle).orNull
+    val middleOrNull = mapToStrOpt(middle).orNull
     Option(Strings.abbreviateMiddle(strOrNull, middleOrNull, length))
   }
 
@@ -269,8 +276,8 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     suffix: S,
     suffixes: SS*
   ): Option[String] = {
-    def suffixOrNull = mapToStrOpt.input(suffix).orNull
-    def applyM       = Adt.CoProducts2[Seq[CharSequence], Seq[Option[CharSequence]]](suffixes)
+    def suffixOrNull = mapToStrOpt(suffix).orNull
+    def applyM       = Adt.CoProduct2[Seq[CharSequence], Seq[Option[CharSequence]]](suffixes)
 
     if (suffixes == null) Option(Strings.appendIfMissing(strOrNull, suffixOrNull))
     else {
@@ -326,8 +333,8 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     suffix: S,
     suffixes: SS*
   ): Option[String] = {
-    def suffixOrNull = mapToStrOpt.input(suffix).orNull
-    def applyM       = Adt.CoProducts2[Seq[CharSequence], Seq[Option[CharSequence]]](suffixes)
+    def suffixOrNull = mapToStrOpt(suffix).orNull
+    def applyM       = Adt.CoProduct2[Seq[CharSequence], Seq[Option[CharSequence]]](suffixes)
 
     if (suffixes == null) Option(Strings.appendIfMissingIgnoreCase(strOrNull, suffixOrNull))
     else {
@@ -438,7 +445,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   centered String, `None` if none input
     */
   def center[P: Adt.CoProducts2[*, String, Option[String]]](size: Int, padStr: P): Option[String] = {
-    val padStrOrNull = mapToStrOpt.input(padStr).orNull
+    val padStrOrNull = mapToStrOpt(padStr).orNull
     Option(Strings.center(strOrNull, size, padStrOrNull))
   }
 
@@ -525,7 +532,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   &lt; 0, 0, &gt; 0, if `this` is respectively less, equal or greater than `other`
     */
   def compare[O: Adt.CoProducts2[*, String, Option[String]]](other: O): Int = {
-    val otherOrNull = mapToStrOpt.input(other).orNull
+    val otherOrNull = mapToStrOpt(other).orNull
     Strings.compare(strOrNull, otherOrNull)
   }
 
@@ -567,7 +574,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   &lt; 0, 0, &gt; 0, if `this` is respectively less, equal ou greater than `other`
     */
   def compare[O: Adt.CoProducts2[*, String, Option[String]]](other: O, nullIsNull: Boolean): Int = {
-    val otherOrNull = mapToStrOpt.input(other).orNull
+    val otherOrNull = mapToStrOpt(other).orNull
     Strings.compare(strOrNull, otherOrNull, nullIsNull)
   }
 
@@ -608,7 +615,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   &lt; 0, 0, &gt; 0, if `this` is respectively less, equal ou greater than `other`, ignoring case differences.
     */
   def compareIgnoreCase[O: Adt.CoProducts2[*, String, Option[String]]](other: O): Int = {
-    val otherOrNull = mapToStrOpt.input(other).orNull
+    val otherOrNull = mapToStrOpt(other).orNull
     Strings.compareIgnoreCase(strOrNull, otherOrNull)
   }
 
@@ -654,7 +661,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   &lt; 0, 0, &gt; 0, if `this` is respectively less, equal ou greater than `other`, ignoring case differences.
     */
   def compareIgnoreCase[O: Adt.CoProducts2[*, String, Option[String]]](other: O, nullIsLess: Boolean): Int = {
-    val otherOrNull = mapToStrOpt.input(other).orNull
+    val otherOrNull = mapToStrOpt(other).orNull
     Strings.compareIgnoreCase(strOrNull, otherOrNull, nullIsLess)
   }
 
@@ -682,7 +689,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   true if the CharSequence contains the search CharSequence,
     */
   def contains[To: Adt.CoProducts2[*, String, Option[String]]](searchSeq: To): Boolean = {
-    val str1 = mapToStrOpt.input(searchSeq).orNull
+    val str1 = mapToStrOpt(searchSeq).orNull
     Strings.contains(strOrNull, str1)
   }
 
@@ -771,7 +778,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     searchArgs: S*
   ): Boolean = {
     def dealWithSeqChar(chars: Seq[Char]): Boolean = Strings.containsAny(strOrNull, chars.toArray[Char]: _*)
-    def applyM = Adt.CoProducts4[Seq[Char], Seq[CharSequence], Seq[Option[Char]], Seq[Option[CharSequence]]](searchArgs)
+    def applyM = Adt.CoProduct4[Seq[Char], Seq[CharSequence], Seq[Option[Char]], Seq[Option[CharSequence]]](searchArgs)
 
     def dealWithSeqCharSequence(css: Seq[CharSequence]): Boolean = if (css.length == 1) {
       Strings.containsAny(strOrNull, css.head)
@@ -785,8 +792,8 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
       applyM.fold(
         dealWithSeqChar,
         dealWithSeqCharSequence,
-        s => dealWithSeqChar(mapTo[Seq[Char]].input(s)),
-        s => dealWithSeqCharSequence(mapTo[Seq[CharSequence]].input(s))
+        s => dealWithSeqChar(mapToCharSeq(s)),
+        s => dealWithSeqCharSequence(mapToCharSequenceSeq(s))
       )
   }
 
@@ -832,12 +839,12 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     */
   def containsAnyIgnoreCase[S: Options2F[Seq, *, Seq[CharSequence], Seq[Option[CharSequence]]]](searchArgs: S*): Boolean = {
     def dealWithSeqCharSeq(strs: Seq[CharSequence]) = Strings.containsAnyIgnoreCase(strOrNull, strs: _*)
-    def applyM                                      = Adt.CoProducts2[Seq[CharSequence], Seq[Option[CharSequence]]](searchArgs)
+    def applyM                                      = Adt.CoProduct2[Seq[CharSequence], Seq[Option[CharSequence]]](searchArgs)
 
     if (searchArgs == null) {
       Strings.equalsAnyIgnoreCase(strOrNull, null)
     } else {
-      applyM.fold(dealWithSeqCharSeq, s => dealWithSeqCharSeq(mapTo[Seq[CharSequence]].input(s)))
+      applyM.fold(dealWithSeqCharSeq, s => dealWithSeqCharSeq(mapToCharSequenceSeq(s)))
     }
   }
 
@@ -867,7 +874,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   true if the CharSequence contains the search CharSequence irrespective of case or false if not or `null` string input
     */
   def containsIgnoreCase[S: Adt.CoProducts2[*, String, Option[String]]](searchStr: S): Boolean = {
-    val searchStrOrNull = mapToStrOpt.input(searchStr).orNull
+    val searchStrOrNull = mapToStrOpt(searchStr).orNull
     Strings.containsIgnoreCase(strOrNull, searchStrOrNull)
   }
 
@@ -949,8 +956,8 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     */
   def containsNone[I: Options2F[Seq, *, Seq[Char], Seq[Option[Char]]]](invalidChars: I*): Boolean = {
     def dealWithSeqChar(chars: Seq[Char]): Boolean = Strings.containsNone(strOrNull, chars: _*)
-    val applyM                                     = Adt.CoProducts2[Seq[Char], Seq[Option[Char]]](invalidChars)
-    applyM.fold(dealWithSeqChar, s => dealWithSeqChar(mapTo[Seq[Char]].input(s)))
+    val applyM                                     = Adt.CoProduct2[Seq[Char], Seq[Option[Char]]](invalidChars)
+    applyM.fold(dealWithSeqChar, s => dealWithSeqChar(mapToCharSeq(s)))
   }
 
   /** <p>Checks if the CharSequence contains only certain characters.</p>
@@ -1026,9 +1033,9 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   true if it only contains valid chars and is non-null
     */
   def containsOnly[V: Options2F[Seq, *, Seq[Char], Seq[Option[Char]]]](valid: V*): Boolean = {
-    val applyM                            = Adt.CoProducts2[Seq[Char], Seq[Option[Char]]](valid)
+    val applyM                            = Adt.CoProduct2[Seq[Char], Seq[Option[Char]]](valid)
     def dealWithSeqChar(chars: Seq[Char]) = Strings.containsOnly(strOrNull, chars: _*)
-    applyM.fold(dealWithSeqChar, s => dealWithSeqChar(mapTo[Seq[Char]].input(s)))
+    applyM.fold(dealWithSeqChar, s => dealWithSeqChar(mapToCharSeq(s)))
   }
 
   /** <p>Check whether the given CharSequence contains any whitespace characters.</p>
@@ -1089,7 +1096,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the number of occurrences, 0 if either CharSequence is `null`
     */
   def countMatches[S: Adt.CoProducts2[*, String, Option[String]]](sub: S): Int = {
-    val str1 = mapToStrOpt.input(sub).orNull
+    val str1 = mapToStrOpt(sub).orNull
     Strings.countMatches(strOrNull, str1)
   }
 
@@ -1120,7 +1127,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the number of occurrences, 0 if either CharSequence is `null`
     */
   def defaultIfBlank[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](defaultStr: S): CharSequence = {
-    val defStr = mapTo[Option[CharSequence]].input(defaultStr).orNull
+    val defStr = mapToCsOpt(defaultStr).orNull
     val result = Strings.defaultIfBlank(strOrNull, defStr)
     result
   }
@@ -1143,7 +1150,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the passed in CharSequence, or the default
     */
   def defaultIfEmpty[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](defaultStr: S): CharSequence = {
-    val str1   = mapTo[Option[CharSequence]].input(defaultStr).orNull
+    val str1   = mapToCsOpt(defaultStr).orNull
     val result = Strings.defaultIfEmpty(strOrNull, str1)
     result
   }
@@ -1177,11 +1184,11 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the passed in String, or the default if it was `null`
     */
   def defaultString[S: Adt.CoProducts2[*, String, Option[String]]](defaultStr: S): String = {
-    val str1 = mapToStrOpt.input(defaultStr).orNull
+    val str1 = mapToStrOpt(defaultStr).orNull
     Objects.toString(strOrNull, str1)
   }
 
-  /** <p>Deletes all whitespaces from a String as defined by {@link Character# isWhitespace ( char )}.</p>
+  /** <p>Deletes all whitespaces from a String as defined by {@link Character# isWhitespace ( char )} .</p>
     *
     * {{{
     * null.ops.deleteWhitespace()         = null
@@ -1221,7 +1228,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the portion of str2 where it differs from str1; returns the empty String if they are equal
     */
   def difference[S: Adt.CoProducts2[*, String, Option[String]]](other: S): Option[String] = {
-    val str1   = mapToStrOpt.input(other).orNull
+    val str1   = mapToStrOpt(other).orNull
     val result = Strings.difference(strOrNull, str1)
     Option(result)
   }
@@ -1248,7 +1255,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   if the CharSequence ends with the suffix, case sensitive, or both `null`
     */
   def endsWith[S: Adt.CoProducts2[*, String, Option[String]]](suffix: S): Boolean = {
-    val str1 = mapToStrOpt.input(suffix).orNull
+    val str1 = mapToStrOpt(suffix).orNull
     Strings.endsWith(strOrNull, str1)
   }
 
@@ -1274,13 +1281,13 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   case-sensitive `searchStrings`.
     */
   def endsWithAny[S: Options2F[Seq, *, Seq[CharSequence], Seq[Option[CharSequence]]]](searchStrings: S*): Boolean = {
-    def applyM                                     = Adt.CoProducts2[Seq[CharSequence], Seq[Option[CharSequence]]](searchStrings)
+    def applyM                                     = Adt.CoProduct2[Seq[CharSequence], Seq[Option[CharSequence]]](searchStrings)
     def dealWithSeqString(strs: Seq[CharSequence]) = Strings.endsWithAny(strOrNull, strs: _*)
 
     if (searchStrings == null)
       Strings.endsWithAny(strOrNull, null)
     else
-      applyM.fold(dealWithSeqString, s => dealWithSeqString(mapTo[Seq[CharSequence]].input(s)))
+      applyM.fold(dealWithSeqString, s => dealWithSeqString(mapToCharSequenceSeq(s)))
   }
 
   /** <p>Case insensitive check if a CharSequence ends with a specified suffix.</p>
@@ -1304,7 +1311,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   `true` if the CharSequence ends with the suffix, case insensitive, or both `null`
     */
   def endsWithIgnoreCase[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](suffix: S): Boolean = {
-    val str2 = mapToCsOpt.input(suffix).orNull
+    val str2 = mapToCsOpt(suffix).orNull
     Strings.endsWithIgnoreCase(strOrNull, str2)
   }
 
@@ -1331,7 +1338,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     * @return
     */
   def equals[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](other: S): Boolean = {
-    val str2 = mapToCsOpt.input(other).orNull
+    val str2 = mapToCsOpt(other).orNull
     Strings.endsWithIgnoreCase(strOrNull, str2)
   }
 
@@ -1356,13 +1363,13 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   contains no matches.
     */
   def equalsAnyIgnoreCase[S: Options2F[Seq, *, Seq[CharSequence], Seq[Option[CharSequence]]]](searchStrings: S*): Boolean = {
-    def applyM                                     = Adt.CoProducts2[Seq[CharSequence], Seq[Option[CharSequence]]](searchStrings)
+    def applyM                                     = Adt.CoProduct2[Seq[CharSequence], Seq[Option[CharSequence]]](searchStrings)
     def dealWithSeqString(strs: Seq[CharSequence]) = Strings.equalsAnyIgnoreCase(strOrNull, strs: _*)
 
     if (searchStrings == null)
       Strings.equalsAnyIgnoreCase(strOrNull, null)
     else
-      applyM.fold(dealWithSeqString, s => dealWithSeqString(mapTo[Seq[CharSequence]].input(s)))
+      applyM.fold(dealWithSeqString, s => dealWithSeqString(mapToCharSequenceSeq(s)))
   }
 
   /** <p>Compares two CharSequences, returning `true` if they represent equal sequences of characters, ignoring case.</p>
@@ -1384,7 +1391,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     * @return
     */
   def equalsIgnoreCase[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](other: S): Boolean = {
-    val str1 = mapToCsOpt.input(other).orNull
+    val str1 = mapToCsOpt(other).orNull
     Strings.equalsIgnoreCase(strOrNull, str1)
   }
 
@@ -1397,11 +1404,11 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   The empty byte[] if `string` is null, the result of [[String# getBytes ( Charset )]] otherwise.
     */
   def getBytes[C: Adt.CoProducts4[*, Charset, Option[Charset], String, Option[String]]](charset: C): Array[Byte] = {
-    val applyM = Adt.CoProducts4[Charset, Option[Charset], String, Option[String]](charset)
+    val applyM = Adt.CoProduct4[Charset, Option[Charset], String, Option[String]](charset)
 
     def dealWithCharsetOptFunc(c: Charset): Array[Byte] = Strings.getBytes(strOrNull, c)
     def dealWithStringOptFunc(c: String): Array[Byte]   = Strings.getBytes(strOrNull, c)
-    def dealWithCharsetOpt                              = dealWithCharsetOptFunc _
+    val dealWithCharsetOpt                              = dealWithCharsetOptFunc _
     def dealWithStringOpt                               = dealWithStringOptFunc _
 
     applyM.fold(
@@ -1456,7 +1463,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
   def getIfBlank[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](defaultSupplier: Supplier[S]): CharSequence =
     if (defaultSupplier == null) Strings.getIfBlank(strOrNull, null)
     else {
-      val supplier: Supplier[CharSequence] = () => mapTo[Option[CharSequence]].input(defaultSupplier.get()).orNull
+      val supplier: Supplier[CharSequence] = () => mapToCsOpt(defaultSupplier.get()).orNull
       Strings.getIfBlank(strOrNull, supplier)
     }
 
@@ -1485,7 +1492,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
   def getIfEmpty[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](defaultSupplier: Supplier[S]): CharSequence =
     if (defaultSupplier == null) Strings.getIfEmpty(strOrNull, null)
     else {
-      val supplier: Supplier[CharSequence] = () => mapTo[Option[CharSequence]].input(defaultSupplier.get()).orNull
+      val supplier: Supplier[CharSequence] = () => mapToCsOpt(defaultSupplier.get()).orNull
       Strings.getIfEmpty(strOrNull, supplier)
     }
 
@@ -1513,7 +1520,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the first index of the search CharSequence, -1 if no match or `null` string input
     */
   def indexOf[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](searchSeq: S): Int = {
-    val str1 = mapToCsOpt.input(searchSeq).orNull
+    val str1 = mapToCsOpt(searchSeq).orNull
     Strings.indexOf(strOrNull, str1)
   }
 
@@ -1547,7 +1554,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the first index of the search CharSequence (always &ge; startPos), -1 if no match or `null` string input
     */
   def indexOf[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](searchSeq: S, startPos: Int): Int = {
-    val str1 = mapToCsOpt.input(searchSeq).orNull
+    val str1 = mapToCsOpt(searchSeq).orNull
     Strings.indexOf(strOrNull, str1, startPos)
   }
 
@@ -1720,8 +1727,8 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
   ](
     searchArgs: S*
   ): Int = {
-    def seqMapping(args: Seq[S]) = Adt.CoProducts3[Seq[Char], Seq[CharSequence], Seq[Option[CharSequence]]](args)
-    def charMapping(elem: S)     = Adt.CoProducts3[Char, CharSequence, Option[SeqCharSequence]](elem)
+    def seqMapping(args: Seq[S]) = Adt.CoProduct3[Seq[Char], Seq[CharSequence], Seq[Option[CharSequence]]](args)
+    def charMapping(elem: S)     = Adt.CoProduct3[Char, CharSequence, Option[SeqCharSequence]](elem)
     def indexOfNull              = Strings.indexOfAny(strOrNull, null)
 
     def dealWithSeqChar(chars: Seq[Char])             = Strings.indexOfAny(strOrNull, chars: _*)
@@ -1741,7 +1748,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
       seqMapping(searchArgs).fold(
         dealWithSeqChar,
         dealWithSeqString,
-        s => dealWithSeqString(mapTo[Seq[CharSequence]].input(s))
+        s => dealWithSeqString(mapToCharSequenceSeq(s))
       )
   }
 
@@ -1833,7 +1840,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the index where cs1 and cs2 begin to differ; -1 if they are equal
     */
   def indexOfDifference[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](cs: S): Int = {
-    val str1 = mapToCsOpt.input(cs).orNull
+    val str1 = mapToCsOpt(cs).orNull
     Strings.indexOfDifference(strOrNull, str1)
   }
 
@@ -1859,7 +1866,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the first index of the search CharSequence, -1 if no match or `null` string input
     */
   def indexOfIgnoreCase[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](searchStr: S): Int = {
-    val str1 = mapToCsOpt.input(searchStr).orNull
+    val str1 = mapToCsOpt(searchStr).orNull
     Strings.indexOfIgnoreCase(strOrNull, str1)
   }
 
@@ -1892,7 +1899,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the first index of the search CharSequence (always &ge; startPos), -1 if no match or `null` string input
     */
   def indexOfIgnoreCase[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](searchStr: S, startPos: Int): Int = {
-    val str1 = mapToCsOpt.input(searchStr).orNull
+    val str1 = mapToCsOpt(searchStr).orNull
     Strings.indexOfIgnoreCase(strOrNull, str1, startPos)
   }
 
@@ -2214,7 +2221,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the last index of the search String,
     */
   def lastIndexOf[S: Adt.CoProducts4[*, Char, Int, CharSequence, Option[CharSequence]]](searchArg: S): Int = {
-    val applyM = Adt.CoProducts4[Char, Int, CharSequence, Option[CharSequence]](searchArg)
+    val applyM = Adt.CoProduct4[Char, Int, CharSequence, Option[CharSequence]](searchArg)
     applyM.fold(
       ch => Strings.lastIndexOf(strOrNull, ch),
       i => Strings.lastIndexOf(strOrNull, i),
@@ -2255,7 +2262,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the last index of the search character (always &le; startPos), -1 if no match or `null` string input
     */
   def lastIndexOf[S: Adt.CoProducts4[*, Char, Int, CharSequence, Option[CharSequence]]](searchArg: S, startPos: Int): Int = {
-    val applyM = Adt.CoProducts4[Char, Int, CharSequence, Option[CharSequence]](searchArg)
+    val applyM = Adt.CoProduct4[Char, Int, CharSequence, Option[CharSequence]](searchArg)
     applyM.fold(
       ch => Strings.lastIndexOf(strOrNull, ch, startPos),
       i => Strings.lastIndexOf(strOrNull, i, startPos),
@@ -2290,13 +2297,13 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the last index of any of the CharSequences, -1 if no match
     */
   def lastIndexOfAny[S: Options2F[Seq, *, Seq[CharSequence], Seq[Option[CharSequence]]]](searchArgs: S*): Int = {
-    def applyM                                      = Adt.CoProducts2[Seq[CharSequence], Seq[Option[CharSequence]]](searchArgs)
+    def applyM                                      = Adt.CoProduct2[Seq[CharSequence], Seq[Option[CharSequence]]](searchArgs)
     def dealWithCharSeqSeq(strs: Seq[CharSequence]) = Strings.lastIndexOfAny(strOrNull, strs: _*)
 
     if (searchArgs == null)
       Strings.lastIndexOfAny(strOrNull, null)
     else
-      applyM.fold(dealWithCharSeqSeq, s => dealWithCharSeqSeq(mapTo[Seq[CharSequence]].input(s)))
+      applyM.fold(dealWithCharSeqSeq, s => dealWithCharSeqSeq(mapToCharSequenceSeq(s)))
   }
 
   /** <p>Case in-sensitive find of the last index within a CharSequence.</p>
@@ -2320,7 +2327,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the first index of the search CharSequence,
     */
   def lastIndexOfIgnoreCase[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](searchStr: S): Int = {
-    val str1 = mapToCsOpt.input(searchStr).orNull
+    val str1 = mapToCsOpt(searchStr).orNull
     Strings.lastIndexOfIgnoreCase(strOrNull, str1)
   }
 
@@ -2352,7 +2359,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the last index of the search CharSequence (always &le; startPos), -1 if no match or `null` input
     */
   def lastIndexOfIgnoreCase[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](searchStr: S, startPos: Int): Int = {
-    val str1 = mapToCsOpt.input(searchStr).orNull
+    val str1 = mapToCsOpt(searchStr).orNull
     Strings.lastIndexOfIgnoreCase(strOrNull, str1, startPos)
   }
 
@@ -2390,7 +2397,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the n-th last index of the search CharSequence, `-1` (`INDEX_NOT_FOUND`) if no match or `null` string input
     */
   def lastOrdinalIndexOf[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](searchStr: S, ordinal: Int): Int = {
-    val str1 = mapToCsOpt.input(searchStr).orNull
+    val str1 = mapToCsOpt(searchStr).orNull
     Strings.lastOrdinalIndexOf(strOrNull, str1, ordinal)
   }
 
@@ -2483,7 +2490,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   left padded String or original String if no padding is necessary, `none` if none String input
     */
   def leftPad[P: Adt.CoProducts2[*, String, Option[String]]](size: Int, padStr: P): Option[String] = {
-    val ps = mapToStrOpt.input(padStr).orNull
+    val ps = mapToStrOpt(padStr).orNull
     Option(Strings.leftPad(strOrNull, size, ps))
   }
 
@@ -2611,7 +2618,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the n-th index of the search CharSequence, `-1` (`INDEX_NOT_FOUND`) if no match or `null` string input
     */
   def ordinalIndexOf[S: Adt.CoProducts2[*, CharSequence, Option[CharSequence]]](searchStr: S, ordinal: Int): Int = {
-    val str1 = mapToCsOpt.input(searchStr).orNull
+    val str1 = mapToCsOpt(searchStr).orNull
     Strings.ordinalIndexOf(strOrNull, str1, ordinal)
   }
 
@@ -2646,7 +2653,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   overlayed String, `none` if none String input
     */
   def overlay[O: Adt.CoProducts2[*, String, Option[String]]](overlay: O, start: Int, end: Int): Option[String] = {
-    val str1    = mapToStrOpt.input(overlay).orNull
+    val str1    = mapToStrOpt(overlay).orNull
     val result2 = Strings.overlay(strOrNull, str1, start, end)
     Option(result2)
   }
@@ -2693,12 +2700,12 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     prefixes: Ps*
   ): Option[String] = {
 
-    def prefixStr: CharSequence = mapTo[Option[CharSequence]].input(prefix).orNull
+    def prefixStr: CharSequence = mapToCsOpt(prefix).orNull
 
-    def prefixesApplyM                              = Adt.CoProducts2[Seq[CharSequence], Seq[Option[CharSequence]]](prefixes)
+    def prefixesApplyM                              = Adt.CoProduct2[Seq[CharSequence], Seq[Option[CharSequence]]](prefixes)
     def dealWithCharSeqSeq(strs: Seq[CharSequence]) = Strings.prependIfMissing(strOrNull, prefixStr, strs: _*)
 
-    def result: String = prefixesApplyM.fold(dealWithCharSeqSeq, s => dealWithCharSeqSeq(mapTo[Seq[CharSequence]].input(s)))
+    def result: String = prefixesApplyM.fold(dealWithCharSeqSeq, s => dealWithCharSeqSeq(mapToCharSequenceSeq(s)))
 
     if (prefixes == null)
       Option(Strings.prependIfMissing(strOrNull, prefixStr, null))
@@ -2811,11 +2818,11 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     prefix: P,
     prefixes: Ps*
   ): Option[String] = {
-    def prefixStr      = mapToStrOpt.input(prefix).orNull
-    def prefixesApplyM = Adt.CoProducts2[Seq[CharSequence], Seq[Option[CharSequence]]](prefixes)
+    def prefixStr      = mapToStrOpt(prefix).orNull
+    def prefixesApplyM = Adt.CoProduct2[Seq[CharSequence], Seq[Option[CharSequence]]](prefixes)
 
     def dealWithCharSeqSeq(strs: Seq[CharSequence]) = Strings.prependIfMissingIgnoreCase(strOrNull, prefixStr, strs: _*)
-    def result: String = prefixesApplyM.fold(dealWithCharSeqSeq, s => dealWithCharSeqSeq(mapTo[Seq[CharSequence]].input(s)))
+    def result: String = prefixesApplyM.fold(dealWithCharSeqSeq, s => dealWithCharSeqSeq(mapToCharSequenceSeq(s)))
 
     if (prefixes == null)
       Option(Strings.prependIfMissingIgnoreCase(strOrNull, prefixStr, null))
@@ -2927,7 +2934,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the substring with the string removed if found, `None` if null String input
     */
   def remove[R: Adt.CoProducts2[*, String, Option[String]]](rmv: R): Option[String] = {
-    val rmvStr = mapToStrOpt.input(rmv).orNull
+    val rmvStr = mapToStrOpt(rmv).orNull
     Option(Strings.remove(strOrNull, rmvStr))
   }
 
@@ -2954,7 +2961,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the substring with the string removed if found, `none` if none String input
     */
   def removeEnd[R: Adt.CoProducts2[*, String, Option[String]]](rmv: R): Option[String] = {
-    val rmvStr = mapToStrOpt.input(rmv).orNull
+    val rmvStr = mapToStrOpt(rmv).orNull
     Option(Strings.removeEnd(strOrNull, rmvStr))
   }
 
@@ -2983,7 +2990,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the substring with the string removed if found, `none` if none String input
     */
   def removeEndIgnoreCase[R: Adt.CoProducts2[*, String, Option[String]]](rmv: R): Option[String] = {
-    val rmvStr = mapToStrOpt.input(rmv).orNull
+    val rmvStr = mapToStrOpt(rmv).orNull
     Option(Strings.removeEndIgnoreCase(strOrNull, rmvStr))
   }
 
@@ -3011,7 +3018,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the substring with the string removed if found, `none` if none String input
     */
   def removeIgnoreCase[R: Adt.CoProducts2[*, String, Option[String]]](rmv: R): Option[String] = {
-    val rmvStr = mapToStrOpt.input(rmv).orNull
+    val rmvStr = mapToStrOpt(rmv).orNull
     Option(Strings.removeIgnoreCase(strOrNull, rmvStr))
   }
 
@@ -3038,7 +3045,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the substring with the string removed if found, `none` if none String input
     */
   def removeStart[R: Adt.CoProducts2[*, String, Option[String]]](rmv: R): Option[String] = {
-    val rmvStr = mapToStrOpt.input(rmv).orNull
+    val rmvStr = mapToStrOpt(rmv).orNull
     Option(Strings.removeStart(strOrNull, rmvStr))
   }
 
@@ -3066,7 +3073,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the substring with the string removed if found, `none` if none String input
     */
   def removeStartIgnoreCase[R: Adt.CoProducts2[*, String, Option[String]]](rmv: R): Option[String] = {
-    val rmvStr = mapToStrOpt.input(rmv).orNull
+    val rmvStr = mapToStrOpt(rmv).orNull
     Option(Strings.removeStartIgnoreCase(strOrNull, rmvStr))
   }
 
@@ -3109,7 +3116,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   a new String consisting of the original String repeated, `none` if none String input
     */
   def repeat[S: Adt.CoProducts2[*, String, Option[String]]](separator: S, repeat: Int): Option[String] = {
-    val sep = mapToStrOpt.input(separator).orNull
+    val sep = mapToStrOpt(separator).orNull
     Option(Strings.repeat(strOrNull, sep, repeat))
   }
 
@@ -3143,8 +3150,8 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     searchString: S,
     replacement: R
   ): Option[String] = {
-    val sstr = mapToStrOpt.input(searchString).orNull
-    val rstr = mapToStrOpt.input(replacement).orNull
+    val sstr = mapToStrOpt(searchString).orNull
+    val rstr = mapToStrOpt(replacement).orNull
 
     Option(Strings.replace(strOrNull, sstr, rstr))
   }
@@ -3186,8 +3193,8 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     replacement: R,
     max: Int
   ): Option[String] = {
-    val sstr = mapToStrOpt.input(searchString).orNull
-    val rstr = mapToStrOpt.input(replacement).orNull
+    val sstr = mapToStrOpt(searchString).orNull
+    val rstr = mapToStrOpt(replacement).orNull
 
     Option(Strings.replace(strOrNull, sstr, rstr, max))
   }
@@ -3251,8 +3258,8 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     searchChars: S,
     replaceChars: R
   ): Option[String] = {
-    val sstr = mapToStrOpt.input(searchChars).orNull
-    val rstr = mapToStrOpt.input(replaceChars).orNull
+    val sstr = mapToStrOpt(searchChars).orNull
+    val rstr = mapToStrOpt(replaceChars).orNull
 
     Option(Strings.replaceChars(strOrNull, sstr, rstr))
   }
@@ -3353,8 +3360,8 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     searchString: S,
     replacement: R
   ): Option[String] = {
-    val sstr = mapToStrOpt.input(searchString).orNull
-    val rstr = mapToStrOpt.input(replacement).orNull
+    val sstr = mapToStrOpt(searchString).orNull
+    val rstr = mapToStrOpt(replacement).orNull
 
     Option(Strings.replaceIgnoreCase(strOrNull, sstr, rstr))
   }
@@ -3396,8 +3403,8 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     replacement: R,
     max: Int
   ): Option[String] = {
-    val sstr = mapToStrOpt.input(searchString).orNull
-    val rstr = mapToStrOpt.input(replacement).orNull
+    val sstr = mapToStrOpt(searchString).orNull
+    val rstr = mapToStrOpt(replacement).orNull
 
     Option(Strings.replaceIgnoreCase(strOrNull, sstr, rstr, max))
   }
@@ -3432,8 +3439,8 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     searchString: S,
     replacement: R
   ): Option[String] = {
-    val sstr = mapToStrOpt.input(searchString).orNull
-    val rstr = mapToStrOpt.input(replacement).orNull
+    val sstr = mapToStrOpt(searchString).orNull
+    val rstr = mapToStrOpt(replacement).orNull
 
     Option(Strings.replaceOnce(strOrNull, sstr, rstr))
   }
@@ -3469,8 +3476,8 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     searchString: S,
     replacement: R
   ): Option[String] = {
-    val sstr = mapToStrOpt.input(searchString).orNull
-    val rstr = mapToStrOpt.input(replacement).orNull
+    val sstr = mapToStrOpt(searchString).orNull
+    val rstr = mapToStrOpt(replacement).orNull
 
     Option(Strings.replaceOnceIgnoreCase(strOrNull, sstr, rstr))
   }
@@ -3599,7 +3606,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   right padded String or original String if no padding is necessary, `none` if none String input
     */
   def rightPad[P: Adt.CoProducts2[*, String, Option[String]]](size: Int, padStr: P): Option[String] = {
-    val ps = mapToStrOpt.input(padStr).orNull
+    val ps = mapToStrOpt(padStr).orNull
     Option(Strings.rightPad(strOrNull, size, ps))
   }
 
@@ -3693,7 +3700,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   an array of parsed Strings, `none` if none String input
     */
   def split[S: Adt.CoProducts2[*, String, Option[String]]](separatorChars: S): Option[Array[String]] = {
-    val sep = mapToStrOpt.input(separatorChars).orNull
+    val sep = mapToStrOpt(separatorChars).orNull
     Option(Strings.split(strOrNull, sep))
   }
 
@@ -3725,7 +3732,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   an array of parsed Strings, `none` if none String input
     */
   def split[S: Adt.CoProducts2[*, String, Option[String]]](separatorChars: S, max: Int): Option[Array[String]] = {
-    val sep = mapToStrOpt.input(separatorChars).orNull
+    val sep = mapToStrOpt(separatorChars).orNull
     Option(Strings.split(strOrNull, sep, max))
   }
 
@@ -3794,7 +3801,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   an array of parsed Strings, `null` if null String was input
     */
   def splitByWholeSeparator[S: Adt.CoProducts2[*, String, Option[String]]](separatorChars: S): Option[Array[String]] = {
-    val sep = mapToStrOpt.input(separatorChars).orNull
+    val sep = mapToStrOpt(separatorChars).orNull
     Option(Strings.splitByWholeSeparator(strOrNull, sep))
   }
 
@@ -3824,7 +3831,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   an array of parsed Strings, `null` if null String was input
     */
   def splitByWholeSeparator[S: Adt.CoProducts2[*, String, Option[String]]](separatorChars: S, max: Int): Option[Array[String]] = {
-    val sep = mapToStrOpt.input(separatorChars).orNull
+    val sep = mapToStrOpt(separatorChars).orNull
     Option(Strings.splitByWholeSeparator(strOrNull, sep, max))
   }
 
@@ -3852,7 +3859,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   an array of parsed Strings, `null` if null String was input
     */
   def splitByWholeSeparatorPreserveAllTokens[S: Adt.CoProducts2[*, String, Option[String]]](separatorChars: S): Option[Array[String]] = {
-    val sep = mapToStrOpt.input(separatorChars).orNull
+    val sep = mapToStrOpt(separatorChars).orNull
     Option(Strings.splitByWholeSeparatorPreserveAllTokens(strOrNull, sep))
   }
 
@@ -3886,7 +3893,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     separatorChars: S,
     max: Int
   ): Option[Array[String]] = {
-    val sep = mapToStrOpt.input(separatorChars).orNull
+    val sep = mapToStrOpt(separatorChars).orNull
     Option(Strings.splitByWholeSeparatorPreserveAllTokens(strOrNull, sep, max))
   }
 
@@ -3973,7 +3980,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   an array of parsed Strings, `none` if none String input
     */
   def splitPreserveAllTokens[S: Adt.CoProducts2[*, String, Option[String]]](separatorChars: S): Option[Array[String]] = {
-    val sep = mapToStrOpt.input(separatorChars).orNull
+    val sep = mapToStrOpt(separatorChars).orNull
     Option(Strings.splitPreserveAllTokens(strOrNull, sep))
   }
 
@@ -4010,7 +4017,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   an array of parsed Strings, `none` if none String input
     */
   def splitPreserveAllTokens[S: Adt.CoProducts2[*, String, Option[String]]](separatorChars: S, max: Int): Option[Array[String]] = {
-    val sep = mapToStrOpt.input(separatorChars).orNull
+    val sep = mapToStrOpt(separatorChars).orNull
     Option(Strings.splitPreserveAllTokens(strOrNull, sep, max))
   }
 
@@ -4034,7 +4041,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   `true` if the CharSequence starts with the prefix, case sensitive, or both `null`
     */
   def startsWith[S: Adt.CoProducts2[*, String, Option[String]]](prefix: S): Boolean = {
-    val pre = mapToStrOpt.input(prefix).orNull
+    val pre = mapToStrOpt(prefix).orNull
     Strings.startsWith(strOrNull, pre)
   }
 
@@ -4059,7 +4066,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   provided case-sensitive `searchStrings`.
     */
   def startsWithAny[CS: Options2F[Seq, *, Seq[CharSequence], Seq[Option[CharSequence]]]](searchStrings: CS*): Boolean = {
-    def applyM = Adt.CoProducts2[Seq[CharSequence], Seq[Option[CharSequence]]](searchStrings)
+    def applyM = Adt.CoProduct2[Seq[CharSequence], Seq[Option[CharSequence]]](searchStrings)
 
     if (searchStrings == null) Strings.startsWithAny(strOrNull)
     else {
@@ -4088,7 +4095,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   `true` if the CharSequence starts with the prefix, case insensitive, or both `null`
     */
   def startsWithIgnoreCase[P: Adt.CoProducts2[*, String, Option[String]]](prefix: P): Boolean = {
-    val str = mapToStrOpt.input(prefix).orNull
+    val str = mapToStrOpt(prefix).orNull
     Strings.startsWithIgnoreCase(strOrNull, str)
   }
 
@@ -4141,7 +4148,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the stripped String, `none` if none String input
     */
   def strip[S: Adt.CoProducts2[*, String, Option[String]]](stripChars: S): Option[String] = {
-    val chars = mapToStrOpt.input(stripChars).orNull
+    val chars = mapToStrOpt(stripChars).orNull
     Option(Strings.strip(strOrNull, chars))
   }
 
@@ -4186,7 +4193,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the stripped String, `none` if none String input
     */
   def stripEnd[S: Adt.CoProducts2[*, String, Option[String]]](stripChars: S): Option[String] = {
-    val chars = mapToStrOpt.input(stripChars).orNull
+    val chars = mapToStrOpt(stripChars).orNull
     Option(Strings.stripEnd(strOrNull, chars))
   }
 
@@ -4216,7 +4223,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the stripped String, `none` if none String input
     */
   def stripStart[S: Adt.CoProducts2[*, String, Option[String]]](stripChars: S): Option[String] = {
-    val chars = mapToStrOpt.input(stripChars).orNull
+    val chars = mapToStrOpt(stripChars).orNull
     Option(Strings.stripStart(strOrNull, chars))
   }
 
@@ -4388,7 +4395,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the substring after the first occurrence of the separator, `none` if none String input
     */
   def substringAfter[S: Adt.CoProducts2[*, String, Option[String]]](separator: S): Option[String] = {
-    val sep = mapToStrOpt.input(separator).orNull
+    val sep = mapToStrOpt(separator).orNull
     Option(Strings.substringAfter(strOrNull, sep))
   }
 
@@ -4467,7 +4474,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the substring after the last occurrence of the separator, `none` if none String input
     */
   def substringAfterLast[S: Adt.CoProducts2[*, String, Option[String]]](separator: S): Option[String] = {
-    val sep = mapToStrOpt.input(separator).orNull
+    val sep = mapToStrOpt(separator).orNull
     Option(Strings.substringAfterLast(strOrNull, sep))
   }
 
@@ -4541,7 +4548,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the substring before the first occurrence of the separator, `none` if none String input
     */
   def substringBefore[S: Adt.CoProducts2[*, String, Option[String]]](separator: S): Option[String] = {
-    val sep = mapToStrOpt.input(separator).orNull
+    val sep = mapToStrOpt(separator).orNull
     Option(Strings.substringBefore(strOrNull, sep))
   }
 
@@ -4571,7 +4578,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the substring before the last occurrence of the separator, `none` if none String input
     */
   def substringBeforeLast[S: Adt.CoProducts2[*, String, Option[String]]](separator: S): Option[String] = {
-    val sep = mapToStrOpt.input(separator).orNull
+    val sep = mapToStrOpt(separator).orNull
     Option(Strings.substringBeforeLast(strOrNull, sep))
   }
 
@@ -4596,7 +4603,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the substring, `null` if no match
     */
   def substringBetween[S: Adt.CoProducts2[*, String, Option[String]]](tag: S): Option[String] = {
-    val t = mapToStrOpt.input(tag).orNull
+    val t = mapToStrOpt(tag).orNull
     Option(Strings.substringBetween(strOrNull, t))
   }
 
@@ -4628,8 +4635,8 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the substring, `null` if no match
     */
   def substringBetween[S: Adt.CoProducts2[*, String, Option[String]]](open: S, close: S): Option[String] = {
-    val o = mapToStrOpt.input(open).orNull
-    val c = mapToStrOpt.input(close).orNull
+    val o = mapToStrOpt(open).orNull
+    val c = mapToStrOpt(close).orNull
     Option(Strings.substringBetween(strOrNull, o, c))
   }
 
@@ -4656,8 +4663,8 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   a String Array of substrings, or `null` if no match
     */
   def substringsBetween[S: Adt.CoProducts2[*, String, Option[String]]](open: S, close: S): Option[Array[String]] = {
-    val o = mapToStrOpt.input(open).orNull
-    val c = mapToStrOpt.input(close).orNull
+    val o = mapToStrOpt(open).orNull
+    val c = mapToStrOpt(close).orNull
     Option(Strings.substringsBetween(strOrNull, o, c))
   }
 
@@ -4803,7 +4810,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     * <p>Works like `truncate(String, int)`, but allows you to specify a "left edge" offset.
     *
     * <p>Specifically:</p> <ul> <li>If `str`is less than `maxWidth`characters long, return it.</li> <li>Else truncate it to `substring(str,
-    * offset, maxWidth)`.</li> <li>If `maxWidth`is less than `0`, throw an {@code IllegalArgumentException}.</li> <li>If `offset` is less
+    * offset, maxWidth)`.</li> <li>If `maxWidth`is less than `0`, throw an {@code IllegalArgumentException} .</li> <li>If `offset` is less
     * than `0`, throw an `IllegalArgumentException`.</li> <li>In no case will it return a String of length greater than `maxWidth`.</li>
     * </ul>
     *
@@ -4916,7 +4923,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   unwrapped String or the original string if it is not quoted properly with the wrapToken
     */
   def unwrap[S: Adt.CoProducts2[*, String, Option[String]]](wrapToken: S): Option[String] = {
-    val token = mapToStrOpt.input(wrapToken).orNull
+    val token = mapToStrOpt(wrapToken).orNull
     Option(Strings.unwrap(strOrNull, token))
   }
 
@@ -4939,7 +4946,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     */
   def upperCase: Option[String] = Option(Strings.upperCase(strOrNull))
 
-  /** <p>Converts a String to upper case as per {@link String# toUpperCase ( Locale )}.</p>
+  /** <p>Converts a String to upper case as per {@link String# toUpperCase ( Locale )} .</p>
     *
     * <p>A `null` input String returns `null`.</p>
     *
@@ -4999,7 +5006,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   wrapped String, `None` if none String input
     */
   def wrap[S: Adt.CoProducts2[*, String, Option[String]]](wrapWith: S): Option[String] = {
-    val token = mapToStrOpt.input(wrapWith).orNull
+    val token = mapToStrOpt(wrapWith).orNull
     Option(Strings.wrap(strOrNull, token))
   }
 
@@ -5056,7 +5063,7 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
     *   the wrapped string, or `null` if `str==null`
     */
   def wrapIfMissing[S: Adt.CoProducts2[*, String, Option[String]]](wrapWith: S): Option[String] = {
-    val token = mapToStrOpt.input(wrapWith).orNull
+    val token = mapToStrOpt(wrapWith).orNull
     Option(Strings.wrapIfMissing(strOrNull, token))
   }
 }
