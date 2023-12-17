@@ -74,11 +74,10 @@ class StringCommons[T: Adt.CoProducts2[*, String, Option[String]]](value: T) {
 
   import privateUtils._
 
+  @inline private def strProAdt: Adt.CoProduct2[String, Option[String]] = Adt.CoProduct2[String, Option[String]](value)
+
   @inline private def strOpt: Option[String] = mapToStrOpt(value)
-  @inline private def strOrNull: String = {
-    val applyM = Adt.CoProduct2[String, Option[String]](value)
-    applyM.fold(identity, _.orNull)
-  }
+  @inline private def strOrNull: String      = strProAdt.fold(identity, _.orNull)
 
   /** * <p>Abbreviates a String using ellipses. This will turn "Now is the time for all good men" into "Now is the time for..."</p>
     *
