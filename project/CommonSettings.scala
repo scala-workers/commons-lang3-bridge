@@ -17,8 +17,7 @@ object CommonSettings {
     )
     val compat = scalaVersion match {
       case Some((2, scalaMajor)) if scalaMajor == 11 => Seq("-Xexperimental", "-Xlint", "-Ywarn-dead-code")
-      case Some((3, scalaMajor))                     => Seq("-Ykind-projector")
-      case _                                         => Nil
+      case _                                         => Seq.empty
     }
     common ++ compat
   }
@@ -26,12 +25,9 @@ object CommonSettings {
   private def genDirectory(sourceFile: File, c: String, parVersion: Option[(Long, Long)]): Seq[File] = {
     val common = sourceFile / c / "scala"
     val compat = parVersion match {
-      case Some((2, 11)) =>
-        Seq(sourceFile / c / "scala-2", sourceFile / c / "scala-2.11", sourceFile / c / "scala-2.11-2.12")
       case Some((2, 12)) =>
         Seq(
           sourceFile / c / "scala-2",
-          sourceFile / c / "scala-2.11-2.12",
           sourceFile / c / "scala-2.12",
           sourceFile / c / "scala-2.12-2.13"
         )
@@ -43,8 +39,6 @@ object CommonSettings {
     }
     common +: compat
   }
-
-  val supportedScalaVersions = Seq(scalaV.v211, scalaV.v212, scalaV.v213, scalaV.v3)
 
   val pushSettings = Seq(
     version              := "0.1.0",
@@ -71,22 +65,16 @@ object CommonSettings {
         url = url("https://github.com/djx314")
       )
     ),
-    description := "Scala Bridge For Apache Commons Lang3 Library",
-    licenses    := List("Apache" -> new URL("https://github.com/scala-workers/commons-lang3-bridge/blob/master/LICENSE")),
-    homepage    := Some(url("https://github.com/scala-workers/commons-lang3-bridge")),
-    // Remove all additional repository other than Maven Central from POM
-    pomIncludeRepository := { _ => false },
-    publishTo := {
-      val nexus = "https://s01.oss.sonatype.org/"
-      if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
-      else Some("releases" at nexus + "service/local/staging/deploy/maven2")
-    },
-    publishMavenStyle := true
+    description          := "Scala Bridge For Apache Commons Lang3 Library",
+    licenses             := List("Apache" -> new URL("https://github.com/scala-workers/commons-lang3-bridge/blob/master/LICENSE")),
+    homepage             := Some(url("https://github.com/scala-workers/commons-lang3-bridge")),
+    pomIncludeRepository := { _ => false }, // Remove all additional repository other than Maven Central from POM
+    publishTo            := localStaging.value,
+    publishMavenStyle    := true
   )
 
   private val commonSetting = Seq(
     parVersion                                                   := CrossVersion.partialVersion(scalaVersion.value),
-    scalaVersion                                                 := scalaV.v213,
     scalacOptions                                                := scalacOptionsVersion(parVersion.value),
     org.scalafmt.sbt.ScalafmtPlugin.autoImport.scalafmtOnCompile := true,
     Compile / unmanagedSourceDirectories ++= {
@@ -97,7 +85,7 @@ object CommonSettings {
     Test / unmanagedSourceDirectories ++= genDirectory(sourceDirectory.value, "test", parVersion.value)
   )
 
-  val commonProjectSettings  = pushSettings ++ commonSetting ++ Seq(crossScalaVersions := supportedScalaVersions)
+  val commonProjectSettings  = pushSettings ++ commonSetting
   val codegenProjectSettings = commonSetting
 
 }

@@ -8,3 +8,6 @@
 /.vscode/
 /sbt.bat
 /sbt-launch.jar
+/java_with_opts.bat
+/sbtw-sbt-launch-bundle/
+/sbtw.bat
